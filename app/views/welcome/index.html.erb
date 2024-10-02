@@ -1,8 +1,2 @@
 <h1> Login </h1>
 <p><%= button_to "Login with Google", "/auth/google_oauth2", data: {turbo: "false"} %></p>
-<h2>Upload CSV File</h2>
-<%= form_with url: "/upload_csv", local: true, html: { multipart: true } do |form| %>
-  <%= form.file_field :csv_file, accept: ".csv" %>
-  <br>
-  <%= form.submit "Submit" %>
-<% end %>
