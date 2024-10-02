@@ -2,5 +2,11 @@
     <div class="logo">AggieAssign</div>
     <div class="google"></div>
     <p><%= button_to "Sign in with Google", "/auth/google_oauth2", data: {turbo: "false"}, class: "login-button" %></p>
+  <h2>Upload CSV File</h2>
+  <%= form_with url: "/upload_csv", local: true, html: { multipart: true } do |form| %>
+    <%= form.file_field :csv_file, accept: ".csv" %>
+    <br>
+    <%= form.submit "Submit" %>
+  <% end %>
 </section>
 
