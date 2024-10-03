@@ -1,0 +1,9 @@
+.google {
+    background-image: url('https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg');
+    height: 24px;
+    width: 24px;
+    border: 1px solid gray;
+    padding: 10px;
+    border-radius: 50%;
+    background-size: cover;
+}
