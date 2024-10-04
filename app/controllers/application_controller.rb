@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# ApplicationController serves as the base controller for all other controllers in the application.
+# It enforces user authentication for all actions unless overridden, and supports browser version
+# restrictions for modern features like webp images, web push, badges, etc.
 class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
