@@ -13,25 +13,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    # services:
-    #   postgres:
-    #     image: postgres:11-alpine
-    #     ports:
-    #       - "5432:5432"
-    #     env:
-    #       POSTGRES_DB: rails_test
-    #       POSTGRES_USER: rails
-    #       POSTGRES_PASSWORD: password
-    # env:
-    #   RAILS_ENV: test
-    #   DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
+    services:
+      postgres:
+        image: postgres:11-alpine
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
     steps:
-      # - name: Install packages
-      #   run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips sqlite3
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Fix permissions
-        run: chmod +x bin/rails
       # Add or replace dependency steps here
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
@@ -45,13 +41,7 @@ jobs:
         run: bin/rails db:schema:load
       # Add or replace test runners here
       - name: Run tests
-        env:
-          RAILS_ENV: test
         run: bundle exec rspec
-      - name: Run Cucumber tests
-        env:
-          RAILS_ENV: test
-        run: bundle exec cucumber   
 
   # lint:
   #   runs-on: ubuntu-latest
@@ -59,9 +49,15 @@ jobs:
   #     - name: Checkout code
   #       uses: actions/checkout@v4
   #     - name: Install Ruby and gems
-  #       uses: ruby/setup-ruby@v1
+  #       uses: ruby/setup-ruby@78c01b705fd9d5ad960d432d3a0cfa341d50e410 # v1.179.1
   #       with:
-  #         ruby-version: '3.3.4'
   #         bundler-cache: true
-  #     - name: Lint code for consistent style
-  #       run: bin/rubocop -f github
+  #     - name: Generate binstubs
+  #       run: bundle binstubs bundler-audit brakeman rubocop
+  #     # Add or replace any other lints here
+  #     - name: Security audit dependencies
+  #       run: bin/bundler-audit --update
+  #     - name: Security audit application code
+  #       run: bin/brakeman -q -w2
+  #     - name: Lint Ruby files
+  #       run: bin/rubocop --parallel
