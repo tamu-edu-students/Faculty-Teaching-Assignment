@@ -4,7 +4,7 @@ end
 
 Before do
     OmniAuth.config.test_mode = true
-    OmniAuth.config.mock_auth[:google_oauth2] = nil # Clear previous auth
+    OmniAuth.config.mock_auth[:google_oauth2] = nil 
   end
 
   When("I click the button {string}") do |button_text|
@@ -12,13 +12,12 @@ Before do
   end
 
 When("I authorize access from Google") do
-  # Mock the OAuth authorization process here
   mock_google_oauth_login
-  visit '/auth/google_oauth2/callback' # Simulate the redirect from Google
+  visit '/auth/google_oauth2/callback' 
 end
 
 Then("I should be on my profile page") do
-  expect(current_path).to eq(user_path(User.first)) # Adjust this to your logic for user path
+  expect(current_path).to eq(user_path(User.first))
 end
 
 Then("I should see {string}") do |message|
@@ -27,16 +26,16 @@ end
 
 When("I login with a non TAMU Google account") do
   mock_google_oauth_login(non_tamu_account: true)
-  visit '/auth/google_oauth2/callback' # Simulate the redirect
+  visit '/auth/google_oauth2/callback' 
 end
 
 Given("I am logged in as a user") do
   mock_google_oauth_login
-  visit '/auth/google_oauth2/callback' # Simulate the redirect
+  visit '/auth/google_oauth2/callback' 
 end
 
 When("I click {string}") do |text|
-    click_link(text) # This will now handle clicking on links correctly
+    click_link(text) 
   end
   
 
