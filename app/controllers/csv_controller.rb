@@ -2,12 +2,14 @@
 class CsvController < ApplicationController
   require 'csv'
 
-  skip_before_action :require_login
+  # skip_before_action :require_login
 
   def upload
     if params[:csv_file].present?
       file = params[:csv_file].path
       parse_csv(file)
+      flash[:notice] = "CSV file uploaded successfully."
+      redirect_to root_path
     else
       flash[:error] = "Please upload a CSV file."
       redirect_to root_path
