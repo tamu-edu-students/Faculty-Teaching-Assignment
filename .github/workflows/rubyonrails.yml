@@ -47,8 +47,8 @@ jobs:
           RAILS_ENV: test
         run: bundle exec rspec
       - name: Run Cucumber tests
-        env:
-          RAILS_ENV: test
+        # env:
+        #   RAILS_ENV: test
         run: bundle exec cucumber   
 
   # lint:
