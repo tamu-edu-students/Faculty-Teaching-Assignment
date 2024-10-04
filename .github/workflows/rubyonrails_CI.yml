@@ -37,6 +37,12 @@ jobs:
         run: bundle exec rspec
       - name: Run cucumber tests
         run: bundle exec cucumber
+      - name: Code Climate coverage
+        uses: paambaati/codeclimate-action@v2.2.4
+        env:
+          CC_TEST_REPORTER_ID: 20741c411800b30551a4bfacf8e40c734d5cdf9feba30b1112133439595e24b4
+        with:
+          coverageCommand: bundle exec cucumber
 
   lint:
     runs-on: ubuntu-latest
