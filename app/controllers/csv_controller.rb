@@ -2,17 +2,19 @@
 class CsvController < ApplicationController
   require 'csv'
 
-  # skip_before_action :require_login
-
   def upload
     if params[:csv_file].present?
       file = params[:csv_file].path
       parse_csv(file)
       flash[:notice] = "CSV file uploaded successfully."
-      redirect_to root_path
+      # Rails.logger.debug "Flash notice set: #{flash[:notice]}"
+      # flash.keep(:notice)  # Keep the flash across multiple redirects
+      redirect_to user_path(@current_user)
     else
       flash[:error] = "Please upload a CSV file."
-      redirect_to root_path
+      # Rails.logger.debug "Flash error set: #{flash[:error]}"
+      # flash.keep(:error)  # Keep the flash across multiple redirects
+      redirect_to user_path(@current_user)
     end
   end
 
@@ -20,9 +22,10 @@ class CsvController < ApplicationController
 
   def parse_csv(file)
     csv = CSV.read(file, headers: true)
-    puts "CSV Headers: #{csv.headers}"
+    Rails.logger.debug "CSV Headers: #{csv.headers}"
     csv.each do |row|
-      puts row.to_hash
+      Rails.logger.debug row.to_hash
+      break
     end
   end
 end
