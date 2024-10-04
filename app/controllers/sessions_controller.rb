@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SessionsController < ApplicationController
   # Don't require login for login page
   skip_before_action :require_login, only: [:omniauth]
@@ -17,7 +19,7 @@ class SessionsController < ApplicationController
       u.first_name = names[0]
       u.last_name = names[1..].join(' ')
     end
-  
+
     if @user.valid?
       session[:user_id] = @user.id
       redirect_to user_path(@user), notice: 'You are logged in'
