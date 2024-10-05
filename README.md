@@ -9,7 +9,7 @@ The key stakeholder for this application is the Associate Department Head, who i
 
 ## Links
 - **App** : https://faculty-teaching-assignment-31f5f9c405bc.herokuapp.com 
-- **Working agreement** : https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Team%20Working%20Agreement.md
+- **Team Working agreement** : https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Team%20Working%20Agreement.md
 - **Sprint Plans**:
 	- Sprint 1: https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Sprint_1_Plan.pdf 
 - **Code Climate Report**: https://codeclimate.com/github/tamu-edu-students/Faculty-Teaching-Assignment
