@@ -1,28 +1,37 @@
+# frozen_string_literal: true
+
+# SessionsController handles user authentication with OmniAuth for Google OAuth2.
 class SessionsController < ApplicationController
-  # Don't require login for login page
   skip_before_action :require_login, only: [:omniauth]
 
-  # GET /logout
   def logout
     reset_session
     redirect_to welcome_path, notice: 'You are logged out'
   end
 
-  # GET /auth/google_oauth2/callback
   def omniauth
-    auth = request.env['omniauth.auth']
-    @user = User.find_or_create_by(uid: auth['uid'], provider: auth['provider']) do |u|
-      u.email = auth['info']['email']
-      names = auth['info']['name'].split
-      u.first_name = names[0]
-      u.last_name = names[1..].join(' ')
-    end
-  
+    @user = find_or_create_user_from_auth(auth_info)
+
     if @user.valid?
       session[:user_id] = @user.id
       redirect_to user_path(@user), notice: 'You are logged in'
     else
       redirect_to welcome_path, alert: 'Login failed'
+    end
+  end
+
+  private
+
+  def auth_info
+    request.env['omniauth.auth']
+  end
+
+  def find_or_create_user_from_auth(auth)
+    User.find_or_create_by(uid: auth['uid'], provider: auth['provider']) do |user|
+      user.email = auth['info']['email']
+      names = auth['info']['name'].split
+      user.first_name = names[0]
+      user.last_name = names[1..].join(' ')
     end
   end
 end

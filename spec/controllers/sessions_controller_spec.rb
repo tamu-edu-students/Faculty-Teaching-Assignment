@@ -62,7 +62,6 @@ RSpec.describe SessionsController, type: :controller do
     it 'sets a flash notice' do
       get :omniauth
       expect(flash[:notice]).to eq('You are logged in')
-    end     
-
+    end
   end
 end
