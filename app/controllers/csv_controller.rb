@@ -5,15 +5,15 @@ class CsvController < ApplicationController
   def upload
     if params[:csv_file].present?
       file = params[:csv_file].path
-      parse_csv(file)
-      flash[:notice] = "CSV file uploaded successfully."
-      # Rails.logger.debug "Flash notice set: #{flash[:notice]}"
-      # flash.keep(:notice)  # Keep the flash across multiple redirects
+      begin
+        parse_csv(file)
+        flash[:notice] = "CSV file uploaded successfully."
+      rescue CSV::MalformedCSVError => e
+        flash[:error] = "Cannot parse CSV file: #{e.message}"
+      end
       redirect_to user_path(@current_user)
     else
       flash[:error] = "Please upload a CSV file."
-      # Rails.logger.debug "Flash error set: #{flash[:error]}"
-      # flash.keep(:error)  # Keep the flash across multiple redirects
       redirect_to user_path(@current_user)
     end
   end
