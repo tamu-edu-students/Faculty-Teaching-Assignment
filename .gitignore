@@ -31,7 +31,14 @@
 
 /public/assets
 
-# Ignore master key for decrypting credentials and more.
+# Ignore master key for decrypting credentials and more
 /config/master.key
 
+# Ignore coverage reports
 /coverage
+
+# Ignore files associated with GLPK
+bin/glpsol
+glpk-5.0/
+include/
+lib/libglpk*
