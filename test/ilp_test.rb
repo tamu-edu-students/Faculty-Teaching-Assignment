@@ -1,15 +1,9 @@
 require 'rulp'
 
-num_classes = 4  # classes
-num_rooms = 3  # rooms
-num_times = 2  # timeslots
-
-# Define the sets for classes, rooms, and time slots
-# NOTE: These need to be the ranges, not the actual class values
-# Otherwise, we need to change the classes.each et al
-classes = (0...num_classes).to_a 
-rooms = (0...num_rooms).to_a   
-times = (0...num_times).to_a   
+# Designate number of classes, rooms, and timeslots
+num_classes = 50
+num_rooms = 15
+num_times = 8
 
 # Define enrollments and room capacities
 enrollments = Array.new(num_classes) { rand(30..50) }
@@ -18,22 +12,19 @@ capacities = Array.new(num_rooms) { rand(40..80) }
 # Allocate ijk binary decision variables
 X_flat = Array.new(num_classes * num_rooms * num_times, &X_b)
 
-# Reshape this into a 3D tensor
+# Reshape into a 3D tensor
 # i.e. X[i][j][k] = 1 is class i is located at room j for time k
 X = X_flat.each_slice(num_times).each_slice(num_rooms).to_a
 
 # Create objective function
+# Minimize the number of empty seats in a full section
 objective = X.map.with_index do |mat, c|
   mat.map.with_index do |row, r|
     row.map.with_index do |val, t|
-        # puts "Class #{c}, Room #{r}, Time #{t}"
         val * (capacities[r] - enrollments[c])
     end.reduce(:+)
   end.reduce(:+)
 end.reduce(:+)
-
-# Form ILP
-problem = Rulp::Min(objective)
 
 # Constraint #1: Room capacity >= class enrollment
 cap_constraints = 
@@ -47,12 +38,12 @@ X.map.with_index do |mat, c|
 end
 
 # Constraint #2: No two classes can share one room at the same time
-# For some reason, the constraints can't be generated like the other two
+# For some reason, the constraints can't be generated using map
 # Create the array at the beginning, and append individually
 share_constraints = Array.new()
-rooms.each do |r|
-  times.each do |t|
-    share_constraints.append(classes.map{|c| X[c][r][t]}.reduce(:+) <= 1)
+(0...num_rooms).each do |r|
+  (0...num_times).each do |t|
+    share_constraints.append((0...num_classes).map{|c| X[c][r][t]}.reduce(:+) <= 1)
   end
 end
 
@@ -62,10 +53,30 @@ X.map do |mat|
   mat.map{|row| row.inject(:+)}.inject(:+) == 1
 end
 
-# TODO: Add constraint that courses that require lab rooms are placed in lab classes
+# Constraint #4: Respect locked courses
+# Have three parallel arrays, where each index is a class/room/time triplet
+num_locks = 3
+locked_classes = Array.new(num_locks) {rand(0...num_classes)}
+locked_rooms = Array.new(num_locks) {rand(0...num_rooms)}
+locked_times = Array.new(num_locks) {rand(0...num_times)}
 
-# Consolidate constraints, add to model, and solve
-constraints = cap_constraints + share_constraints + place_constraints
+lock_constraints = 
+(0...num_locks).map do |i|
+  # For unknown reasons, I can't write X[c][r][t] == 1
+  # Ruby will evaluate this as a boolean expression, instead of the constraint
+  # Introduce a dummy variable to prevent this from happening
+  # If their sum is two => X[c][r][t] == 1
+  X[locked_classes[i]][locked_rooms[i]][locked_times[i]] + Dummy_b == 2
+end
+
+# Constraint #5: Courses that require special designations get rooms that meet them
+# TODO
+
+# Consolidate constraints
+constraints = cap_constraints + share_constraints + place_constraints + lock_constraints
+
+# Form ILP and solve
+problem = Rulp::Min(objective)
 problem[constraints]
 Rulp::Glpk(problem)
 
