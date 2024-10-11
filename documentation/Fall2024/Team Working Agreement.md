@@ -22,6 +22,7 @@
 - Agendas should be brief/minimal
 - Developers "start" and "finish" stories, PO "delivers" them
 - Attend meetings or inform about unavailibility
+- Always squash and merge
 
 ### Disagreement Handling
 - Talk about it
