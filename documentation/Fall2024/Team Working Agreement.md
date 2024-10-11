@@ -10,10 +10,10 @@
 | Event                  | Frequency/Time |
 |------------------------|----------------|
 | **Sprint Planning**     | Bi-Weekly      |
-| **Daily Scrum**         | N/A            |
-| **Sprint Review**       | Monday (after sprint end) |
-| **Sprint Retrospective**| Monday (after sprint end) |
-| **Client Meetings**	  | Every Wednesday|
+| **Daily Scrum**         | 6:00pm - 6:10pm            |
+| **Sprint Review**       | Wednesday before class after Client Meeting |
+| **Sprint Retrospective**| Wednesday before class after Client Meeting |
+| **Client Meetings**	  | Wednesday 1:45pm |
 
 ### Team Approach to Work
 - Collaboration and teamwork
@@ -21,15 +21,19 @@
 - Communication about blockers
 - Agendas should be brief/minimal
 - Developers "start" and "finish" stories, PO "delivers" them
+- Attend meetings or inform about unavailibility
 
 ### Disagreement Handling
 - Talk about it
-- Majority Discussion
+- Majority Vote
 
 ## Definition of Done
 - Satisfies the requirement
 - Team agrees it's done
 - Properly tested
+- Rubocop has at most 1 offense per file
+- Run cucumber and maintain coverage above 90% for your feature
+- Run rspec and maintain coverage above 90% for your feature
 
 ## Communication Channels
 - **Slack**
@@ -38,3 +42,4 @@
 - **GitHub**
 - **Pivotal Tracker**
 - **Google Docs**
+- **Code Climate**
