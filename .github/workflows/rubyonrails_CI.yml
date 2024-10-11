@@ -38,6 +38,17 @@ jobs:
       - name: Run cucumber tests
         run: bundle exec cucumber
 
+      - name: Check code coverage
+        run: |
+          COVERAGE=$(grep -Po '(\d+\.\d+)%' coverage/.last_run.json | head -1)
+          echo "Current coverage is $COVERAGE"
+          REQUIRED_COVERAGE=90
+          if (( $(echo "$COVERAGE < $REQUIRED_COVERAGE" | bc -l) )); then
+            echo "Code coverage ($COVERAGE%) is below the threshold of $REQUIRED_COVERAGE%" && exit 1
+          else
+            echo "Code coverage ($COVERAGE%) meets the required threshold."
+          fi
+
   lint:
     runs-on: ubuntu-latest
     steps:
