@@ -26,7 +26,6 @@ class CsvController < ApplicationController
     Rails.logger.debug "CSV Headers: #{csv.headers}"
     csv.each do |row|
       Rails.logger.debug row.to_hash
-      break
     end
   end
 end
