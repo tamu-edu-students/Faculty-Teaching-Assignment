@@ -8,11 +8,9 @@ class WelcomeController < ApplicationController
   skip_before_action :require_login, only: [:index]
 
   def index
-    if logged_in?
-      unless flash[:notice] || flash[:error]
-        flash[:notice] = "Welcome back, #{@current_user.first_name}!"
-      end
-      redirect_to user_path(@current_user)
-    end
+    return unless logged_in?
+
+    flash[:notice] = "Welcome back, #{@current_user.first_name}!" unless flash[:notice] || flash[:error]
+    redirect_to user_path(@current_user)
   end
 end

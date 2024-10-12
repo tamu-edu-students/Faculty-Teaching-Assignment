@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/csv_controller.rb
 class CsvController < ApplicationController
   require 'csv'
@@ -7,15 +9,14 @@ class CsvController < ApplicationController
       file = params[:csv_file].path
       begin
         parse_csv(file)
-        flash[:notice] = "CSV file uploaded successfully."
+        flash[:notice] = 'CSV file uploaded successfully.'
       rescue CSV::MalformedCSVError => e
         flash[:error] = "Cannot parse CSV file: #{e.message}"
       end
-      redirect_to user_path(@current_user)
     else
-      flash[:error] = "Please upload a CSV file."
-      redirect_to user_path(@current_user)
+      flash[:error] = 'Please upload a CSV file.'
     end
+    redirect_to user_path(@current_user)
   end
 
   private

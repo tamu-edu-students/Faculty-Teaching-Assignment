@@ -7,7 +7,8 @@ RSpec.describe ApplicationController, type: :controller do
   describe '#current_user' do
     context 'when session contains user_id' do
       before do
-        @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John', last_name: 'Doe')
+        @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
+                             last_name: 'Doe')
         session[:user_id] = @user.id
         puts "session[:user_id] = #{session[:user_id]}"
       end
@@ -31,7 +32,8 @@ RSpec.describe ApplicationController, type: :controller do
   describe '#logged_in?' do
     context 'when user is logged in' do
       before do
-        @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John', last_name: 'Doe')
+        @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
+                             last_name: 'Doe')
         session[:user_id] = @user.id
       end
 
