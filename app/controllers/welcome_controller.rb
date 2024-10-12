@@ -9,7 +9,7 @@ class WelcomeController < ApplicationController
 
   def index
     return unless logged_in?
-
+    #
     flash[:notice] = "Welcome back, #{@current_user.first_name}!" unless flash[:notice] || flash[:error]
     redirect_to user_path(@current_user)
   end
