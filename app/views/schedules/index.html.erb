@@ -1,0 +1,27 @@
+<!-- app/views/schedules/index.html.erb -->
+<div class="container">
+  <div class="header">
+    <h1>Schedules you are working on</h1>
+    <p>Please find the schedule you would like to edit</p>
+    <input type="text" placeholder="Search a schedule" class="search-bar" />
+  </div>
+
+  <div class="schedules-list">
+    <% @schedules.each do |schedule| %>
+      <div class="schedule-card">
+        <div class="schedule-header">
+          <h2><%= schedule.schedule_name %> <%= schedule.semester_name %></h2>
+        </div>
+        <div class="schedule-info">
+          <p>Some information about  the schedule</p>
+        </div>
+        <div class="schedule-actions">
+            <%= button_to 'Delete', class: 'btn delete-btn' %>
+            <%= button_to 'Export', class: 'btn export-btn' %>
+        </div>
+        <%= link_to '', schedule_path(schedule), class: 'card-link'  %>
+      </div>      
+    <% end %>
+  </div>
+
+</div>

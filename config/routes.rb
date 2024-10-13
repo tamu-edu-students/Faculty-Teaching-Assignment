@@ -28,4 +28,5 @@ Rails.application.routes.draw do
 
   # Schedules page
   get '/schedules', to: 'schedules#index', as: 'schedules'
+  get '/schedules/:id', to: 'schedules#show', as: 'schedule'
 end
