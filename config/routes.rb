@@ -25,4 +25,7 @@ Rails.application.routes.draw do
   # Login/logout
   get '/logout', to: 'sessions#logout', as: 'logout'
   get '/auth/google_oauth2/callback', to: 'sessions#omniauth'
+
+  # Schedules page
+  get '/schedules', to: 'schedules#index', as: 'schedules'
 end
