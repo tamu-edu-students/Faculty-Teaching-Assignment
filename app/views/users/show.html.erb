@@ -15,5 +15,9 @@
     <%= @current_user.last_name %>
   </p>
 
-  <%= link_to "Logout", logout_path %>
+  <h2>Upload CSV File</h2>
+  <%= form_with url: upload_csv_path, method: :post, local: true, data: { turbo: false } do |form| %>
+    <%= form.file_field :csv_file %>
+    <%= form.submit "Submit" %>
+  <% end %>
 </div>

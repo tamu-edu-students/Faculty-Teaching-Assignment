@@ -27,7 +27,6 @@ Rails.application.routes.draw do
   get '/logout', to: 'sessions#logout', as: 'logout'
   get '/auth/google_oauth2/callback', to: 'sessions#omniauth'
 
-  # # Schedules page
-  # get '/schedules', to: 'schedules#index', as: 'schedules'
-  # get '/schedules/:id', to: 'schedules#show', as: 'schedule'
+  # Upload CSV
+  post 'upload_csv', to: 'csv#upload'
 end
