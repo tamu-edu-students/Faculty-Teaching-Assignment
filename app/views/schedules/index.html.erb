@@ -7,6 +7,7 @@
   </div>
 
   <div class="schedules-list">
+    <%= link_to 'Create a New Schedule', new_schedule_path, class: 'btn create-new-schedule-btn' %>
     <% @schedules.each do |schedule| %>
       <div class="schedule-card">
         <div style="position:relative;">
@@ -19,7 +20,7 @@
           <%= link_to '', schedule_path(schedule), class: 'card-link'  %>
         </div>
           <div class="schedule-actions">
-              <%= button_to 'Delete', class: 'btn delete-btn' %>
+              <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn delete-btn' %>
               <%= button_to 'Export', class: 'btn export-btn' %>
           </div>
       </div>      

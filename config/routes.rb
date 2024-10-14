@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :schedules
   get 'sessions/logout'
   get 'sessions/omniauth'
   get 'users/show'
@@ -26,7 +27,7 @@ Rails.application.routes.draw do
   get '/logout', to: 'sessions#logout', as: 'logout'
   get '/auth/google_oauth2/callback', to: 'sessions#omniauth'
 
-  # Schedules page
-  get '/schedules', to: 'schedules#index', as: 'schedules'
-  get '/schedules/:id', to: 'schedules#show', as: 'schedule'
+  # # Schedules page
+  # get '/schedules', to: 'schedules#index', as: 'schedules'
+  # get '/schedules/:id', to: 'schedules#show', as: 'schedule'
 end

@@ -1,0 +1,28 @@
+<%= form_with(model: schedule) do |form| %>
+  <% if schedule.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(schedule.errors.count, "error") %> prohibited this schedule from being saved:</h2>
+
+      <ul>
+        <% schedule.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :schedule_name, style: "font-size: 17px;font-weight: bold;display: block" %>
+    <%= form.text_field :schedule_name, style: "font-size: 15px" %>
+  </div>
+
+  <div>
+    <%= form.label :semester_name, style: "font-size: 17px;font-weight: bold;display: block" %>
+    <%= form.text_field :semester_name, style: "font-size: 15px" %>
+  </div>
+
+  <div>
+    <%= form.submit class: "update-btn"%>
+  </div>
+
+<% end %>
