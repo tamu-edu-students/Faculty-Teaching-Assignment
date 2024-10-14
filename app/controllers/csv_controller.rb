@@ -5,14 +5,8 @@ class CsvController < ApplicationController
   require 'csv'
 
   def upload
-    if params[:csv_file].present?
-      file = params[:csv_file].path
-      begin
-        parse_csv(file)
-        flash[:notice] = 'CSV file uploaded successfully.'
-      rescue CSV::MalformedCSVError => e
-        flash[:error] = "Cannot parse CSV file: #{e.message}"
-      end
+    if csv_file_present?
+      process_csv_file
     else
       flash[:error] = 'Please upload a CSV file.'
     end
@@ -20,6 +14,22 @@ class CsvController < ApplicationController
   end
 
   private
+
+  def csv_file_present?
+    params[:csv_file].present?
+  end
+
+  def process_csv_file
+    file = params[:csv_file].path
+    parse_and_handle_csv(file)
+  end
+
+  def parse_and_handle_csv(file)
+    parse_csv(file)
+    flash[:notice] = 'CSV file uploaded successfully.'
+  rescue CSV::MalformedCSVError => e
+    flash[:error] = "Cannot parse CSV file: #{e.message}"
+  end
 
   def parse_csv(file)
     csv = CSV.read(file, headers: true)
