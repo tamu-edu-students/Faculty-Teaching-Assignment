@@ -1,2 +1,4 @@
 <h2>Some details about the schedule</h2>
-<h2><%= @schedule.schedule_name %> <%= @schedule.semester_name %></h2>
+<h5>Schedule Name: <%= @schedule.schedule_name %> <br>
+Semester:<%= @schedule.semester_name %></h5>
+<%= link_to 'Back', schedules_path, class: 'btn btn-secondary' %>
