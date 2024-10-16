@@ -4,17 +4,6 @@
 require 'rails_helper'
 
 RSpec.describe SessionsController, type: :controller do
-  # before(:all) do
-  #   @user = User.create!(
-  #     uid: '12345',
-  #     provider: 'google_oauth2',
-  #     email: 'test@example.com',
-  #     first_name: 'John', last_name: 'Doe'
-  #   )
-  # end
-  # after(:all) do
-  #   User.destroy_all
-  # end
   describe 'GET #logout' do
     before do
       @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
@@ -56,7 +45,7 @@ RSpec.describe SessionsController, type: :controller do
 
     it 'redirects to the root path' do
       get :omniauth
-      expect(response).to redirect_to(user_path(User.last))
+      expect(response).to redirect_to(schedules_path)
     end
 
     it 'sets a flash notice' do
