@@ -25,8 +25,9 @@
             <%= link_to '', schedule_path(schedule), class: 'stretched-link'  %>        
           </div>
         </div>
-        <div style="margin-bottom:5px; margin-left:5px">
-          <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn btn-danger btn-sm'%>
+        <div class="d-flex mb-3 ms-2">
+          <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn btn-danger btn-sm me-2' %>
+          <%= button_to 'Export', schedule_path(schedule), class: 'btn btn-primary btn-sm' %>
         </div>
       </div>
     </div>
