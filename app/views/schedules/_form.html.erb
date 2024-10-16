@@ -1,8 +1,7 @@
-<%= form_with(model: schedule) do |form| %>
+<%= form_with(model: schedule, local: true, class: "p-4") do |form| %>
   <% if schedule.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(schedule.errors.count, "error") %> prohibited this schedule from being saved:</h2>
-
+    <div class="alert alert-danger">
+      <h4 class="alert-heading"><%= pluralize(schedule.errors.count, "error") %> prohibited this schedule from being saved:</h4>
       <ul>
         <% schedule.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -11,18 +10,18 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :schedule_name, style: "font-size: 17px;font-weight: bold;display: block" %>
-    <%= form.text_field :schedule_name, style: "font-size: 15px" %>
+  <div class="mb-3">
+    <%= form.label :schedule_name, class: "form-label fw-bold" %>
+    <%= form.text_field :schedule_name, class: "form-control", placeholder: "Enter schedule name" %>
   </div>
 
-  <div>
-    <%= form.label :semester_name, style: "font-size: 17px;font-weight: bold;display: block" %>
-    <%= form.text_field :semester_name, style: "font-size: 15px" %>
+  <div class="mb-3">
+    <%= form.label :semester_name, class: "form-label fw-bold" %>
+    <%= form.text_field :semester_name, class: "form-control", placeholder: "Enter semester name" %>
   </div>
 
-  <div>
-    <%= form.submit class: "update-btn"%>
+  <div class="d-grid">
+    <%= form.submit "Save Schedule", class: "btn btn-primary" %>
   </div>
 
 <% end %>
