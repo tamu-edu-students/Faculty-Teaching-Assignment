@@ -139,6 +139,11 @@ GEM
     docile (1.4.1)
     drb (2.2.1)
     erubi (1.13.0)
+    factory_bot (6.5.0)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.4.3)
+      factory_bot (~> 6.4)
+      railties (>= 5.0.0)
     faraday (2.12.0)
       faraday-net_http (>= 2.0, < 3.4)
       json
@@ -440,6 +445,7 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   debug
+  factory_bot_rails
   importmap-rails
   jbuilder
   omniauth

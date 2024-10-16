@@ -1,0 +1,7 @@
+FactoryBot.define do
+  
+    factory :schedule do
+      schedule_name {"Test Schedule"}
+      semester_name {"Fall 2024"}
+    end
+  end
