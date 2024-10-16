@@ -6,13 +6,15 @@
     <%= link_to "Create a New Schedule", new_schedule_path, class: "btn btn-dark" %>
   </div>
 
-  <%= form_tag "/schedules", method: "GET" do %>
-    <%= label_tag :search_by_name %>
-    <%= text_field_tag :search_by_name, params[:search_by_name] %>
-    <%= submit_tag "Search" %>
+  <%= form_tag "/schedules", method: "GET", class: "form-inline" do %>
+    <div class="input-group mb-3">
+      <%= text_field_tag :search_by_name, params[:search_by_name], class: "form-control", placeholder: "Search by schedule name" %>
+      <button class="btn btn-outline-primary" type="submit">
+      Search
+      </button>
+    </div>
   <% end %>
   
-  <!-- Loop through each schedule in the database -->
   <% @schedules.each do |schedule| %>
     <div class="container">
       <div class="card sched-card">
