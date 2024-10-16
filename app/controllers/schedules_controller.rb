@@ -1,9 +1,13 @@
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
     before_action :set_schedule, only: %i[ show destroy ]
-    def index
-        @user = current_user    
+    def index  
         @schedules = Schedule.all
+
+        if params[:search_by_name] && params[:search_by_name] != ""
+            @schedules = @schedules.where("schedule_name like ?", 
+            "%#{params[:search_by_name]}%")
+          end
     end
     
     def show

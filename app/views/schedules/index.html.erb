@@ -6,12 +6,12 @@
     <%= link_to "Create a New Schedule", new_schedule_path, class: "btn btn-dark" %>
   </div>
 
-  <!-- Search bar -->
-  <div class="input-group mb-4">
-    <input type="text" class="form-control" placeholder="Search a schedule" aria-label="Search a schedule">
-    <button class="btn btn-outline-secondary" type="button">Search</button>
-  </div>
-
+  <%= form_tag "/schedules", method: "GET" do %>
+    <%= label_tag :search_by_name %>
+    <%= text_field_tag :search_by_name, params[:search_by_name] %>
+    <%= submit_tag "Search" %>
+  <% end %>
+  
   <!-- Loop through each schedule in the database -->
   <% @schedules.each do |schedule| %>
     <div class="container">
