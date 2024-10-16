@@ -15,14 +15,16 @@
   <!-- Loop through each schedule in the database -->
   <% @schedules.each do |schedule| %>
     <div class="container">
-      <div class="card">
-        <div class="card-header"><%= schedule.schedule_name %></div>
-        <div class="card-body" style="transform: rotate(0);">
-          Semester: <%= schedule.semester_name %><br>Some Info about the schedule
-          <%= link_to '', schedule_path(schedule), class: 'stretched-link'  %>        
+      <div class="card  sched-card">
+        <div style="transform: rotate(0);">
+          <div class="card-header"><h4><%= schedule.schedule_name %><h5></div>
+          <div class="card-body" >
+            Semester: <%= schedule.semester_name %><br>Some Info about the schedule
+            <%= link_to '', schedule_path(schedule), class: 'stretched-link'  %>        
+          </div>
         </div>
-        <div>
-          <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn btn-outline-secondary me-2' %>
+        <div style="margin-bottom:5px; margin-left:5px">
+          <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn btn-danger btn-sm float-left' %>
         </div>
       </div>
     </div>
