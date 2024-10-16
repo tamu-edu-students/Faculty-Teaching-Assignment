@@ -1,13 +1,12 @@
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
+    before_action :set_schedule, only: %i[ show destroy ]
     def index
         @user = current_user    
         @schedules = Schedule.all
     end
     
     def show
-        @user = current_user
-        @schedule = Schedule.find(params[:id])
     end
 
     # GET /schedules/new
@@ -42,6 +41,12 @@ class SchedulesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def schedule_params
         params.require(:schedule).permit(:schedule_name, :semester_name)
+    end
+
+    private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_schedule
+      @schedule = Schedule.find(params[:id])
     end
   end
   

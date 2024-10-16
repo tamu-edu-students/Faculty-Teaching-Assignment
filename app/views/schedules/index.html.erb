@@ -15,7 +15,7 @@
   <!-- Loop through each schedule in the database -->
   <% @schedules.each do |schedule| %>
     <div class="container">
-      <div class="card  sched-card">
+      <div class="card sched-card">
         <div style="transform: rotate(0);">
           <div class="card-header"><h4><%= schedule.schedule_name %><h5></div>
           <div class="card-body" >
@@ -24,7 +24,7 @@
           </div>
         </div>
         <div style="margin-bottom:5px; margin-left:5px">
-          <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn btn-danger btn-sm float-left' %>
+          <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn btn-danger btn-sm'%>
         </div>
       </div>
     </div>
