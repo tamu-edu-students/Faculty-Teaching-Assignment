@@ -62,7 +62,5 @@ TimeSlot.create([
   { day: 'F', start_time: '13:50', end_time: '14:40', slot_type: 'LAB' },
   { day: 'F', start_time: '15:00', end_time: '15:50', slot_type: 'LAB' },
 
-
-  # Add all other time slots here
 ])
 
