@@ -1,22 +1,26 @@
-<h1>Available Time Slots</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Day</th>
-      <th>Start Time</th>
-      <th>End Time</th>
-      <th>Type</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @time_slots.each do |time_slot| %>
+<div class="table-wrapper">
+  <table>
+    <thead>
       <tr>
-        <td><%= time_slot.day %></td>
-        <td><%= time_slot.start_time %></td>
-        <td><%= time_slot.end_time %></td>
-        <td><%= time_slot.slot_type %></td>
+        <th>Day</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Type</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @time_slots.each do |slot| %>
+        <tr>
+          <td>
+            <span class="day-box <%= "day-#{slot.day.downcase}" %>">
+              <%= slot.day %>
+            </span>
+          </td>
+          <td><%= slot.start_time %></td>
+          <td><%= slot.end_time %></td>
+          <td><%= slot.slot_type %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
