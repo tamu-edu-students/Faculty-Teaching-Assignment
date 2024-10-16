@@ -1,30 +1,30 @@
 <!-- app/views/schedules/index.html.erb -->
-<div class="container">
-  <div class="header">
+
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Schedules you are working on</h1>
-    <p>Please find the schedule you would like to edit</p>
-    <input type="text" placeholder="Search a schedule" class="search-bar" />
+    <%= link_to "Create a New Schedule", new_schedule_path, class: "btn btn-dark" %>
   </div>
 
-  <div class="schedules-list">
-    <%= link_to 'Create a New Schedule', new_schedule_path, class: 'btn create-new-schedule-btn' %>
-    <% @schedules.each do |schedule| %>
-      <div class="schedule-card">
-        <div style="position:relative;">
-          <div class="schedule-header">
-            <h2><%= schedule.schedule_name %> <%= schedule.semester_name %></h2>
-          </div>
-          <div class="schedule-info">
-            <p>Some information about  the schedule</p>
-          </div>
-          <%= link_to '', schedule_path(schedule), class: 'card-link'  %>
+  <!-- Search bar -->
+  <div class="input-group mb-4">
+    <input type="text" class="form-control" placeholder="Search a schedule" aria-label="Search a schedule">
+    <button class="btn btn-outline-secondary" type="button">Search</button>
+  </div>
+
+  <!-- Loop through each schedule in the database -->
+  <% @schedules.each do |schedule| %>
+    <div class="container">
+      <div class="card">
+        <div class="card-header"><%= schedule.schedule_name %></div>
+        <div class="card-body" style="transform: rotate(0);">
+          Semester: <%= schedule.semester_name %><br>Some Info about the schedule
+          <%= link_to '', schedule_path(schedule), class: 'stretched-link'  %>        
         </div>
-          <div class="schedule-actions">
-              <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn delete-btn' %>
-              <%= button_to 'Export', class: 'btn export-btn' %>
-          </div>
-      </div>      
-    <% end %>
-  </div>
-
+        <div>
+          <%= button_to 'Delete', schedule_path(schedule), method: :delete, class: 'btn btn-outline-secondary me-2' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>
