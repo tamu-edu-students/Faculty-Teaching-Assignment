@@ -13,32 +13,21 @@
         </div>
     </div>
 </div>
-<nav class="navbar navbar-expand-sm navbar-light border-bottom border-2 border-secondary px-4 pb-0 fw-bold">
-  <div class="collapse navbar-collapse" id="scheduleNavbar">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link active" href="#">Rooms</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Courses</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Instructors</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Time Slots</a>
-      </li>
-    </ul>
+<%= render_navbar("rooms") %>
+<div class="container border-2 border-dark">
+  <div class="row p-4">
+    
   </div>
-</nav>
-<div class="container">
-    <table class="table col-8">
-        <thead class="thead-dark">
+    <table class="table col-8 border-2 border-dark table-hover table-bordered">
+        <thead class="table-dark">
             <tr>
             <th scope="col">Campus</th>
             <th scope="col">Building Code</th>
             <th scope="col">Room Number</th>
             <th scope="col">Capacity</th>
+            <th scope="col" class="col-1">Lecture Hall</th>
+            <th scope="col" class="col-1">Learning Studio</th>
+            <th scope="col" class="col-1">Lab</th>
             <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -50,6 +39,12 @@
                 <td><%= room.building_code %></td>
                 <td><%= room.room_number %></td>
                 <td><%= room.capacity %></td>
+                <%= display_usage_type room.is_lecture_hall,room.is_active %>
+                <%= display_usage_type room.is_learning_studio,room.is_active %>
+                <%= display_usage_type room.is_lab,room.is_active %>
+                <td>
+                    <button class="btn btn-secondary">Set Active</button>
+                </td>
             </tr>
             <% end %>
         </tbody>

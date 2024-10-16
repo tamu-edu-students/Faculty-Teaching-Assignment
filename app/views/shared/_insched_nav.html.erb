@@ -1,0 +1,11 @@
+<nav class="navbar navbar-expand-sm navbar-light border-bottom border-2 border-dark px-4 pb-0 fw-bold">
+  <div class="collapse navbar-collapse" id="scheduleNavbar">
+    <ul class="navbar-nav">
+        <% tabs.each do |tab| %>
+            <li id="<%= tab[:id] %>" class="nav-item">
+                <a class="nav-link <%= "active" if active_tab == tab[:id] %>" href="<%= (active_tab == tab[:id] && "#") || (tab[:link]) %>"><%= tab[:title] %></a>
+            </li>
+        <% end %>
+    </ul>
+  </div>
+</nav>
