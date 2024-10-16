@@ -35,3 +35,9 @@
 /config/master.key
 
 /coverage
+
+# Ignore files associated with GLPK
+bin/glpsol
+glpk-5.0/
+include/
+lib/libglpk*

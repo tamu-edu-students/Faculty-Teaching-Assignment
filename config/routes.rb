@@ -25,4 +25,7 @@ Rails.application.routes.draw do
   # Login/logout
   get '/logout', to: 'sessions#logout', as: 'logout'
   get '/auth/google_oauth2/callback', to: 'sessions#omniauth'
+
+  # Rooms
+  get "rooms/index"
 end

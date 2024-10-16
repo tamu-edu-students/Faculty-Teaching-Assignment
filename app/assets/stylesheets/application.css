@@ -74,3 +74,10 @@
    margin-inline-end: 2rem;
    display: flex;
  }
+
+ #scheduleNavbar .nav-item .nav-link.active {
+  background: var(--bs-secondary);
+  color: var(--bs-white);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+ }
