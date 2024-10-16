@@ -23,13 +23,22 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_17_221341) do
     t.string "comments"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "schedule_id", null: false
+    t.integer "schedule_id", default: -1, null: false
     t.index ["schedule_id"], name: "index_rooms_on_schedule_id"
   end
 
   create_table "schedules", force: :cascade do |t|
     t.string "schedule_name"
     t.string "semester_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "time_slots", force: :cascade do |t|
+    t.string "day"
+    t.string "start_time"
+    t.string "end_time"
+    t.string "slot_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
