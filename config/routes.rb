@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  resources :schedules
   get 'sessions/logout'
   get 'sessions/omniauth'
   get 'users/show'
@@ -29,9 +28,4 @@ Rails.application.routes.draw do
 
   # Upload CSV
   post 'upload_csv', to: 'csv#upload'
-
-  resources :schedules do
-    resources :rooms, only: [:index]
-    post :upload_rooms, on: :member
-  end
 end

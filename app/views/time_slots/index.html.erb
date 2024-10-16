@@ -1,0 +1,22 @@
+<h1>Available Time Slots</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @time_slots.each do |time_slot| %>
+      <tr>
+        <td><%= time_slot.day %></td>
+        <td><%= time_slot.start_time %></td>
+        <td><%= time_slot.end_time %></td>
+        <td><%= time_slot.slot_type %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
