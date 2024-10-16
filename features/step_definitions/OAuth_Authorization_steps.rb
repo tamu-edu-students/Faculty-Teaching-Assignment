@@ -22,6 +22,10 @@ Then('I should be on my profile page') do
   expect(current_path).to eq(user_path(User.first))
 end
 
+Then('I should be on my schedules page') do
+  expect(current_path).to eq(schedules_path)
+end
+
 Then('I should see {string}') do |message|
   expect(page).to have_content(message)
 end
