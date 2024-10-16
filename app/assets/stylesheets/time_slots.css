@@ -1,0 +1,44 @@
+.table-wrapper {
+    max-width: 800px; 
+    margin: 0 auto;   
+    padding: 20px;    
+    background-color: #f8f8f8; 
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+  }
+  
+  table {
+    width: 100%;       
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .day-box {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .day-mwf {
+    background-color: #FFA07A; /* Light Salmon */
+  }
+  
+  .day-mw {
+    background-color: #8FBC8F; /* Dark Sea Green */
+  }
+  
+  .day-tr {
+    background-color: #87CEEB; /* Sky Blue */
+  }
+  
+  .day-f {
+    background-color: #DDA0DD; /* Plum */
+  }
+  
