@@ -1,11 +1,5 @@
 /* app/assets/stylesheets/schedules.css 
 This contains the css required for all the schedules views*/
-.container {
-    margin: 0 auto;
-    width: 90%;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  .sched-card:hover {
-    box-shadow: 10px 10px 10px rgba(36, 36, 36, 0.5);
-  }
+.sched-card:hover {
+  box-shadow: 10px 10px 10px rgba(36, 36, 36, 0.5);
+}
