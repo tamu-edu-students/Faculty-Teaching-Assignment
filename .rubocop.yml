@@ -8,3 +8,5 @@ Metrics/MethodLength:
   Max: 25
 Metrics/CyclomaticComplexity:
   Max: 15
+AllCops:
+  NewCops: enable

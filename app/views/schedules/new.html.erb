@@ -1,0 +1,17 @@
+<% content_for :title, "New Schedule" %>
+
+<div class="d-flex justify-content-center py-5">
+  <div class="card shadow text-center" style="width: 50%;">
+    <div class="card-header bg-primary text-white text-center">
+      <h3>Create a New Schedule</h3>
+    </div>
+    
+    <div class="card-body">
+      <%= render "form", schedule: @schedule %>
+    </div>
+    
+    <div class="card-footer text-center">
+      <%= link_to 'Back', schedules_path, class: 'btn btn-secondary' %>
+    </div>
+  </div>
+</div>

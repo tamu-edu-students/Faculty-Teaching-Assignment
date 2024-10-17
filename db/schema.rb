@@ -27,6 +27,13 @@ ActiveRecord::Schema[7.2].define(version: 20_241_016_120_052) do
     t.datetime 'updated_at', null: false
   end
 
+  create_table 'schedules', force: :cascade do |t|
+    t.string 'schedule_name'
+    t.string 'semester_name'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+  end
+
   create_table 'users', force: :cascade do |t|
     t.string 'email'
     t.string 'first_name'

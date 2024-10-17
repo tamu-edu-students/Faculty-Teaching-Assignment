@@ -446,6 +446,7 @@ DEPENDENCIES
   csv
   cucumber-rails
   database_cleaner
+  database_cleaner-active_record
   debug
   factory_bot_rails
   importmap-rails
