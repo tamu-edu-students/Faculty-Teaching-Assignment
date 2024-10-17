@@ -26,10 +26,6 @@ Then('I should be on my schedules page') do
   expect(current_path).to eq(schedules_path)
 end
 
-Then('I should see {string}') do |message|
-  expect(page).to have_content(message)
-end
-
 When('I login with a non TAMU Google account') do
   mock_google_oauth_login(non_tamu_account: true)
   visit '/auth/google_oauth2/callback'
@@ -38,10 +34,6 @@ end
 Given('I am logged in as a user') do
   mock_google_oauth_login
   visit '/auth/google_oauth2/callback'
-end
-
-When('I click {string}') do |text|
-  click_link(text)
 end
 
 Then('I should be on the welcome page') do

@@ -17,7 +17,3 @@ end
 When('I do not attach any file to the upload form') do
   # No file attached
 end
-
-When('I click the {string} button') do |button_text|
-  click_button(button_text)
-end

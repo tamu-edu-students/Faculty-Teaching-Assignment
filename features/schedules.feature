@@ -19,7 +19,7 @@ Feature: Schedules page
     Scenario: User should be able to see each schedule's details
         Given I am logged in as a user with first name "Test"
         When I visit the landing page
-        And I click on "Test Schedule 1"
+        And I click on the card for "Test Schedule 1"
         Then I should see "Schedule Name: Test Schedule 1"
         And I should see "Semester:Fall 2024"
         And I should see "Some details about the schedule"
