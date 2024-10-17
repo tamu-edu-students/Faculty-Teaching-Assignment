@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe RoomsController, type: :controller do
+  render_views
   let!(:room1) do
     create(:room, campus: 'CS', building_code: 'B101', room_number: '101', capacity: 50, is_active: true, is_lecture_hall: true, is_lab: false,
                   is_learning_studio: false)
