@@ -27,5 +27,5 @@ Rails.application.routes.draw do
   get '/auth/google_oauth2/callback', to: 'sessions#omniauth'
 
   # Rooms
-  get "rooms/index", to: 'rooms#index', as: 'rooms'
+  resources :rooms, only: [:index]
 end

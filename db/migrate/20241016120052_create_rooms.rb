@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Adding Create Rooms Migration
 class CreateRooms < ActiveRecord::Migration[7.2]
   def change
     create_table :rooms do |t|

@@ -1,9 +1,11 @@
-class Room < ApplicationRecord
-    enum campus: { NONE: 0, CS: 1, GV: 2 }
+# frozen_string_literal: true
 
-    validates :building_code, presence: true
-    validates :room_number, presence: true
-    validates :capacity, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-    validates :is_lecture_hall, :is_learning_studio, :is_lab, inclusion: { in: [true, false] }
+# Room Model
+class Room < ApplicationRecord
+  enum :campus, { NONE: 0, CS: 1, GV: 2 }
+
+  validates :building_code, presence: true
+  validates :room_number, presence: true
+  validates :capacity, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :is_lecture_hall, :is_learning_studio, :is_lab, inclusion: { in: [true, false] }
 end
-  
