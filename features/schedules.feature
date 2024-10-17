@@ -1,7 +1,7 @@
 Feature: Schedules page
     As a scheduler
     So that I can see the schedules I have worked on
-    I want to see the list of my schedules on the landing page
+    I want to see the list of my schedules on the landing page and be able to search them
 
     Background: schedules in database
 
@@ -24,3 +24,17 @@ Feature: Schedules page
         And I should see "Semester:Fall 2024"
         And I should see "Some details about the schedule"
         But I should not see "Another Schedule"
+
+    Scenario: Search for an existing schedule
+        Given I am logged in as a user with first name "Test"
+        When I visit the schedules index page
+        When I search for "Test Schedule"
+        Then I should see "Test Schedule 1"
+        But I should not see "Another Schedule"
+
+    Scenario: Search for a non-existing schedule
+        Given I am logged in as a user with first name "Test"
+        When I visit the schedules index page
+        When I search for "ABCD"
+        Then I should not see "Test Schedule 1"
+        And I should not see "Another Schedule"

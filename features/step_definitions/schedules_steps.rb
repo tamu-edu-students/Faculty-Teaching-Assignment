@@ -33,3 +33,8 @@ When('I click the {string} button for {string}') do |button_name, schedule_name|
     click_button button_name
   end
 end
+
+When('I search for {string}') do |search_term|
+    fill_in 'search_by_name', with: search_term
+    click_button 'Search'
+end
