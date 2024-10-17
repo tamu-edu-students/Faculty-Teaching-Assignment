@@ -16,15 +16,15 @@
 <%= render_navbar("rooms") %>
 <div class="container border-2 border-dark">
   <div class="row p-4">
-    
+    <%= link_to (@active_filter ? 'Show All Rooms' : 'Show Active Rooms'), rooms_path(active_rooms: @active_filter ? false : true), class: 'btn btn-dark col-3' %>
   </div>
     <table class="table col-8 border-2 border-dark table-hover table-bordered">
         <thead class="table-dark">
             <tr>
-            <th scope="col">Campus</th>
-            <th scope="col">Building Code</th>
-            <th scope="col">Room Number</th>
-            <th scope="col">Capacity</th>
+            <th scope="col"><%= sortable "campus", "Campus" %></th>
+            <th scope="col"><%= sortable "building_code", "Building Code" %></th>
+            <th scope="col"><%= sortable "room_number", "Room Number" %></th>
+            <th scope="col"><%= sortable "capacity", "Capacity" %></th>
             <th scope="col" class="col-1">Lecture Hall</th>
             <th scope="col" class="col-1">Learning Studio</th>
             <th scope="col" class="col-1">Lab</th>

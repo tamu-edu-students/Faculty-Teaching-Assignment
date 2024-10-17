@@ -85,3 +85,16 @@
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
  }
+
+.sortable-link {
+  text-decoration: none;
+  color: var(--bs-white);
+}
+
+.sortable-link:after {
+  content: " ▲"; /* Up arrow for ascending */
+}
+
+.sortable-link.desc:after {
+  content: " ▼"; /* Down arrow for descending */
+}
