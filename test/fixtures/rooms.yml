@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  campus: 1
+  is_lecture_hall: false
+  is_learning_studio: false
+  is_lab: false
+  building_code: MyString
+  room_number: MyString
+  capacity: 1
+  is_active: false
+  comments: MyString
+
+two:
+  campus: 1
+  is_lecture_hall: false
+  is_learning_studio: false
+  is_lab: false
+  building_code: MyString
+  room_number: MyString
+  capacity: 1
+  is_active: false
+  comments: MyString

@@ -2,3 +2,4 @@
 <h5>Schedule Name: <%= @schedule.schedule_name %> <br>
 Semester:<%= @schedule.semester_name %></h5>
 <%= link_to 'Back', schedules_path, class: 'btn btn-secondary' %>
+<%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'btn btn-primary' %>

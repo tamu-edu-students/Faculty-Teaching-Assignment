@@ -1,5 +1,7 @@
 <div class="header">
-    <div class="header-logo">AggieAssign</div>
+    <div class="header-logo">
+        <a id="home-button" href="/schedules">AggieAssign</a>
+    </div>
     <div class="profile-section">
         <div class="mx-2">Hi, <%= @current_user.first_name %>!</div>
         <%= link_to "Logout", logout_path %>

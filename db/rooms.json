@@ -1,0 +1,1814 @@
+[
+    {
+        "campus": 1,
+        "building_code": "AIEN",
+        "room_number": "M309",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCA",
+        "room_number": "107A",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCA",
+        "room_number": "107B",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCB",
+        "room_number": "101",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCB",
+        "room_number": "209",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "105",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "109A",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "109C",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "111",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "205",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "207",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "305",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "307",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ARCC",
+        "room_number": "414",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "BLOC",
+        "room_number": "113",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "BLOC",
+        "room_number": "117",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "BLOC",
+        "room_number": "120",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "BLOC",
+        "room_number": "121",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "BLOC",
+        "room_number": "149",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "BLOC",
+        "room_number": "150",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "BLOC",
+        "room_number": "160",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "BLOC",
+        "room_number": "161",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "C E",
+        "room_number": "007",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "C E",
+        "room_number": "118",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "C E",
+        "room_number": "203",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "C E",
+        "room_number": "219",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "C E",
+        "room_number": "222",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "C E",
+        "room_number": "223",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEM",
+        "room_number": "2102",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEM",
+        "room_number": "2104",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEM",
+        "room_number": "2121",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEM",
+        "room_number": "2122",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEM",
+        "room_number": "255",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEN",
+        "room_number": "102",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEN",
+        "room_number": "104",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEN",
+        "room_number": "106",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEN",
+        "room_number": "108",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEN",
+        "room_number": "111",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CHEN",
+        "room_number": "112",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "CLB",
+        "room_number": "109",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "CLB",
+        "room_number": "111",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "CLB",
+        "room_number": "114",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "CLB",
+        "room_number": "210",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "CLB",
+        "room_number": "215",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "CLB",
+        "room_number": "216",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CSA",
+        "room_number": "303",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CVE",
+        "room_number": "203",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CVLB",
+        "room_number": "418",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CVLB",
+        "room_number": "419",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "CVLB",
+        "room_number": "421",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "EABA",
+        "room_number": "118",
+        "usage_types": [
+            2,
+            1,
+            3
+        ],
+        "capacity": 75,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "EABA",
+        "room_number": "121",
+        "usage_types": [
+            2,
+            1,
+            3
+        ],
+        "capacity": 100,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "EABB",
+        "room_number": "106",
+        "usage_types": [
+            1
+        ],
+        "capacity": 118,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "EABA",
+        "room_number": "108",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ENPH",
+        "room_number": "202",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ENPH",
+        "room_number": "205",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ENPH",
+        "room_number": "206",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ETB",
+        "room_number": "1005",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ETB",
+        "room_number": "1020",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ETB",
+        "room_number": "1034",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ETB",
+        "room_number": "1035",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ETB",
+        "room_number": "2005",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ETB",
+        "room_number": "2026",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ETB",
+        "room_number": "3002",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "FERM",
+        "room_number": "110",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "FERM",
+        "room_number": "303",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "FRAN",
+        "room_number": "102",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "FRAN",
+        "room_number": "201",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HALB",
+        "room_number": "101",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HALB",
+        "room_number": "105",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HEB",
+        "room_number": "118",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HEB",
+        "room_number": "137",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HEB",
+        "room_number": "203",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HECC",
+        "room_number": "100",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HECC",
+        "room_number": "108",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HECC",
+        "room_number": "200",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HECC",
+        "room_number": "201",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HECC",
+        "room_number": "203",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HECM",
+        "room_number": "119",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HECM",
+        "room_number": "120",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HECM",
+        "room_number": "206",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HELD",
+        "room_number": "105",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HELD",
+        "room_number": "107",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HELD",
+        "room_number": "111",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HELD",
+        "room_number": "113",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HELD",
+        "room_number": "200",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "113",
+        "usage_types": [
+            2,
+            1
+        ],
+        "capacity": 65,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "124",
+        "usage_types": [
+            1
+        ],
+        "capacity": 135,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "126",
+        "usage_types": [
+            2,
+            1
+        ],
+        "capacity": 30,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "104",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "105",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "115",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "122",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "131",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "203",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "204",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "209",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "210",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "217",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "218",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "219",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "229",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "232",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "HRBB",
+        "room_number": "302",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ILCB",
+        "room_number": "112",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ILCB",
+        "room_number": "207",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ILCB",
+        "room_number": "233",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "KIRK",
+        "room_number": "128",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "KIRK",
+        "room_number": "206",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "KIRK",
+        "room_number": "207",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "KLCT",
+        "room_number": "115",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "LAAH",
+        "room_number": "124",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "MAIN",
+        "room_number": "114",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "MAIN",
+        "room_number": "212",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "MAIN",
+        "room_number": "213",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "MAIN",
+        "room_number": "218",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "MAIN",
+        "room_number": "302",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "MAIN",
+        "room_number": "303",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "MAIN",
+        "room_number": "315",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "MERC",
+        "room_number": "242",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "MPHY",
+        "room_number": "107",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "MPHY",
+        "room_number": "205",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "O&M",
+        "room_number": "103",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "O&M",
+        "room_number": "110",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "O&M",
+        "room_number": "112",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "O&M",
+        "room_number": "206",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "OCSB",
+        "room_number": "141",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ONLINE",
+        "room_number": "ONLINE",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "PETR",
+        "room_number": "104",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "PETR",
+        "room_number": "118",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "PMEC",
+        "room_number": "147",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "PMEC",
+        "room_number": "242",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 2,
+        "building_code": "PMEC",
+        "room_number": "243",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "PSYC",
+        "room_number": "108",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RDMC",
+        "room_number": "111A",
+        "usage_types": null,
+        "capacity": 30,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RDMC",
+        "room_number": "111H",
+        "usage_types": null,
+        "capacity": 30,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RDMC",
+        "room_number": "111B",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RDMC",
+        "room_number": "111C",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RDMC",
+        "room_number": "111J",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "101",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "106",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "114",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "208",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "302",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "319",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "907",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "910",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "RICH",
+        "room_number": "912B",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "SCTS",
+        "room_number": "208",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "SCTS",
+        "room_number": "216",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "SCTS",
+        "room_number": "317",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "TEAG",
+        "room_number": "326",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "THOM",
+        "room_number": "009C",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "THOM",
+        "room_number": "107A",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "THOM",
+        "room_number": "121",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "WCBA",
+        "room_number": "161",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "102",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "105A",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "105B",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "119A",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "119C",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "210",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "211",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "212",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "218",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "223A",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "223D",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "240",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "241",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "260",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "261",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "244",
+        "usage_types": [
+            2,
+            1
+        ],
+        "capacity": 100,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "310",
+        "usage_types": [
+            2,
+            1
+        ],
+        "capacity": 100,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "350",
+        "usage_types": [
+            2,
+            1
+        ],
+        "capacity": 100,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "311",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "312",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "315",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "340",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "341",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "342",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "344",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "345",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "353",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "360",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "361",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "362",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "440",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "441",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "442",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "444",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "445",
+        "usage_types": null,
+        "capacity": 9999,
+        "is_active": false,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "590",
+        "usage_types": [
+            3
+        ],
+        "capacity": 34,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "582",
+        "usage_types": [
+            3
+        ],
+        "capacity": 24,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "584",
+        "usage_types": [
+            3
+        ],
+        "capacity": 24,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "596",
+        "usage_types": [
+            3
+        ],
+        "capacity": 24,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "598",
+        "usage_types": [
+            3
+        ],
+        "capacity": 24,
+        "is_active": true,
+        "comments": ""
+    },
+    {
+        "campus": 1,
+        "building_code": "ZACH",
+        "room_number": "592",
+        "usage_types": [
+            3
+        ],
+        "capacity": 24,
+        "is_active": true,
+        "comments": "No power!"
+    }
+]
