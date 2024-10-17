@@ -54,6 +54,8 @@ group :development, :test do
   gem 'rubocop-rails-omakase', require: false
 
   gem 'sqlite3', '~> 1.4'
+
+  gem 'factory_bot_rails'
 end
 
 group :development do
@@ -66,6 +68,7 @@ group :test do
   gem 'capybara'
   gem 'cucumber-rails', require: false
   gem 'database_cleaner'
+  gem 'database_cleaner-active_record'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'selenium-webdriver'

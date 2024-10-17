@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :schedules
   get 'sessions/logout'
   get 'sessions/omniauth'
   get 'users/show'
