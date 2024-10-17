@@ -1,18 +1,3 @@
-<div class="px-4 py-2 border-bottom">
-    <div class="col-12 row justify-content-between align-items-center">
-        <div class="col-3 h1">
-            Fall 2024
-        </div>
-        <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
-            <button class="col btn btn-secondary px-4 mx-1">
-                Add Predefined Courses
-            </button>
-            <button class="col btn btn-dark px-4">
-                Export
-            </button>
-        </div>
-    </div>
-</div>
 <%= render_navbar("rooms") %>
 <div class="container border-2 border-dark">
   <div class="row p-4">
@@ -28,7 +13,7 @@
             <th scope="col" class="col-1">Lecture Hall</th>
             <th scope="col" class="col-1">Learning Studio</th>
             <th scope="col" class="col-1">Lab</th>
-            <th scope="col">Actions</th>
+            <th scope="col"><%= sortable "comments", "Comments" %></th>
             </tr>
         </thead>
 
@@ -43,7 +28,7 @@
                 <%= display_usage_type room.is_learning_studio,room.is_active %>
                 <%= display_usage_type room.is_lab,room.is_active %>
                 <td>
-                    <button class="btn btn-secondary">Set Active</button>
+                    <%= room.comments %>
                 </td>
             </tr>
             <% end %>

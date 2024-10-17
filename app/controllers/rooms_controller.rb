@@ -14,10 +14,8 @@ class RoomsController < ApplicationController
       @active_filter = false
     end
 
-    return unless params[:sort]
-
     direction = params[:direction] == 'desc' ? 'desc' : 'asc'
-    @rooms = @rooms.order("#{params[:sort]} #{direction}")
+    @rooms = @rooms.order("#{sort_column} #{direction}")
   end
 
   private
