@@ -12,13 +12,13 @@ Feature: Schedules page
 
     Scenario: User sees landing page with generated schedules
         Given I am logged in as a user with first name "Test"
-        When I visit the landing page
+        When I visit the schedules index page
         Then I should see "Test Schedule 1"
         And I should see "Another Schedule"
         
     Scenario: User should be able to see each schedule's details
         Given I am logged in as a user with first name "Test"
-        When I visit the landing page
+        When I visit the schedules index page
         And I click on the card for "Test Schedule 1"
         Then I should see "Schedule Name: Test Schedule 1"
         And I should see "Semester:Fall 2024"
