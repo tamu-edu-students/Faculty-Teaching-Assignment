@@ -3,12 +3,13 @@
 # Controller for rooms
 class RoomsController < ApplicationController
   helper_method :sort_column, :sort_direction
+  before_action :set_schedule, only: [:index]
 
   def index
-    @rooms = Room.all
-
+    @schedule = Schedule.find(params[:schedule_id])
+    @rooms = @schedule.rooms
     if params[:active_rooms] == 'true'
-      @rooms = Room.where(is_active: true)
+      @rooms = @rooms.where(is_active: true)
       @active_filter = true
     else
       @active_filter = false
@@ -28,5 +29,13 @@ class RoomsController < ApplicationController
   # Define the sorting direction (ascending or descending)
   def sort_direction
     %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
+  end
+
+  # Set the schedule correctly
+  def set_schedule
+    @schedule = Schedule.find(params[:schedule_id]) if params[:schedule_id]
+  rescue ActiveRecord::RecordNotFound
+    flash[:alert] = "Schedule not found."
+    redirect_to schedules_path
   end
 end

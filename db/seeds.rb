@@ -26,7 +26,8 @@ def create_room(room)
     is_learning_studio: room['is_learning_studio'],
     is_lab: room['is_lab'],
     is_active: room['is_active'],
-    comments: room['comments']
+    comments: room['comments'],
+    schedule_id: 1
   )
 end
 

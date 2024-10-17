@@ -2,6 +2,7 @@
 
 # Room Model
 class Room < ApplicationRecord
+  belongs_to :schedule
   enum :campus, { NONE: 0, CS: 1, GV: 2 }
 
   validates :building_code, presence: true

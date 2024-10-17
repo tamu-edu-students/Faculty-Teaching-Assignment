@@ -1,7 +1,10 @@
-<%= render_navbar("rooms") %>
+<%= render_navbar("rooms", @schedule.schedule_name) %>
+<% if @rooms.empty? %>
+    <p class="container h1 text-secondary">No rooms added to this schedule!</p>
+<% else %>
 <div class="container border-2 border-dark">
   <div class="row p-4">
-    <%= link_to (@active_filter ? 'Show All Rooms' : 'Show Active Rooms'), rooms_path(active_rooms: @active_filter ? false : true), class: 'btn btn-dark col-3' %>
+    <%= link_to (@active_filter ? 'Show All Rooms' : 'Show Active Rooms'), schedule_rooms_path(params[:schedule_id], active_rooms: @active_filter ? false : true), class: 'btn btn-dark col-3' %>
   </div>
     <table class="table col-8 border-2 border-dark table-hover table-bordered">
         <thead class="table-dark">
@@ -16,7 +19,6 @@
             <th scope="col"><%= sortable "comments", "Comments" %></th>
             </tr>
         </thead>
-
         <tbody>
             <% @rooms.each do |room| %>
             <tr>
@@ -35,3 +37,4 @@
         </tbody>
     </table>
 </div>
+<% end %>
