@@ -28,4 +28,6 @@ Rails.application.routes.draw do
 
   # Rooms
   resources :rooms, only: [:index]
+  # Upload CSV
+  post 'upload_csv', to: 'csv#upload'
 end
