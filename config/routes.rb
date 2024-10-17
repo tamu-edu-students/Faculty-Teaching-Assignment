@@ -26,10 +26,10 @@ Rails.application.routes.draw do
   # Login/logout
   get '/logout', to: 'sessions#logout', as: 'logout'
   get '/auth/google_oauth2/callback', to: 'sessions#omniauth'
-  
+
   # Upload CSV
   post 'upload_csv', to: 'csv#upload'
-  
+
   resources :schedules do
     resources :rooms, only: [:index]
   end

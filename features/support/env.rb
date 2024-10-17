@@ -56,4 +56,4 @@ end
 Cucumber::Rails::Database.javascript_strategy = :truncation
 
 # features/support/env.rb
-Dir[Rails.root.join('features/support/**/*.rb')].each { |f| require f }
+Rails.root.glob('features/support/**/*.rb').sort.each { |f| require f }

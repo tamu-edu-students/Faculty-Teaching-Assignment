@@ -56,8 +56,6 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'shoulda-matchers'
   gem 'sqlite3', '~> 1.4'
-
-  gem 'factory_bot_rails'
 end
 
 group :development do

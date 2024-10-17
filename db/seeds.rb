@@ -43,7 +43,7 @@ def parse_room_data(json_room_data)
 end
 
 def seed_room_data
-  file = File.open(ROOMS_DATA_PATH).read
+  file = File.read(ROOMS_DATA_PATH)
   json_room_data = JSON.parse file
 
   # Clear out the Room table
@@ -52,8 +52,8 @@ def seed_room_data
 
   active_rooms = parse_room_data(json_room_data)
 
-  Rails.logger.debug "Seeded #{json_room_data.length} rooms into the database"
-  Rails.logger.debug "Active Rooms : #{active_rooms}"
+  Rails.logger.debug { "Seeded #{json_room_data.length} rooms into the database" }
+  Rails.logger.debug { "Active Rooms : #{active_rooms}" }
 end
 
 seed_room_data

@@ -35,7 +35,7 @@ class RoomsController < ApplicationController
   def set_schedule
     @schedule = Schedule.find(params[:schedule_id]) if params[:schedule_id]
   rescue ActiveRecord::RecordNotFound
-    flash[:alert] = "Schedule not found."
+    flash[:alert] = 'Schedule not found.'
     redirect_to schedules_path
   end
 end

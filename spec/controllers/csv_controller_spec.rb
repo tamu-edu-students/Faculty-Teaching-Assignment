@@ -11,7 +11,7 @@ RSpec.describe CsvController, type: :controller do
     session[:user_id] = @user.id
   end
 
-  let(:file) { fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test.csv'), 'text/csv') }
+  let(:file) { fixture_file_upload(Rails.root.join('spec/fixtures/files/test.csv'), 'text/csv') }
 
   describe 'POST #upload' do
     context 'with a valid CSV file' do

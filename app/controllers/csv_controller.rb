@@ -33,7 +33,7 @@ class CsvController < ApplicationController
 
   def parse_csv(file)
     csv = CSV.read(file, headers: true)
-    Rails.logger.debug "CSV Headers: #{csv.headers}"
+    Rails.logger.debug { "CSV Headers: #{csv.headers}" }
     csv.each do |row|
       Rails.logger.debug row.to_hash
     end
