@@ -3,3 +3,13 @@
 Semester:<%= @schedule.semester_name %></h5>
 <%= link_to 'Back', schedules_path, class: 'btn btn-secondary' %>
 <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'btn btn-primary' %>
+
+<%= form_with url: upload_rooms_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
+  <div class='col-4'>
+    <%= f.label :file, "Select Room Data (CSV)", class: "form-label fw-bold" %>
+    <%= f.file_field :file, class: "form-control" %>
+  </div>
+  <div>
+    <%= f.submit "Upload Room Data" %>
+  </div>
+<% end %>

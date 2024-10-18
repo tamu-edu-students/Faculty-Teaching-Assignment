@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+require 'csv'
 
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
-  before_action :set_schedule, only: %i[show destroy]
+  before_action :set_schedule, only: %i[show destroy upload_rooms]
   def index
     @schedules = Schedule.all
 
@@ -20,7 +21,11 @@ class SchedulesController < ApplicationController
   end
 
   def create
-    @schedule = Schedule.new(schedule_params)
+    @schedule = Schedule.new(
+      schedule_name: params[:schedule_name],
+      semester_name: params[:semester_name]
+    )
+    
 
     respond_to do |format|
       if @schedule.save
@@ -42,9 +47,42 @@ class SchedulesController < ApplicationController
     end
   end
 
+  def upload_rooms
+    if params[:file].present?
+      begin
+        room_data = CSV.read(params[:file].path, headers: true)
+        
+        @schedule.rooms.destroy_all
+
+        room_data.each do |row|
+          Room.create!(
+            schedule_id: @schedule.id,
+            campus: row['campus'],
+            building_code: row['building_code'],
+            room_number: row['room_number'],
+            capacity: row['capacity'],
+            is_lecture_hall: row['is_lecture_hall'] == 'True',
+            is_learning_studio: row['is_learning_studio'] == 'True',
+            is_lab: row['is_lab'] == 'True',
+            is_active: row['is_active'] == 'True',
+            comments: row['comments']
+          )
+        end
+        flash[:notice] = "Rooms successfully uploaded."
+      rescue => e
+        raise ActiveRecord::Rollback
+        flash[:alert] = "There was an error uploading the CSV file: #{e.message}"
+      end
+    else
+      flash[:alert] = "Please upload a CSV file."
+    end
+
+    redirect_to schedule_path(@schedule)
+  end
+
   # Only allow a list of trusted parameters through.
   def schedule_params
-    params.require(:schedule).permit(:schedule_name, :semester_name)
+    params.require(:schedule).permit(:schedule_name, :semester_name, :room_csv)
   end
 
   private
@@ -52,5 +90,8 @@ class SchedulesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_schedule
     @schedule = Schedule.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    flash[:alert] = "Schedule not found."
+    redirect_to schedules_path
   end
 end

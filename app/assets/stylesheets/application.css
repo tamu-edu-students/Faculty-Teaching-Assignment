@@ -103,3 +103,8 @@
 .sortable-link.desc:after {
   content: " ▼"; /* Down arrow for descending */
 }
+
+.schedule-name {
+  text-decoration: none;
+  color: #000000;
+}
