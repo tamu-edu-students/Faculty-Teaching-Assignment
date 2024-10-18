@@ -28,4 +28,7 @@ Rails.application.routes.draw do
 
   # Upload CSV
   post 'upload_csv', to: 'csv#upload'
+
+  resources :instructors, only: [:index, :show] # Add this line for instructors
+
 end
