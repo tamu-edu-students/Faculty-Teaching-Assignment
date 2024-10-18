@@ -4,7 +4,7 @@ require 'csv'
 
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
-  before_action :set_schedule, only: %i[show destroy upload_rooms]
+  before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors]
   def index
     @schedules = Schedule.all
 
@@ -79,10 +79,47 @@ class SchedulesController < ApplicationController
     redirect_to schedule_path(@schedule)
   end
 
+  def upload_instructors
+    if params[:file].present?
+      begin
+        ActiveRecord::Base.transaction do
+          instructor_data = CSV.read(params[:file].path, headers: true)
+         
+          @schedule.instructors.destroy_all
+          actual_headers = instructor_data[1] 
+          instructor_data[2..].each do |row|
+            instructor_data = {
+                schedule_id: @schedule.id,
+                id_number: row[actual_headers.index('anonimized ID')],
+                first_name: row[actual_headers.index('First Name')],
+                last_name: row[actual_headers.index('Last Name')],
+                middle_name: row[actual_headers.index('Middle Name')],
+                email: row[actual_headers.index('Email')],
+                before_9: row[actual_headers.index('Teaching before 9:00 am.')],
+                after_3: row[actual_headers.index('Teaching after 3:00 pm.')],
+                beaware_of: row[actual_headers.index('Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)')]
+              }
+          
+              Instructor.create(instructor_data)
+          end
+        end
+        flash[:notice] = 'Instructors successfully uploaded.'
+      rescue StandardError => e
+        flash[:alert] = "There was an error uploading the CSV file: #{e.message}"
+        raise e
+      end
+    else
+      flash[:alert] = 'Please upload a CSV file.'
+    end
+
+    redirect_to schedule_path(@schedule)
+  end
+
   # Only allow a list of trusted parameters through.
   def schedule_params
     params.require(:schedule).permit(:schedule_name, :semester_name, :room_csv)
   end
+
 
   private
 

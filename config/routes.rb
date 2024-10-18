@@ -33,5 +33,8 @@ Rails.application.routes.draw do
   resources :schedules do
     resources :rooms, only: [:index]
     post :upload_rooms, on: :member
+
+    resources :instructors, only: [:index] 
+    post :upload_instructors, on: :member
   end
 end
