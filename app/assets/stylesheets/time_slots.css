@@ -1,0 +1,99 @@
+.timeTable-table-wrapper {
+    max-width: 800px; 
+    margin: 0 auto;   
+    padding: 20px;    
+    background-color: #f8f8f8; 
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+}
+
+.timeTable-table {
+    width: 100%;       
+    border-collapse: collapse;
+}
+
+.timeTable-th, .timeTable-td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+.timeTable-day-box {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.timeTable-day-mwf {
+    background-color: #FFA07A; 
+}
+
+.timeTable-day-mw {
+    background-color: #8FBC8F; 
+}
+
+.timeTable-day-tr {
+    background-color: #87CEEB; 
+}
+
+.timeTable-day-f {
+    background-color: #DDA0DD; 
+}
+
+.timeTable-filters {
+    display: flex;
+    justify-content: center; 
+    gap: 20px; 
+    margin-bottom: 25px; 
+    margin-top:20px;
+}
+
+.timeTable-filters select {
+    appearance: none;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23333" d="M2 0L0 2h4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    padding-right: 30px; 
+}
+
+.timeTable-filters select:hover {
+    background-color: #e6e6e6; 
+}
+
+.timeTable-filters div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.timeTable-filters label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.timeTable-btn {
+    padding: 10px 20px;
+    background-color: #000;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    margin-top: auto; 
+    transition: background-color 0.3s ease;
+}
+
+.timeTable-btn:hover {
+    background-color: #333; 
+}

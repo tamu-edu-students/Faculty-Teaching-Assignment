@@ -36,5 +36,9 @@ Rails.application.routes.draw do
 
     resources :instructors, only: [:index]
     post :upload_instructors, on: :member
+    get '/time_slots', to: 'time_slots#index'
   end
+
+  # Show Time Slot View
+  resources :time_slots, only: [:index]
 end

@@ -6,7 +6,7 @@ module ApplicationHelper
     {
       id: 'rooms',
       title: 'Rooms',
-      link: '/rooms/index'
+      link: '/rooms'
     },
     {
       id: 'courses',
@@ -21,7 +21,7 @@ module ApplicationHelper
     {
       id: 'time-slots',
       title: 'Time Slots',
-      link: '#'
+      link: '/time_slots'
     }
   ].freeze
 

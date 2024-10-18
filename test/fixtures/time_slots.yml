@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  day: MyString
+  start_time: MyString
+  end_time: MyString
+  slot_type: MyString
+
+two:
+  day: MyString
+  start_time: MyString
+  end_time: MyString
+  slot_type: MyString
