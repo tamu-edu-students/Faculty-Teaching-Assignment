@@ -64,7 +64,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_018_191_419) do
 
   add_foreign_key 'instructors', 'schedules'
   add_foreign_key 'rooms', 'schedules'
-end
+
   create_table 'time_slots', force: :cascade do |t|
     t.string 'day'
     t.string 'start_time'
