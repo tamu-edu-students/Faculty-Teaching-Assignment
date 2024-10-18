@@ -6,7 +6,7 @@ module ApplicationHelper
     {
       id: 'rooms',
       title: 'Rooms',
-      link: '/rooms/index'
+      link: '/rooms'
     },
     {
       id: 'courses',

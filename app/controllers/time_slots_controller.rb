@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TimeSlotsController < ApplicationController
   def index
     @time_slots = TimeSlot.all
