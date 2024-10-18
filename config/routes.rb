@@ -17,11 +17,8 @@ Rails.application.routes.draw do
   get 'manifest' => 'rails/pwa#manifest', as: :pwa_manifest
 
   # Defines the root path route ("/")
-  root 'welcome#index'
   get 'welcome/index', to: 'welcome#index', as: 'welcome'
-
-  # Show user
-  get '/users/:id', to: 'users#show', as: 'user'
+  root 'welcome#index'
 
   # Login/logout
   get '/logout', to: 'sessions#logout', as: 'logout'

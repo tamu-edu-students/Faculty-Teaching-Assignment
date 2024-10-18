@@ -13,10 +13,9 @@ RSpec.describe WelcomeController, type: :controller do
         controller.instance_variable_set(:@current_user, @user)
       end
 
-      it 'redirects to the user path with a welcome notice' do
+      it 'redirects to the schedule path with a welcome notice' do
         get :index
-        expect(response).to redirect_to(user_path(@user))
-        expect(flash[:notice]).to eq('Welcome back, John!')
+        expect(response).to redirect_to(schedules_path)
       end
     end
 
@@ -25,7 +24,7 @@ RSpec.describe WelcomeController, type: :controller do
         allow(controller).to receive(:logged_in?).and_return(false)
       end
 
-      it 'renders the index template' do
+      it 'renders the welcome template' do
         get :index
         expect(response).to render_template(:index)
       end

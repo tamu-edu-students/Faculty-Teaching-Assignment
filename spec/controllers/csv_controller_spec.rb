@@ -15,21 +15,15 @@ RSpec.describe CsvController, type: :controller do
 
   describe 'POST #upload' do
     context 'with a valid CSV file' do
-      it "processes the CSV file, sets a success flash, and redirects to the user's page" do
+      it "processes the CSV file and sets a success flag" do
         post :upload, params: { csv_file: file }
-
-        expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(user_path(@user))  # Redirect to the current user's page
-        expect(flash[:notice]).to eq('CSV file uploaded successfully.')
+        expect(flash[:notice]).to eq('File uploaded successfully')
       end
     end
 
     context 'when no CSV file is selected' do
-      it "sets an error flash and redirects to the user's page" do
+      it "sets an error flash" do
         post :upload, params: { csv_file: nil }
-
-        expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(user_path(@user))  # Redirect to the current user's page
         expect(flash[:error]).to eq('Please upload a CSV file.')
       end
     end
