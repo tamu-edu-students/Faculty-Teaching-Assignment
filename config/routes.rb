@@ -33,5 +33,9 @@ Rails.application.routes.draw do
   resources :schedules do
     resources :rooms, only: [:index]
     post :upload_rooms, on: :member
+    get '/time_slots', to: 'time_slots#index'
   end
+
+  # Show Time Slot View
+  resources :time_slots, only: [:index]
 end

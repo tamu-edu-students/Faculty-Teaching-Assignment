@@ -45,5 +45,15 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_17_221341) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  create_table 'time_slots', force: :cascade do |t|
+    t.string 'day'
+    t.string 'start_time'
+    t.string 'end_time'
+    t.string 'slot_type'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+  end
+
+
   add_foreign_key "rooms", "schedules"
 end
