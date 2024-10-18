@@ -27,18 +27,74 @@
   }
   
   .day-mwf {
-    background-color: #FFA07A; /* Light Salmon */
+    background-color: #FFA07A; 
   }
   
   .day-mw {
-    background-color: #8FBC8F; /* Dark Sea Green */
+    background-color: #8FBC8F; 
   }
   
   .day-tr {
-    background-color: #87CEEB; /* Sky Blue */
+    background-color: #87CEEB; 
   }
   
   .day-f {
-    background-color: #DDA0DD; /* Plum */
+    background-color: #DDA0DD; 
+  }
+
+.filters {
+    display: flex;
+    justify-content: center; 
+    gap: 20px; 
+    margin-bottom: 25px; 
+    margin-top:20px;
+  }
+  
+  .filters select {
+    appearance: none;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23333" d="M2 0L0 2h4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    padding-right: 30px; 
+  }
+  
+  .filters select:hover {
+    background-color: #e6e6e6; 
+  }
+  
+  .filters div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filters label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    background-color: #000;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    margin-top: auto; 
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #333; 
   }
   
