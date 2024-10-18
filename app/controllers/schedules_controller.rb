@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'csv'
 
 # app/controllers/schedules_controller.rb
@@ -21,11 +22,7 @@ class SchedulesController < ApplicationController
   end
 
   def create
-    @schedule = Schedule.new(
-      schedule_name: params[:schedule_name],
-      semester_name: params[:semester_name]
-    )
-    
+    @schedule = Schedule.new(schedule_params)
 
     respond_to do |format|
       if @schedule.save
@@ -50,31 +47,33 @@ class SchedulesController < ApplicationController
   def upload_rooms
     if params[:file].present?
       begin
-        room_data = CSV.read(params[:file].path, headers: true)
-        
-        @schedule.rooms.destroy_all
+        ActiveRecord::Base.transaction do
+          room_data = CSV.read(params[:file].path, headers: true)
 
-        room_data.each do |row|
-          Room.create!(
-            schedule_id: @schedule.id,
-            campus: row['campus'],
-            building_code: row['building_code'],
-            room_number: row['room_number'],
-            capacity: row['capacity'],
-            is_lecture_hall: row['is_lecture_hall'] == 'True',
-            is_learning_studio: row['is_learning_studio'] == 'True',
-            is_lab: row['is_lab'] == 'True',
-            is_active: row['is_active'] == 'True',
-            comments: row['comments']
-          )
+          @schedule.rooms.destroy_all
+
+          room_data.each do |row|
+            Room.create!(
+              schedule_id: @schedule.id,
+              campus: row['campus'],
+              building_code: row['building_code'],
+              room_number: row['room_number'],
+              capacity: row['capacity'],
+              is_lecture_hall: row['is_lecture_hall'] == 'True',
+              is_learning_studio: row['is_learning_studio'] == 'True',
+              is_lab: row['is_lab'] == 'True',
+              is_active: row['is_active'] == 'True',
+              comments: row['comments']
+            )
+          end
         end
-        flash[:notice] = "Rooms successfully uploaded."
-      rescue => e
-        raise ActiveRecord::Rollback
+        flash[:notice] = 'Rooms successfully uploaded.'
+      rescue StandardError => e
         flash[:alert] = "There was an error uploading the CSV file: #{e.message}"
+        raise e
       end
     else
-      flash[:alert] = "Please upload a CSV file."
+      flash[:alert] = 'Please upload a CSV file.'
     end
 
     redirect_to schedule_path(@schedule)
@@ -91,7 +90,7 @@ class SchedulesController < ApplicationController
   def set_schedule
     @schedule = Schedule.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    flash[:alert] = "Schedule not found."
+    flash[:alert] = 'Schedule not found.'
     redirect_to schedules_path
   end
 end

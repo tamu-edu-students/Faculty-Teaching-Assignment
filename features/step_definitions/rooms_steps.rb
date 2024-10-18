@@ -5,7 +5,7 @@ Given(/I am on the rooms page for "(.*)"/) do |schedule_name|
   visit schedule_rooms_path(schedule_id: @schedule.id)
 end
 
-When(/I visit the rooms page for "(.*)"/) do |schedule_name|
+When(/I visit the rooms page for "(.*)"/) do |_schedule_name|
   visit schedule_rooms_path(schedule_id: @schedule.id)
 end
 

@@ -1,0 +1,11 @@
+campus,building_code,room_number,is_lab,is_lecture_hall,is_learning_studio,capacity,is_active,comments
+CS,AIEN,M309,False,False,False,9999,False,
+CS,ARCA,107A,False,False,False,9999,False,
+CS,ARCA,107B,False,False,False,9999,False,
+CS,ARCB,101,False,False,False,9999,False,
+CS,ARCB,209,False,False,False,9999,False,
+CS,ARCC,105,False,False,False,9999,False,
+CS,ARCC,109A,False,False,False,9999,False,
+CS,ARCC,109C,False,False,False,9999,False,
+CS,ARCC,111,False,False,False,9999,False,
+CS,ARCC,205,False,False,False,9999,False,

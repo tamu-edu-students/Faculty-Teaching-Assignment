@@ -14,12 +14,12 @@ RSpec.describe RoomsController, type: :controller do
       controller.instance_variable_set(:@current_user, @user)
     end
 
-    it  'incorrect schedule id' do
+    it 'incorrect schedule id' do
       get :index, params: { schedule_id: (schedule.id + 1) }
       expect(flash[:alert]).to eq('Schedule not found.')
     end
 
-    context 'without added rooms ' do 
+    context 'without added rooms ' do
       before do
         get :index, params: { schedule_id: schedule.id }
       end
