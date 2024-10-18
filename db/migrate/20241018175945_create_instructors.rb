@@ -13,8 +13,6 @@ class CreateInstructors < ActiveRecord::Migration[6.1]
       t.boolean :before_9
       t.boolean :after_3
       t.text :beaware_of
-      t.references :schedule, foreign_key: true
-
       t.timestamps
     end
   end
