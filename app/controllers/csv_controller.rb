@@ -42,7 +42,7 @@ class CsvController < ApplicationController
 
 
 def parse_csv(file)
-  csv = CSV.read(file)
+  csv = CSV.read(file, headers: true)
     actual_headers = csv[1] 
   
   csv[2..].each do |row|
