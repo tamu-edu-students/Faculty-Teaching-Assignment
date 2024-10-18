@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  get "time_slots/index"
+  get 'time_slots/index'
   get 'sessions/logout'
   get 'sessions/omniauth'
   get 'users/show'
@@ -32,5 +32,4 @@ Rails.application.routes.draw do
 
   # Show Time Slot View
   resources :time_slots, only: [:index]
-
 end

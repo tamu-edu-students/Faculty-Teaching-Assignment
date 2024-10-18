@@ -1,32 +1,32 @@
 <%= form_with url: time_slots_path, method: :get, local: true do %>
-    <div class="filters">
+    <div class="timeTable-filters">
       <div>
         <%= label_tag :day, 'Filter by Day' %>
-        <%= select_tag :day, options_for_select(['MWF', 'MW', 'TR', 'F'], params[:day]), include_blank: 'All Days' %>
+        <%= select_tag :day, options_for_select(['MWF', 'MW', 'TR', 'F'], params[:day]), include_blank: 'All Days', class: 'timeTable-select' %>
       </div>
       <div>
         <%= label_tag :slot_type, 'Filter by Type' %>
-        <%= select_tag :slot_type, options_for_select(['LEC', 'LAB'], params[:slot_type]), include_blank: 'All Types' %>
+        <%= select_tag :slot_type, options_for_select(['LEC', 'LAB'], params[:slot_type]), include_blank: 'All Types', class: 'timeTable-select' %>
       </div>
-      <%= submit_tag 'Filter', class: 'btn btn-primary' %>
+      <%= submit_tag 'Filter', class: 'timeTable-btn' %>
     </div>
   <% end %>
   
-  <div class="table-wrapper">
-    <table>
+  <div class="timeTable-table-wrapper">
+    <table class="timeTable-table">
       <thead>
         <tr>
-          <th>Day</th>
-          <th>Start Time</th>
-          <th>End Time</th>
-          <th>Type</th>
+          <th class="timeTable-th">Day</th>
+          <th class="timeTable-th">Start Time</th>
+          <th class="timeTable-th">End Time</th>
+          <th class="timeTable-th">Type</th>
         </tr>
       </thead>
       <tbody>
         <% @time_slots.each do |slot| %>
           <tr>
             <td>
-              <span class="day-box <%= "day-#{slot.day.downcase}" %>">
+              <span class="timeTable-day-box <%= "timeTable-day-#{slot.day.downcase}" %>">
                 <%= slot.day %>
               </span>
             </td>
