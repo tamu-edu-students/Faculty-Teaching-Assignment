@@ -4,7 +4,7 @@ require 'hungarian_algorithm'
 # Designate number of classes, rooms, and timeslots
 num_classes = 50
 num_rooms = 15
-num_times = 8
+num_times = 12
 
 # Define enrollments and room capacities
 enrollments = Array.new(num_classes) { rand(30..50) }
@@ -89,10 +89,12 @@ num_professors = num_classes
 
 # Construct unhappiness matrix, where UM[i][j] is the unhappiness of professor i if assigned to class j
 # Garbage values for now
-unhappiness_matrix = Array.new(num_professors) {Array.new(num_classes) { rand(0..10)}}
+unhappiness_matrix = Array.new(num_professors) {Array.new(num_classes) { rand(1..10)}}
 
 # Solve the min weight perfect matching via the Hungarian algorithm
 # While extensions to nonperfect matchings exist for HA, this particular library doesn't support them
+# The library modifies the matrix, so create a deep copy first
+copy = unhappiness_matrix.map{ |row| row.dup}
 matching = HungarianAlgorithm.new(unhappiness_matrix).process.sort
 
 # matching is a 2D array, where each element [i,j] represents the assignment of professsor i to class j
@@ -110,3 +112,11 @@ assignment = matching.map{ |u,v| v}
     end
   end
 end
+
+# Print unhappiness
+# Don't print number of wasted seats, since answer is polluted by 9999s in the dataset
+total_unhappiness = 0
+(0...num_classes).each do |prof|
+  total_unhappiness += copy[prof][assignment[prof]]
+end
+puts "average unhappines: #{total_unhappiness.to_f / num_classes}"
