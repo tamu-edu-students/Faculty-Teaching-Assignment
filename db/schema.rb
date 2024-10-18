@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_18_182513) do
-  create_table "instructors", primary_key: "person_uid", force: :cascade do |t|
+ActiveRecord::Schema[7.2].define(version: 2024_10_18_191419) do
+  create_table "instructors", force: :cascade do |t|
     t.integer "id_number"
     t.string "last_name"
     t.string "first_name"
@@ -20,9 +20,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_182513) do
     t.boolean "before_9"
     t.boolean "after_3"
     t.text "beaware_of"
+    t.integer "schedule_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "schedule_id", null: false
     t.index ["schedule_id"], name: "index_instructors_on_schedule_id"
   end
 

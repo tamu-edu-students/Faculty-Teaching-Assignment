@@ -16,7 +16,7 @@ module ApplicationHelper
     {
       id: 'instructors',
       title: 'Instructors',
-      link: '#'
+      link: '/instructors'
     },
     {
       id: 'time-slots',

@@ -41,3 +41,5 @@ bin/glpsol
 glpk-5.0/
 include/
 lib/libglpk*
+
+app/.DS_Store

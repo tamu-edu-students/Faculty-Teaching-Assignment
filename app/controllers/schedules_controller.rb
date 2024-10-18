@@ -45,10 +45,10 @@ class SchedulesController < ApplicationController
   end
 
   def upload_rooms
-    if params[:file].present?
+    if params[:room_file].present?
       begin
         ActiveRecord::Base.transaction do
-          room_data = CSV.read(params[:file].path, headers: true)
+          room_data = CSV.read(params[:room_file].path, headers: true)
 
           @schedule.rooms.destroy_all
 
@@ -80,27 +80,55 @@ class SchedulesController < ApplicationController
   end
 
   def upload_instructors
-    if params[:file].present?
+    if params[:instructor_file].present?
       begin
         ActiveRecord::Base.transaction do
-          instructor_data = CSV.read(params[:file].path, headers: true)
-         
+          instructor_data = CSV.read(params[:instructor_file].path)
+          
           @schedule.instructors.destroy_all
           actual_headers = instructor_data[1] 
-          instructor_data[2..].each do |row|
-            instructor_data = {
-                schedule_id: @schedule.id,
-                id_number: row[actual_headers.index('anonimized ID')],
-                first_name: row[actual_headers.index('First Name')],
-                last_name: row[actual_headers.index('Last Name')],
-                middle_name: row[actual_headers.index('Middle Name')],
-                email: row[actual_headers.index('Email')],
-                before_9: row[actual_headers.index('Teaching before 9:00 am.')],
-                after_3: row[actual_headers.index('Teaching after 3:00 pm.')],
-                beaware_of: row[actual_headers.index('Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)')]
-              }
+
+          required_headers = [
+          'anonimized ID',
+          'First Name',
+          'Last Name',
+          'Email',
+          'Teaching before 9:00 am.',
+          'Teaching after 3:00 pm.',
+          'Middle Name',  
+          'Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)'  # Optional: Include if needed
+            ]
+
+          missing_headers = required_headers - actual_headers
+          unless missing_headers.empty?
+            flash[:alert] = "Missing required headers: #{missing_headers.join(', ')}"
+            redirect_to schedule_path(@schedule) and return
+          end
           
-              Instructor.create(instructor_data)
+          instructor_data[2..].each do |row|
+            # Extracting values and checking for nulls
+            id_number = row[actual_headers.index('anonimized ID')]
+            first_name = row[actual_headers.index('First Name')]
+            last_name = row[actual_headers.index('Last Name')]
+            middle_name = row[actual_headers.index('Middle Name')]
+            email = row[actual_headers.index('Email')]
+            before_9 = row[actual_headers.index('Teaching before 9:00 am.')]
+            after_3 = row[actual_headers.index('Teaching after 3:00 pm.')]
+            beaware_of = row[actual_headers.index('Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)')]
+  
+            instructor_data = {
+              schedule_id: @schedule.id,
+              id_number: id_number,
+              first_name: first_name,
+              last_name: last_name,
+              middle_name: middle_name,
+              email: email,
+              before_9: before_9,
+              after_3: after_3,
+              beaware_of: beaware_of
+            }
+          
+            Instructor.create(instructor_data)
           end
         end
         flash[:notice] = 'Instructors successfully uploaded.'
@@ -110,14 +138,13 @@ class SchedulesController < ApplicationController
       end
     else
       flash[:alert] = 'Please upload a CSV file.'
-    end
-
+    end  
     redirect_to schedule_path(@schedule)
   end
 
   # Only allow a list of trusted parameters through.
   def schedule_params
-    params.require(:schedule).permit(:schedule_name, :semester_name, :room_csv)
+    params.require(:schedule).permit(:schedule_name, :semester_name, :room_file, :instructor_file)
   end
 
 
