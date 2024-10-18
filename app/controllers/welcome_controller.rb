@@ -9,7 +9,6 @@ class WelcomeController < ApplicationController
 
   def index
     return unless logged_in?
-
     redirect_to schedules_path
   end
 end

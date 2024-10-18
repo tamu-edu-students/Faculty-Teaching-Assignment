@@ -1,0 +1,22 @@
+<tr>
+  <td><%= room.campus %></td>
+  <td><%= room.building_code %></td>
+  <td><%= room.room_number %></td>
+  <td><%= room.capacity %></td>
+
+<!-- Inline logic for Lecture Hall -->
+  <td class="<%= usage_type_classes(room.is_lecture_hall, room.is_active) %>">
+    <%= usage_type_message(room.is_lecture_hall, room.is_active) %>
+  </td>
+
+  <!-- Inline logic for Learning Studio -->
+  <td class="<%= usage_type_classes(room.is_learning_studio, room.is_active) %>">
+    <%= usage_type_message(room.is_learning_studio, room.is_active) %>
+  </td>
+
+  <!-- Inline logic for Lab -->
+  <td class="<%= usage_type_classes(room.is_lab, room.is_active) %>">
+    <%= usage_type_message(room.is_lab, room.is_active) %>
+  </td>
+  <td><%= room.comments %></td>
+</tr>
