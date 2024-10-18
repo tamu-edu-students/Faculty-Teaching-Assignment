@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 # db/migrate/2024XXXXXX_create_instructors.rb
 class CreateInstructors < ActiveRecord::Migration[6.1]
   def change
     create_table :instructors, id: false do |t|
-      t.primary_key :person_uid  # Set person_uid as the primary key
+      t.primary_key :person_uid # Set person_uid as the primary key
       t.integer :id_number
       t.string :last_name
       t.string :first_name
@@ -12,7 +14,7 @@ class CreateInstructors < ActiveRecord::Migration[6.1]
       t.boolean :after_3
       t.text :beaware_of
       t.references :schedule, foreign_key: true
-      
+
       t.timestamps
     end
   end

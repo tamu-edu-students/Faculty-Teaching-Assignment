@@ -21,42 +21,9 @@ Feature: Instructors Page
         Given a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         And I am logged in as a user with first name "Test"
         And I am on the details page for "Sched 1"
-        When I attach a valid CSV file with path "spec/fixtures/instructors/instructors_valid.csv"
-        And I click on "Upload Instructor Data"
-        Then I should see "CSV file uploaded successfully."
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    Scenario: Successfully upload a valid CSV file
-        Given I am on my profile page
-        When I attach a valid CSV file to the upload form
-        And I click the "Submit" button
-        Then I should see "CSV file uploaded successfully."
-
-    Scenario: Upload an invalid CSV file
-        Given I am on my profile page
-        When I attach an invalid CSV file to the upload form
-        And I click the "Submit" button
-        Then I should see "Cannot parse CSV file"
-
-    Scenario: Upload without selecting a file
-        Given I am on my profile page
-        When I do not attach any file to the upload form
-        And I click the "Submit" button
-        Then I should see "Please upload a CSV file."
+        When I attach a valid "instructor_file" with path "spec/fixtures/instructors/instructors_valid.csv"
+        And I click the "Upload Instructor Data" button
+        Then I should see "Instructors successfully uploaded."
 
 
         

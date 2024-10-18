@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Instructor migration
 class ChangeInstructorsPrimaryKey < ActiveRecord::Migration[6.1]
   def change
     # This will drop the existing instructors table
@@ -14,7 +17,7 @@ class ChangeInstructorsPrimaryKey < ActiveRecord::Migration[6.1]
       t.boolean :after_3
       t.text :beaware_of
       t.references :schedule, foreign_key: true
-      
+
       t.timestamps
     end
   end

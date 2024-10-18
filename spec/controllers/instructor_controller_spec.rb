@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe InstructorsController, type: :controller do
   render_views
-  let!(:schedule) { create(:schedule) }  # Assuming you have a Schedule factory
+  let!(:schedule) { create(:schedule) } # Assuming you have a Schedule factory
 
   describe 'GET #index' do
     before do
@@ -29,12 +29,12 @@ RSpec.describe InstructorsController, type: :controller do
       end
     end
     context 'with added instructors ' do
-        let!(:instructor1) { create(:instructor, schedule: schedule) }  # Associate instructor with the schedule
-        let!(:instructor2) { create(:instructor, schedule: schedule) }  # Associate another instructor with the schedule
-        it 'assigns all instructors to @instructors' do
-          get :index, params: { schedule_id: schedule.id }
-          expect(assigns(:instructors)).to match_array([instructor1, instructor2])
-        end
+      let!(:instructor1) { create(:instructor, schedule: schedule) } # Associate instructor with the schedule
+      let!(:instructor2) { create(:instructor, schedule: schedule) } # Associate another instructor with the schedule
+      it 'assigns all instructors to @instructors' do
+        get :index, params: { schedule_id: schedule.id }
+        expect(assigns(:instructors)).to match_array([instructor1, instructor2])
       end
     end
+  end
 end

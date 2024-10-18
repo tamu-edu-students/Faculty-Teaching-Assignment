@@ -33,3 +33,11 @@ Feature: Rooms Page
         | BLDG1         | 101         | 30       |
         | BLDG2         | 102         | 50       | 
         And I should not see "BLDG3"
+
+       Scenario: Upload rooms data
+        Given a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
+        And I am logged in as a user with first name "Test"
+        And I am on the details page for "Sched 1"
+        When I attach a valid "room_file" with path "spec/fixtures/rooms/rooms_valid.csv"
+        And I click the "Upload Room Data" button
+        Then I should see "Rooms successfully uploaded."

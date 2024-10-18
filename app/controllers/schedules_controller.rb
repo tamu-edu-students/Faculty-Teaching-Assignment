@@ -84,27 +84,27 @@ class SchedulesController < ApplicationController
       begin
         ActiveRecord::Base.transaction do
           instructor_data = CSV.read(params[:instructor_file].path)
-          
+
           @schedule.instructors.destroy_all
-          actual_headers = instructor_data[1] 
+          actual_headers = instructor_data[1]
 
           required_headers = [
-          'anonimized ID',
-          'First Name',
-          'Last Name',
-          'Email',
-          'Teaching before 9:00 am.',
-          'Teaching after 3:00 pm.',
-          'Middle Name',  
-          'Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)'  # Optional: Include if needed
-            ]
+            'anonimized ID',
+            'First Name',
+            'Last Name',
+            'Email',
+            'Teaching before 9:00 am.',
+            'Teaching after 3:00 pm.',
+            'Middle Name',
+            'Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)' # Optional: Include if needed
+          ]
 
           missing_headers = required_headers - actual_headers
           unless missing_headers.empty?
             flash[:alert] = "Missing required headers: #{missing_headers.join(', ')}"
             redirect_to schedule_path(@schedule) and return
           end
-          
+
           instructor_data[2..].each do |row|
             # Extracting values and checking for nulls
             id_number = row[actual_headers.index('anonimized ID')]
@@ -115,7 +115,7 @@ class SchedulesController < ApplicationController
             before_9 = row[actual_headers.index('Teaching before 9:00 am.')]
             after_3 = row[actual_headers.index('Teaching after 3:00 pm.')]
             beaware_of = row[actual_headers.index('Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)')]
-  
+
             instructor_data = {
               schedule_id: @schedule.id,
               id_number: id_number,
@@ -127,7 +127,7 @@ class SchedulesController < ApplicationController
               after_3: after_3,
               beaware_of: beaware_of
             }
-          
+
             Instructor.create(instructor_data)
           end
         end
@@ -138,7 +138,7 @@ class SchedulesController < ApplicationController
       end
     else
       flash[:alert] = 'Please upload a CSV file.'
-    end  
+    end
     redirect_to schedule_path(@schedule)
   end
 
@@ -146,7 +146,6 @@ class SchedulesController < ApplicationController
   def schedule_params
     params.require(:schedule).permit(:schedule_name, :semester_name, :room_file, :instructor_file)
   end
-
 
   private
 
