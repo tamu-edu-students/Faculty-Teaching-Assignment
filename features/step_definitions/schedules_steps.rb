@@ -24,7 +24,7 @@ Given('I am on the schedules index page') do
 end
 
 Given('I have created a schedule called {string}') do |schedule_name|
-  Schedule.create!(schedule_name:, semester_name: 'Fall 2024')
+  Schedule.create!(schedule_name: schedule_name, semester_name: 'Fall 2024')
 end
 
 When('I click the {string} button for {string}') do |button_name, schedule_name|
@@ -35,6 +35,6 @@ When('I click the {string} button for {string}') do |button_name, schedule_name|
 end
 
 When('I search for {string}') do |search_term|
-    fill_in 'search_by_name', with: search_term
-    click_button 'Search'
+  fill_in 'search_by_name', with: search_term
+  click_button 'Search'
 end
