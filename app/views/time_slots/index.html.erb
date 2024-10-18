@@ -15,29 +15,28 @@
   <% end %>
   
   <div class="timeTable-table-wrapper">
-    <table class="timeTable-table">
-      <thead>
+  <table class="table timeTable-table">
+    <thead class="table-dark">
+      <tr>
+        <th class="timeTable-th">Day</th>
+        <th class="timeTable-th">Start Time</th>
+        <th class="timeTable-th">End Time</th>
+        <th class="timeTable-th">Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @time_slots.each do |slot| %>
         <tr>
-          <th class="timeTable-th">Day</th>
-          <th class="timeTable-th">Start Time</th>
-          <th class="timeTable-th">End Time</th>
-          <th class="timeTable-th">Type</th>
+          <td>
+            <span class="timeTable-day-box <%= "timeTable-day-#{slot.day.downcase}" %>">
+              <%= slot.day %>
+            </span>
+          </td>
+          <td><%= slot.start_time %></td>
+          <td><%= slot.end_time %></td>
+          <td><%= slot.slot_type %></td>
         </tr>
-      </thead>
-      <tbody>
-        <% @time_slots.each do |slot| %>
-          <tr>
-            <td>
-              <span class="timeTable-day-box <%= "timeTable-day-#{slot.day.downcase}" %>">
-                <%= slot.day %>
-              </span>
-            </td>
-            <td><%= slot.start_time %></td>
-            <td><%= slot.end_time %></td>
-            <td><%= slot.slot_type %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  
+      <% end %>
+    </tbody>
+  </table>
+</div>
