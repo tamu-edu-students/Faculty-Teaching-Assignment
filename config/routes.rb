@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  get "time_slots/index"
+  resources :schedules
   get 'sessions/logout'
   get 'sessions/omniauth'
   get 'users/show'
@@ -30,7 +30,13 @@ Rails.application.routes.draw do
   # Upload CSV
   post 'upload_csv', to: 'csv#upload'
 
-  # Show Time Slot View
-  resources :time_slots, only: [:index]
+  resources :schedules do
+    resources :rooms, only: [:index]
+    post :upload_rooms, on: :member
+    get '/time_slots', to: 'time_slots#index'
+  end
 
+  # Show Time Slot View 
+  resources :time_slots, only: [:index]
+  
 end
