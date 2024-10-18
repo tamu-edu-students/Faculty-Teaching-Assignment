@@ -9,9 +9,13 @@ RSpec.describe CsvController, type: :controller do
     @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
                          last_name: 'Doe')
     session[:user_id] = @user.id
+
+    Instructor.create!(first_name: 'John', last_name: 'Doe', id_number: 5678)
+
   end
 
   let(:file) { fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test.csv'), 'text/csv') }
+  let(:instructors_file) { fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'Dummy-instructors.csv'), 'text/csv') }
 
   describe 'POST #upload' do
     context 'with a valid CSV file' do
@@ -21,6 +25,9 @@ RSpec.describe CsvController, type: :controller do
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to(user_path(@user))  # Redirect to the current user's page
         expect(flash[:notice]).to eq('CSV file uploaded successfully.')
+
+        post :upload, params: { csv_file: instructors_file }
+        expect(Instructor.first.first_name).to eq('John')
       end
     end
 
