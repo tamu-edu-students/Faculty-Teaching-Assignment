@@ -16,6 +16,5 @@ FactoryBot.define do
     is_learning_studio { false }
     is_lecture_hall { false }
     comments { 'A large lecture hall.' }
-    schedule_id { 1 }
   end
 end
