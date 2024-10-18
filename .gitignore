@@ -36,5 +36,8 @@
 
 /coverage
 
-# Ignore .rubycop.yml file.
-.rubocop.yml
+# Ignore files associated with GLPK
+bin/glpsol
+glpk-5.0/
+include/
+lib/libglpk*

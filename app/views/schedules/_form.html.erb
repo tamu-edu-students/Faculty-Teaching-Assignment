@@ -1,4 +1,4 @@
-<%= form_with(model: schedule, local: true, class: "p-4") do |form| %>
+<%= form_with(model: schedule, local: true, class: "p-4 container") do |form| %>
   <% if schedule.errors.any? %>
     <div class="alert alert-danger">
       <h4 class="alert-heading"><%= pluralize(schedule.errors.count, "error") %> prohibited this schedule from being saved:</h4>

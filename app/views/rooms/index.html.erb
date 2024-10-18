@@ -1,0 +1,40 @@
+<%= render_navbar("rooms", @schedule) %>
+<% if @rooms.empty? %>
+    <p class="container h1 text-secondary">No rooms added to this schedule!</p>
+<% else %>
+<div class="container border-2 border-dark">
+  <div class="row p-4">
+    <%= link_to (@active_filter ? 'Show All Rooms' : 'Show Active Rooms'), schedule_rooms_path(params[:schedule_id], active_rooms: @active_filter ? false : true), class: 'btn btn-dark col-3' %>
+  </div>
+    <table class="table col-8 border-2 border-dark table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+            <th scope="col"><%= sortable "campus", "Campus" %></th>
+            <th scope="col"><%= sortable "building_code", "Building Code" %></th>
+            <th scope="col"><%= sortable "room_number", "Room Number" %></th>
+            <th scope="col"><%= sortable "capacity", "Capacity" %></th>
+            <th scope="col" class="col-1">Lecture Hall</th>
+            <th scope="col" class="col-1">Learning Studio</th>
+            <th scope="col" class="col-1">Lab</th>
+            <th scope="col"><%= sortable "comments", "Comments" %></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @rooms.each do |room| %>
+            <tr>
+                <td><%= room.campus %></td>
+                <td><%= room.building_code %></td>
+                <td><%= room.room_number %></td>
+                <td><%= room.capacity %></td>
+                <%= display_usage_type room.is_lecture_hall,room.is_active %>
+                <%= display_usage_type room.is_learning_studio,room.is_active %>
+                <%= display_usage_type room.is_lab,room.is_active %>
+                <td>
+                    <%= room.comments %>
+                </td>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>
+<% end %>

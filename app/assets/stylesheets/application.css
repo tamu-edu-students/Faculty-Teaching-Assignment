@@ -70,7 +70,41 @@
    color: #000000;
  }
 
+ #home-button {
+  text-decoration: none;
+  color: #000000;
+ }
+
  .header .profile-section {
    margin-inline-end: 2rem;
    display: flex;
  }
+
+ #scheduleNavbar .nav-item .nav-link {
+  padding-inline: 16px;
+ }
+
+ #scheduleNavbar .nav-item .nav-link.active {
+  background: var(--bs-dark);
+  color: var(--bs-white);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+ }
+
+.sortable-link {
+  text-decoration: none;
+  color: var(--bs-white);
+}
+
+.sortable-link:after {
+  content: " ▲"; /* Up arrow for ascending */
+}
+
+.sortable-link.desc:after {
+  content: " ▼"; /* Down arrow for descending */
+}
+
+.schedule-name {
+  text-decoration: none;
+  color: #000000;
+}

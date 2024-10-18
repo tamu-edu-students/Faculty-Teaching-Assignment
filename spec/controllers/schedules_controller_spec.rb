@@ -38,6 +38,11 @@ RSpec.describe SchedulesController, type: :controller do
       get :show, params: { id: schedule1.id }
       expect(response).to render_template :show
     end
+
+    it 'invalid schedule id' do
+      get :show, params: { id: '9abs' }
+      expect(flash[:alert]).to eq('Schedule not found.')
+    end
   end
 
   describe 'GET #new' do
@@ -90,6 +95,42 @@ RSpec.describe SchedulesController, type: :controller do
     it 'redirects to schedules index' do
       delete :destroy, params: { id: schedule1.id }
       expect(response).to redirect_to schedules_url
+    end
+  end
+
+  describe 'POST #upload_rooms' do
+    let(:file_valid) { fixture_file_upload(Rails.root.join('spec/fixtures/rooms/rooms_valid.csv'), 'text/csv') }
+    let(:file_invalid) { fixture_file_upload(Rails.root.join('spec/fixtures/rooms/rooms_invalid.csv'), 'text/csv') }
+    let!(:schedule1) { create(:schedule) }
+
+    context 'with a valid CSV file' do
+      it "processes the CSV file, sets a success flash, and redirects to the user's page" do
+        post :upload_rooms, params: { id: schedule1.id, file: file_valid }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(schedule_path(schedule1)) # Redirect to the current user's page
+        expect(flash[:notice]).to eq('Rooms successfully uploaded.')
+      end
+    end
+
+    context 'when invalid CSV file is selected' do
+      it "sets an error flash and redirects to the user's page" do
+        expect do
+          post :upload_rooms, params: { id: schedule1.id, file: file_invalid }
+        end.to raise_error(ArgumentError, /'1' is not a valid campus/)
+
+        expect(flash[:alert]).to include('There was an error uploading the CSV file')
+      end
+    end
+
+    context 'when no CSV file is selected' do
+      it "sets an error flash and redirects to the user's page" do
+        post :upload_rooms, params: { id: schedule1.id, file: nil }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(schedule_path(schedule1)) # Redirect to the current user's page
+        expect(flash[:alert]).to eq('Please upload a CSV file.')
+      end
     end
   end
 end
