@@ -40,6 +40,22 @@ end# frozen_string_literal: true
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.2].define(version: 2024_10_16_025253) do
+  create_table "rooms", force: :cascade do |t|
+    t.integer "campus"
+    t.boolean "is_lecture_hall"
+    t.boolean "is_learning_studio"
+    t.boolean "is_lab"
+    t.string "building_code"
+    t.string "room_number"
+    t.integer "capacity"
+    t.boolean "is_active"
+    t.string "comments"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "schedule_id", null: false
+    t.index ["schedule_id"], name: "index_rooms_on_schedule_id"
+  end
+  
   create_table "schedules", force: :cascade do |t|
     t.string "schedule_name"
     t.string "semester_name"

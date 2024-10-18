@@ -36,7 +36,6 @@ Rails.application.routes.draw do
     get '/time_slots', to: 'time_slots#index'
   end
 
-  # Show Time Slot View 
+  # Show Time Slot View
   resources :time_slots, only: [:index]
-  
 end
