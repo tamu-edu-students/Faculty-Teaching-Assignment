@@ -8,10 +8,14 @@ The main customer need is to have an application that creates an **efficient cla
 The key stakeholder for this application is the Associate Department Head, who is responsible for creating the teaching schedule before every semester. The secondary stakeholders are the Instructors and Students, who benefit indirectly from having flexible course schedules. The application integrates all scheduling requirements into one platform, allowing for streamlined data input, constraint satisfaction, and schedule optimization, while being scalable for future adjustments.
 
 ## Links
-- **App** : https://faculty-teaching-assignment-31f5f9c405bc.herokuapp.com 
+- **App** : https://faculty-teaching-assignment-31f5f9c405bc.herokuapp.com
+- **Code Climate Report**: https://codeclimate.com/github/tamu-edu-students/Faculty-Teaching-Assignment
 - **Team Working agreement** : https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Team%20Working%20Agreement.md
 - **Sprint Plans**:
 	- Sprint 1: 
 		- Goal: Setup and understand the project, get client data and enable user login and authentication
-		- https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Sprint_1_Plan.pdf 
-- **Code Climate Report**: https://codeclimate.com/github/tamu-edu-students/Faculty-Teaching-Assignment
+		- (Sprint Plan)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Sprint_1_Plan.pdf]
+		- (Retrospective)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint%201%20Retrospective.pdf]
+    	- Sprint 2:
+       		- Goal: Have a raw views for all the data upload.
+         	- (Sprint Plan)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_2_Plan.pdf]
