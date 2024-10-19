@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_17_221341) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_18_233419) do
+  create_table "courses", force: :cascade do |t|
+    t.integer "course_number"
+    t.string "title"
+    t.string "description"
+    t.string "subject"
+    t.integer "credits"
+    t.boolean "has_lab"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "lec_hours"
+    t.integer "lab_hours"
+    t.integer "schedule_id", null: false
+    t.index ["schedule_id"], name: "index_courses_on_schedule_id"
+  end
+
   create_table "rooms", force: :cascade do |t|
     t.integer "campus"
     t.boolean "is_lecture_hall"
@@ -23,7 +38,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_17_221341) do
     t.string "comments"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "schedule_id", null: false
+    t.integer "schedule_id", default: -1, null: false
     t.index ["schedule_id"], name: "index_rooms_on_schedule_id"
   end
 
@@ -45,5 +60,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_17_221341) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "courses", "schedules"
   add_foreign_key "rooms", "schedules"
 end

@@ -79,6 +79,40 @@ class SchedulesController < ApplicationController
     redirect_to schedule_path(@schedule)
   end
 
+  def upload_courses
+    if params[:file].present?
+      begin
+        ActiveRecord::Base.transaction do
+          course_data = CSV.read(params[:file].path, headers: true)
+
+          @schedule.courses.destroy_all
+
+          room_data.each do |row|
+            Course.create!(
+              schedule_id: @schedule.id,
+              course_number: row['course number'].to_i,  # Ensure this is an integer
+              title: row['title'],
+              description: row['description'],
+              subject: row['subject'],  # Assuming subject is present in the CSV
+              lec_hours: row['lecture hours'].to_i,  # Convert to integer
+              lab_hours: row['lab hours'].to_i  # Convert to integer
+            )
+
+            
+          end
+        end
+        flash[:notice] = 'Rooms successfully uploaded.'
+      rescue StandardError => e
+        flash[:alert] = "There was an error uploading the CSV file: #{e.message}"
+        raise e
+      end
+    else
+      flash[:alert] = 'Please upload a CSV file.'
+    end
+
+    redirect_to schedule_path(@schedule)
+  end
+
   # Only allow a list of trusted parameters through.
   def schedule_params
     params.require(:schedule).permit(:schedule_name, :semester_name, :room_csv)

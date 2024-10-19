@@ -2,6 +2,7 @@
 
 require 'set'
 require 'json'
+require 'csv'
 
 ROOMS_DATA_PATH = 'db/rooms.json'
 
@@ -56,4 +57,18 @@ def seed_room_data
   Rails.logger.debug { "Active Rooms : #{active_rooms}" }
 end
 
+# def seed_course_data
+#   CSV.foreach(Rails.root.join('db/courses.csv'), headers: true) do |row|
+#     Course.create!(
+#       course_number: row['course number'].to_i,  # Ensure this is an integer
+#       title: row['title'],
+#       description: row['description'],
+#       subject: row['subject'],  # Assuming subject is present in the CSV
+#       lec_hours: row['lecture hours'].to_i,  # Convert to integer
+#       lab_hours: row['lab hours'].to_i  # Convert to integer
+#     )
+#   end
+# end
+
 seed_room_data
+seed_course_data

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  # get "courses/index"
   resources :schedules
   get 'sessions/logout'
   get 'sessions/omniauth'
@@ -33,5 +34,7 @@ Rails.application.routes.draw do
   resources :schedules do
     resources :rooms, only: [:index]
     post :upload_rooms, on: :member
+    resources :courses, only: [:index] 
   end
+  
 end
