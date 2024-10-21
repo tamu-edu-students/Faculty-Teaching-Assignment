@@ -10,14 +10,14 @@ class CSVHandler
   def parse_room_csv(schedule_id)
     begin
       ActiveRecord::Base.transaction do
-        room_data = CSV.read(@file.path, headers: true)
+        room_data = CSV.parse(@file.read, headers: true)
         room_data.each do |row|
           Room.create!(
             schedule_id: schedule_id,
             campus: row['campus'],
             building_code: row['building_code'],
             room_number: row['room_number'],
-            capacity: row['capacity'],
+            capacity: row['capacity'].to_i,
             is_lecture_hall: row['is_lecture_hall'] == 'True',
             is_learning_studio: row['is_learning_studio'] == 'True',
             is_lab: row['is_lab'] == 'True',
@@ -36,7 +36,7 @@ class CSVHandler
   def parse_instructor_csv(schedule_id)
     begin
       ActiveRecord::Base.transaction do
-        instructor_data = CSV.read(@file.path)
+        instructor_data = CSV.parse(@file.read)
         actual_headers = instructor_data[1]
         required_headers = [
           'anonimized ID',

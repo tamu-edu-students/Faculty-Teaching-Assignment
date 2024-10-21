@@ -38,3 +38,21 @@ Feature: Schedules page
         When I search for "ABCD"
         Then I should not see "Test Schedule 1"
         And I should not see "Another Schedule"
+
+    Scenario: User can upload room CSV
+        Given I am logged in as a user with first name "Test"
+        When I visit the schedules index page
+        And I click on the card for "Test Schedule 1" 
+        Then I should see "Select Room Data (CSV)"
+        When I upload a valid room file 
+        And I click the "Upload Room Data" button
+        Then I should see "Rooms successfully uploaded"
+
+    Scenario: User can upload instructor CSV
+        Given I am logged in as a user with first name "Test"
+        When I visit the schedules index page
+        And I click on the card for "Test Schedule 1" 
+        Then I should see "Select Instructor Data (CSV)"
+        When I upload a valid instructor file
+        And I click the "Upload Instructor Data" button
+        Then I should see "Instructors successfully uploaded"  

@@ -115,10 +115,7 @@ RSpec.describe SchedulesController, type: :controller do
 
     context 'when invalid CSV file is selected' do
       it "sets an error flash and redirects to the user's page" do
-        expect do
-          post :upload_rooms, params: { id: schedule1.id, room_file: file_invalid }
-        end.to raise_error(ArgumentError, /'1' is not a valid campus/)
-
+        post :upload_rooms, params: { id: schedule1.id, room_file: file_invalid }
         expect(flash[:alert]).to include('There was an error uploading the CSV file')
       end
     end
