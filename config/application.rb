@@ -26,8 +26,5 @@ module AggieAssign
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-
-    # Ensure that the CSV handler services is autoloaded
-    config.autoload_paths += %W(#{config.root}/app/services)
   end
 end

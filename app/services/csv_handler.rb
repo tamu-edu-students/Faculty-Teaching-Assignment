@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CSVHandler
+class CsvHandler
   require 'csv'
 
   def upload(file)

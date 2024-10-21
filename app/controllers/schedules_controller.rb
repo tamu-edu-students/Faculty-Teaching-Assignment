@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../services/csv_handler'
+# require_relative '../services/csv_handler'
 
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
@@ -50,7 +50,7 @@ class SchedulesController < ApplicationController
       # We've erased our past data with no way to restore it
       # We probably need to create a back up and restore if parsing gives an alert
       @schedule.rooms.destroy_all
-      csv_handler = CSVHandler.new
+      csv_handler = CsvHandler.new
       csv_handler.upload(params[:room_file])
       flash_result = csv_handler.parse_room_csv(@schedule.id)
       flash[flash_result.keys.first] = flash_result.values.first
@@ -64,7 +64,7 @@ class SchedulesController < ApplicationController
     if params[:instructor_file].present?
       # FIXME: See concern in upload_rooms
       @schedule.instructors.destroy_all
-      csv_handler = CSVHandler.new
+      csv_handler = CsvHandler.new
       csv_handler.upload(params[:instructor_file])
       flash_result = csv_handler.parse_instructor_csv(@schedule.id)
       flash[flash_result.keys.first] = flash_result.values.first     
