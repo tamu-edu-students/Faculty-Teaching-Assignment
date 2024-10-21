@@ -1,0 +1,42 @@
+<%= render_navbar("time-slots", @schedule) %>
+
+<%= form_with url: time_slots_path, method: :get, local: true do %>
+    <div class="timeTable-filters">
+      <div>
+        <%= label_tag :day, 'Filter by Day' %>
+        <%= select_tag :day, options_for_select(['MWF', 'MW', 'TR', 'F'], params[:day]), include_blank: 'All Days', class: 'timeTable-select' %>
+      </div>
+      <div>
+        <%= label_tag :slot_type, 'Filter by Type' %>
+        <%= select_tag :slot_type, options_for_select(['LEC', 'LAB'], params[:slot_type]), include_blank: 'All Types', class: 'timeTable-select' %>
+      </div>
+      <%= submit_tag 'Filter', class: 'timeTable-btn' %>
+    </div>
+  <% end %>
+  
+  <div class="timeTable-table-wrapper">
+  <table class="table timeTable-table">
+    <thead class="table-dark">
+      <tr>
+        <th class="timeTable-th">Day</th>
+        <th class="timeTable-th">Start Time</th>
+        <th class="timeTable-th">End Time</th>
+        <th class="timeTable-th">Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @time_slots.each do |slot| %>
+        <tr>
+          <td>
+            <span class="timeTable-day-box <%= "timeTable-day-#{slot.day.downcase}" %>">
+              <%= slot.day %>
+            </span>
+          </td>
+          <td><%= slot.start_time %></td>
+          <td><%= slot.end_time %></td>
+          <td><%= slot.slot_type %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

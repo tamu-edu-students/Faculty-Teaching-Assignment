@@ -1,0 +1,35 @@
+<%= render_navbar("instructors", @schedule) %>
+<% if @instructors.empty? %>
+    <p class="container h1 text-secondary">No instructors added to this schedule!</p>
+<% else %>
+<h1>Instructors List</h1>
+
+<table style="border-collapse: collapse; width: 100%; border: 1px solid #000;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #000; padding: 8px;">ID Number</th>
+      <th style="border: 1px solid #000; padding: 8px;">First Name</th>
+      <th style="border: 1px solid #000; padding: 8px;">Last Name</th>
+      <th style="border: 1px solid #000; padding: 8px;">Middle Name</th>
+      <th style="border: 1px solid #000; padding: 8px;">Email</th>
+      <th style="border: 1px solid #000; padding: 8px;">Teaches Before 9</th>
+      <th style="border: 1px solid #000; padding: 8px;">Teaches After 3</th>
+      <th style="border: 1px solid #000; padding: 8px;">Be Aware Of</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @instructors.each do |instructor| %>
+      <tr>
+        <td style="border: 1px solid #000; padding: 8px;"><%= instructor.id_number %></td>
+        <td style="border: 1px solid #000; padding: 8px;"><%= instructor.first_name %></td>
+        <td style="border: 1px solid #000; padding: 8px;"><%= instructor.last_name %></td>
+        <td style="border: 1px solid #000; padding: 8px;"><%= instructor.middle_name %></td>
+        <td style="border: 1px solid #000; padding: 8px;"><%= instructor.email %></td>
+        <td style="border: 1px solid #000; padding: 8px;"><%= instructor.before_9 ? 'Yes' : 'No' %></td>
+        <td style="border: 1px solid #000; padding: 8px;"><%= instructor.after_3 ? 'Yes' : 'No' %></td>
+        <td style="border: 1px solid #000; padding: 8px;"><%= instructor.beaware_of %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>

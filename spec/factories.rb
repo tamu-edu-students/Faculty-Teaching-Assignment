@@ -17,4 +17,16 @@ FactoryBot.define do
     is_lecture_hall { false }
     comments { 'A large lecture hall.' }
   end
+
+  factory :instructor do
+    id_number { rand(1000..9999) }
+    first_name { 'John' } # Default first name
+    last_name { 'Doe' }  # Default last name
+    middle_name { 'A' }  # Default middle name (optional)
+    email { 'abc@gmail.com' } # Generate a random email
+    before_9 { [true, false].sample } # Random boolean
+    after_3 { [true, false].sample } # Random boolean
+    beaware_of { 'Some notes or warnings.' } # Default text
+    association :schedule # Associate with a Schedule, assuming you have a Schedule factory as well
+  end
 end

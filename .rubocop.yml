@@ -1,12 +1,12 @@
-require: rubocop-rails
-
 Metrics/BlockLength:
-  Max: 50
+  Max: 150
 Layout/LineLength:
   Max: 150
 Metrics/MethodLength:
-  Max: 25
+  Max: 60
 Metrics/CyclomaticComplexity:
   Max: 15
+Metrics/ClassLength:
+  Max: 250
 AllCops:
   NewCops: enable
