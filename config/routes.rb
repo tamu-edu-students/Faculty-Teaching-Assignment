@@ -36,6 +36,9 @@ Rails.application.routes.draw do
 
     resources :instructors, only: [:index]
     post :upload_instructors, on: :member
+
+    resources :courses, only: [:index]
+    post :upload_courses, on: :member
     get '/time_slots', to: 'time_slots#index'
   end
 

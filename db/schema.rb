@@ -10,7 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_18_191419) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_23_023403) do
+  create_table "course_sections", force: :cascade do |t|
+    t.integer "section_number"
+    t.integer "size"
+    t.integer "course_id", null: false
+    t.integer "room_id"
+    t.integer "schedule_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_course_sections_on_course_id"
+    t.index ["room_id"], name: "index_course_sections_on_room_id"
+    t.index ["schedule_id"], name: "index_course_sections_on_schedule_id"
+  end
+
+  create_table "courses", force: :cascade do |t|
+    t.integer "course_number"
+    t.string "title"
+    t.text "description"
+    t.string "subject"
+    t.integer "credits"
+    t.boolean "has_lab"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "instructors", force: :cascade do |t|
     t.integer "id_number"
     t.string "last_name"
@@ -49,6 +73,17 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_191419) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "teaching_plans", force: :cascade do |t|
+    t.integer "schedule_id", null: false
+    t.integer "course_id", null: false
+    t.integer "num_sections"
+    t.integer "num_students"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_teaching_plans_on_course_id"
+    t.index ["schedule_id"], name: "index_teaching_plans_on_schedule_id"
+  end
+
   create_table "time_slots", force: :cascade do |t|
     t.string "day"
     t.string "start_time"
@@ -69,6 +104,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_191419) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "course_sections", "courses"
+  add_foreign_key "course_sections", "rooms"
+  add_foreign_key "course_sections", "schedules"
   add_foreign_key "instructors", "schedules"
   add_foreign_key "rooms", "schedules"
+  add_foreign_key "teaching_plans", "courses"
+  add_foreign_key "teaching_plans", "schedules"
 end

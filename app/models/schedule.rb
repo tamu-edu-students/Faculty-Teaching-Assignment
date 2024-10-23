@@ -4,5 +4,6 @@
 class Schedule < ApplicationRecord
   has_many :rooms
   has_many :instructors
+  has_many :sections
   validates :schedule_name, :semester_name, presence: true
 end
