@@ -4,7 +4,7 @@ require 'csv'
 
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
-  before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors]
+  before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors upload_courses]
   def index
     @schedules = Schedule.all
 
@@ -142,6 +142,85 @@ class SchedulesController < ApplicationController
     redirect_to schedule_path(@schedule)
   end
 
+
+  def upload_courses
+    if params[:course_file].present?
+      begin
+        ActiveRecord::Base.transaction do
+          course_data = CSV.read(params[:course_file].path)
+
+          # @schedule.courses.destroy_all
+          actual_headers = course_data[0]
+
+          required_headers = [
+            'Class',
+            'Title',
+            'Description',
+            'Credits',
+            'Max. Seats',
+            '#Labs',
+            'Section number'
+              ]
+
+          missing_headers = required_headers - actual_headers
+          unless missing_headers.empty?
+            flash[:alert] = "Missing required headers: #{missing_headers.join(', ')}"
+            redirect_to schedule_path(@schedule) and return
+          end
+
+          course_data[1..].each do |row|
+            # Extracting values and checking for nulls
+            course_number = row[actual_headers.index('Class')]
+            title = row[actual_headers.index('Title')]
+            description = row[actual_headers.index('Description')]
+            credits = row[actual_headers.index('Credits')]
+            max_seats = row[actual_headers.index('Max. Seats')]
+            labs = row[actual_headers.index('#Labs')]
+            section_number = row[actual_headers.index('Section number')]
+            has_lab = labs.to_i > 0
+            num_sections = section_number.split(',').count
+
+            course_data = {
+              course_number: course_number,
+              title: title,
+              description: description,
+              credits: credits,
+              has_lab: has_lab
+            }
+            course = Course.create(course_data)
+
+            teaching_plan_data = {
+              schedule_id: @schedule.id,
+              course_id: course.id,
+              num_sections: num_sections,
+              num_students: max_seats
+            }
+            TeachingPlan.create(teaching_plan_data)
+
+            section_number.split(',').each do |section|
+              section_data = {
+                schedule_id: @schedule.id,
+                room_id: 198,
+                course_id: course.id, 
+                section_number: section.to_i,
+                size: max_seats
+              }
+              CourseSection.create(section_data)
+            end
+
+            
+          end
+        end
+        flash[:notice] = 'Courses successfully uploaded.'
+      rescue StandardError => e
+        flash[:alert] = "There was an error uploading the CSV file: #{e.message}"
+        raise e
+      end
+    else
+      flash[:alert] = 'Please upload a CSV file.'
+    end
+    redirect_to schedule_path(@schedule)
+  end
   # Only allow a list of trusted parameters through.
   def schedule_params
     params.require(:schedule).permit(:schedule_name, :semester_name, :room_file, :instructor_file)
