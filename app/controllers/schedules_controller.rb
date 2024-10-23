@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'csv'
-
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
   before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors]
@@ -46,96 +44,28 @@ class SchedulesController < ApplicationController
 
   def upload_rooms
     if params[:room_file].present?
-      begin
-        ActiveRecord::Base.transaction do
-          room_data = CSV.read(params[:room_file].path, headers: true)
-
-          @schedule.rooms.destroy_all
-
-          room_data.each do |row|
-            Room.create!(
-              schedule_id: @schedule.id,
-              campus: row['campus'],
-              building_code: row['building_code'],
-              room_number: row['room_number'],
-              capacity: row['capacity'],
-              is_lecture_hall: row['is_lecture_hall'] == 'True',
-              is_learning_studio: row['is_learning_studio'] == 'True',
-              is_lab: row['is_lab'] == 'True',
-              is_active: row['is_active'] == 'True',
-              comments: row['comments']
-            )
-          end
-        end
-        flash[:notice] = 'Rooms successfully uploaded.'
-      rescue StandardError => e
-        flash[:alert] = "There was an error uploading the CSV file: #{e.message}"
-        raise e
-      end
+      # FIXME: What if the input file is malformed?
+      # We've erased our past data with no way to restore it
+      # We probably need to create a back up and restore if parsing gives an alert
+      @schedule.rooms.destroy_all
+      csv_handler = CsvHandler.new
+      csv_handler.upload(params[:room_file])
+      flash_result = csv_handler.parse_room_csv(@schedule.id)
+      flash[flash_result.keys.first] = flash_result.values.first
     else
       flash[:alert] = 'Please upload a CSV file.'
     end
-
     redirect_to schedule_path(@schedule)
   end
 
   def upload_instructors
     if params[:instructor_file].present?
-      begin
-        ActiveRecord::Base.transaction do
-          instructor_data = CSV.read(params[:instructor_file].path)
-
-          @schedule.instructors.destroy_all
-          actual_headers = instructor_data[1]
-
-          required_headers = [
-            'anonimized ID',
-            'First Name',
-            'Last Name',
-            'Email',
-            'Teaching before 9:00 am.',
-            'Teaching after 3:00 pm.',
-            'Middle Name',
-            'Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)' # Optional: Include if needed
-          ]
-
-          missing_headers = required_headers - actual_headers
-          unless missing_headers.empty?
-            flash[:alert] = "Missing required headers: #{missing_headers.join(', ')}"
-            redirect_to schedule_path(@schedule) and return
-          end
-
-          instructor_data[2..].each do |row|
-            # Extracting values and checking for nulls
-            id_number = row[actual_headers.index('anonimized ID')]
-            first_name = row[actual_headers.index('First Name')]
-            last_name = row[actual_headers.index('Last Name')]
-            middle_name = row[actual_headers.index('Middle Name')]
-            email = row[actual_headers.index('Email')]
-            before_9 = row[actual_headers.index('Teaching before 9:00 am.')]
-            after_3 = row[actual_headers.index('Teaching after 3:00 pm.')]
-            beaware_of = row[actual_headers.index('Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)')]
-
-            instructor_data = {
-              schedule_id: @schedule.id,
-              id_number: id_number,
-              first_name: first_name,
-              last_name: last_name,
-              middle_name: middle_name,
-              email: email,
-              before_9: before_9,
-              after_3: after_3,
-              beaware_of: beaware_of
-            }
-
-            Instructor.create(instructor_data)
-          end
-        end
-        flash[:notice] = 'Instructors successfully uploaded.'
-      rescue StandardError => e
-        flash[:alert] = "There was an error uploading the CSV file: #{e.message}"
-        raise e
-      end
+      # FIXME: See concern in upload_rooms
+      @schedule.instructors.destroy_all
+      csv_handler = CsvHandler.new
+      csv_handler.upload(params[:instructor_file])
+      flash_result = csv_handler.parse_instructor_csv(@schedule.id)
+      flash[flash_result.keys.first] = flash_result.values.first     
     else
       flash[:alert] = 'Please upload a CSV file.'
     end

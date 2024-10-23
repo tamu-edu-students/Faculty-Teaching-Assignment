@@ -38,3 +38,19 @@ When('I search for {string}') do |search_term|
   fill_in 'search_by_name', with: search_term
   click_button 'Search'
 end
+
+When('I upload a valid instructor file') do
+  valid_instructor_csv = File.read(Rails.root.join('spec', 'fixtures', 'instructors', 'instructors_valid.csv'))
+  @instructor_file = Tempfile.new(['instructors_valid', '.csv'])
+  @instructor_file.write(valid_instructor_csv)
+  @instructor_file.rewind
+  attach_file('Select Instructor Data (CSV)', @instructor_file.path)
+end
+
+When('I upload a valid room file') do
+  valid_room_csv = File.read(Rails.root.join('spec', 'fixtures', 'rooms', 'rooms_valid.csv'))
+  @room_file = Tempfile.new(['rooms_valid', '.csv'])
+  @room_file.write(valid_room_csv)
+  @room_file.rewind
+  attach_file('Select Room Data (CSV)', @room_file.path)
+end

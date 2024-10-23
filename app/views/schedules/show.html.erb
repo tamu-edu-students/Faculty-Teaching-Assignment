@@ -16,7 +16,7 @@ Semester:<%= @schedule.semester_name %></h5>
 
   <%= form_with url: upload_instructors_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
   <div class='col-4'>
-    <%= f.label :instructor_file, "Select Instructors Data (CSV)", class: "form-label fw-bold" %>
+    <%= f.label :instructor_file, "Select Instructor Data (CSV)", class: "form-label fw-bold" %>
     <%= f.file_field :instructor_file, class: "form-control" %>
   </div>
   <div>
