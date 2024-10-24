@@ -33,6 +33,7 @@ Rails.application.routes.draw do
 
     resources :instructors, only: [:index]
     post :upload_instructors, on: :member
+    post 'time_slots', to: 'time_slots#filter', as: 'filter_time_slots'
     get '/time_slots', to: 'time_slots#index'
   end
 
