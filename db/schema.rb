@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_18_191419) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_23_233115) do
+  create_table "courses", force: :cascade do |t|
+    t.string "course_number"
+    t.integer "max_seats"
+    t.string "lecture_type"
+    t.integer "num_labs"
+    t.integer "schedule_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["schedule_id"], name: "index_courses_on_schedule_id"
+  end
+
   create_table "instructors", force: :cascade do |t|
     t.integer "id_number"
     t.string "last_name"
@@ -49,6 +60,15 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_191419) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sections", force: :cascade do |t|
+    t.string "section_number"
+    t.integer "seats_alloted"
+    t.integer "course_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_sections_on_course_id"
+  end
+
   create_table "time_slots", force: :cascade do |t|
     t.string "day"
     t.string "start_time"
@@ -69,6 +89,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_18_191419) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "courses", "schedules"
   add_foreign_key "instructors", "schedules"
   add_foreign_key "rooms", "schedules"
+  add_foreign_key "sections", "courses"
 end
