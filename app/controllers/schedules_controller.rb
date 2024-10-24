@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# require_relative '../services/csv_handler'
-
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
   before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors]
