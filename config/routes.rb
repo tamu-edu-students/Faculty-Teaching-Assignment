@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :schedules
   get 'sessions/logout'
   get 'sessions/omniauth'
   get 'users/show'
@@ -16,13 +17,25 @@ Rails.application.routes.draw do
   get 'manifest' => 'rails/pwa#manifest', as: :pwa_manifest
 
   # Defines the root path route ("/")
-  root 'welcome#index'
   get 'welcome/index', to: 'welcome#index', as: 'welcome'
-
-  # Show user
-  get '/users/:id', to: 'users#show', as: 'user'
+  root 'welcome#index'
 
   # Login/logout
   get '/logout', to: 'sessions#logout', as: 'logout'
   get '/auth/google_oauth2/callback', to: 'sessions#omniauth'
+
+  # Upload CSV
+  post 'upload_csv', to: 'csv#upload'
+
+  resources :schedules do
+    resources :rooms, only: [:index]
+    post :upload_rooms, on: :member
+
+    resources :instructors, only: [:index]
+    post :upload_instructors, on: :member
+    get '/time_slots', to: 'time_slots#index'
+  end
+
+  # Show Time Slot View
+  resources :time_slots, only: [:index]
 end

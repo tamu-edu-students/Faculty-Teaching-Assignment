@@ -4,7 +4,7 @@ Feature: Google OAuth Authentication and Authorization
     Given I am on the welcome page
     When I click the button "Sign in with Google"
     And I authorize access from Google
-    Then I should be on my profile page
+    Then I should be on my schedules page
     And I should see "You are logged in"
 
   Scenario: User logs out successfully

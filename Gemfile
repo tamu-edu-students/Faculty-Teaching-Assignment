@@ -39,6 +39,8 @@ gem 'omniauth-rails_csrf_protection'
 
 # For the professor/class matching
 gem 'hungarian_algorithm'
+# CSV parsing
+gem 'csv'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
@@ -53,6 +55,8 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem 'rubocop-rails-omakase', require: false
 
+  gem 'factory_bot_rails'
+  gem 'shoulda-matchers'
   gem 'sqlite3', '~> 1.4'
 end
 
@@ -66,6 +70,7 @@ group :test do
   gem 'capybara'
   gem 'cucumber-rails', require: false
   gem 'database_cleaner'
+  gem 'database_cleaner-active_record'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
@@ -75,4 +80,3 @@ end
 group :production do
   gem 'pg' # for Heroku deployment
 end
-

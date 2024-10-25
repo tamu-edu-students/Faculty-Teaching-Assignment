@@ -25,10 +25,16 @@ rake glpk:install
 ```
 The schedule builder relies on [GLPK](https://www.gnu.org/software/glpk/), an open-source linear program solver. This is downloaded, configured, and installed by the `glpk:install` Rake task. By default, it is installed to the top-level app directory, as to prevent the user from having to add the required binaries to their path. See `lib/tasks/glpk.rake` for details.
 ## Links
-- **App** : https://faculty-teaching-assignment-31f5f9c405bc.herokuapp.com 
+- **App** : https://faculty-teaching-assignment-31f5f9c405bc.herokuapp.com
+- **Code Climate Report**: https://codeclimate.com/github/tamu-edu-students/Faculty-Teaching-Assignment
 - **Team Working agreement** : https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Team%20Working%20Agreement.md
 - **Sprint Plans**:
 	- Sprint 1: 
 		- Goal: Setup and understand the project, get client data and enable user login and authentication
 		- https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Sprint_1_Plan.pdf 
 - **Code Climate Report**: https://codeclimate.com/github/tamu-edu-students/Faculty-Teaching-Assignment
+		- (Sprint Plan)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Sprint_1_Plan.pdf]
+		- (Retrospective)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint%201%20Retrospective.pdf]
+    	- Sprint 2:
+       		- Goal: Have a raw views for all the data upload.
+         	- (Sprint Plan)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_2_Plan.pdf]
