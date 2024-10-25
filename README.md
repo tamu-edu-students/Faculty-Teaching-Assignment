@@ -19,3 +19,115 @@ The key stakeholder for this application is the Associate Department Head, who i
     	- Sprint 2:
        		- Goal: Have a raw views for all the data upload.
          	- (Sprint Plan)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_2_Plan.pdf]
+
+# Getting Started with Setup and Deployment
+
+## Prerequisites
+1. **Heroku Account**: [Sign up for a Heroku account](https://signup.heroku.com/).
+2. **Heroku CLI**: Download and install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli).
+3. **GitHub Repository**: Ensure your Rails application is committed and pushed to a GitHub repository.
+4. **Rails and Ruby**: Check that you have Ruby and Rails installed locally to set up the app.
+5. **OAuth Configuration**: Ensure you have Google OAuth API keys
+
+---
+
+## 1. Clone the GitHub Repository (If Needed)
+If you're setting up the project locally, clone the repository:
+
+```bash
+git clone https://github.com/tamu-edu-students/Faculty-Teaching-Assignment.git
+cd Faculty-Teaching-Assignment
+```
+
+---
+
+## 2. Install Dependencies and setup Rails Master Key
+Run `bundle install` to install all required dependencies.
+
+```bash
+bundle install
+```
+Generate your ```GOOGLE_CLIENT_ID``` and ```GOOGLE_CLIENT_SECRET```. Encrypt both of these using a ```RAILS_MASTER_KEY``` and store it in your ```config/credentials.ymc.enc``` 
+Make sure you ```config/master.key``` popuplated with your ```RAILS_MASTER_KEY```.
+
+or just store your Google OAuth credentials in your ```config/credentials.ymc.enc``` unencrypted but do not commit them.
+
+---
+
+## 3. Set Up Database (Locally)
+Run database migrations and set up the database:
+
+```bash
+rails db:create
+rails db:migrate
+rails db:seed # If there are any seed files
+rails server # To run locally
+```
+
+## 4. Prepare Application for Heroku
+
+1. **Add a `Procfile`**: Create a file named `Procfile` in the root directory with the following line:
+
+   ```plaintext
+   web: bundle exec puma -C config/puma.rb
+   ```
+
+2. **Add the Heroku Postgres Add-on**: Heroku uses PostgreSQL as the default database for Rails apps. Check your `Gemfile` for the `pg` gem.
+
+3. **Environment Variables**: Use `dotenv` for local testing and set variables on Heroku using the CLI.
+
+---
+
+## 5. Deploy to Heroku
+
+1. **Login to Heroku**:
+
+   ```bash
+   heroku login
+   ```
+
+2. **Create a New Heroku App**:
+
+   ```bash
+   heroku create <YOUR_APP_NAME> # Optionally specify an app name
+   ```
+
+3. **Add Heroku as a Git Remote**:
+
+   ```bash
+   git remote add heroku https://git.heroku.com/<YOUR_APP_NAME>.git
+   ```
+
+4. **Push to Heroku**:
+
+   ```bash
+   git push heroku main
+   ```
+
+5. **Run Database Migrations on Heroku**:
+
+   ```bash
+   heroku run rails db:migrate
+   ```
+
+---
+
+## 6. Configure Environment Variables on Heroku and add redirect URI
+
+Add the Heroku domain as an authorized redirect URI to your Google OAuth. Example:
+```bash
+https://<YOUR_APP_NAME>.herokuapp.com/auth/<PROVIDER>/callback
+```
+
+Set environment variables on Heroku for any API keys, secrets, or configuration variables, you will have to setup your Google Authentication key :
+
+If you have used ```RAILS_MASTER_KEY``` to encrypt
+```bash
+heroku config:set RAILS_MASTER_KEY=<YOUR_MASTER_KEY>
+```
+
+or
+```bash
+heroku config:set GOOGLE_CLIENT_ID=<your_google_client_id>
+heroku config:set GOOGLE_CLIENT_SECRET=<your_google_client_secret>
+```
