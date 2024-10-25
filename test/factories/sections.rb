@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :section do
-    section_number { "MyString" }
+    section_number { 'MyString' }
     seats_alloted { 1 }
     course { nil }
   end

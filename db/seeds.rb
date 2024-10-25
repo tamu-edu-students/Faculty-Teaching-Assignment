@@ -63,3 +63,4 @@ TimeSlot.create([
                   { day: 'F', start_time: '15:00', end_time: '15:50', slot_type: 'LAB' }
 
                 ])
+Course.create

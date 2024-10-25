@@ -65,7 +65,7 @@ class SchedulesController < ApplicationController
       csv_handler = CsvHandler.new
       csv_handler.upload(params[:instructor_file])
       flash_result = csv_handler.parse_instructor_csv(@schedule.id)
-      flash[flash_result.keys.first] = flash_result.values.first     
+      flash[flash_result.keys.first] = flash_result.values.first
     else
       flash[:alert] = 'Please upload a CSV file.'
     end
@@ -80,7 +80,7 @@ class SchedulesController < ApplicationController
       csv_handler = CsvHandler.new
       csv_handler.upload(params[:course_file])
       flash_result = csv_handler.parse_course_csv(@schedule.id)
-      flash[flash_result.keys.first] = flash_result.values.first     
+      flash[flash_result.keys.first] = flash_result.values.first
     else
       flash[:alert] = 'Please upload a CSV file.'
     end

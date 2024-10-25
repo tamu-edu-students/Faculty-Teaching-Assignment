@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-class CourseTest < ActiveSupport::TestCase
+class CoursesControllerTest < ActionDispatch::IntegrationTest
   # test "the truth" do
   #   assert true
   # end
