@@ -19,6 +19,10 @@ The key stakeholder for this application is the Associate Department Head, who i
 	* Sprint 2:
 		* Goal: Have a raw views for all the data upload.
 		* [Sprint Plan](https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_2_Plan.pdf)
+      * [Retrospective](https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_2_Retrospective.pdf)
+   * Sprint 3:
+      * Goal: Implement algorithm on actual data provided by the client
+      * [Sprint Plan](https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_3_Plan.pdf)
 
 # Getting Started with Setup and Deployment
 
@@ -120,7 +124,6 @@ rails server # To run locally
 Add the Heroku domain as an authorized redirect URI to your Google OAuth. Example:
 ```bash
 https://<YOUR_APP_NAME>.herokuapp.com/auth/<PROVIDER>/callback
-# Or whatever it may be
 ```
 
 Set environment variables on Heroku for any API keys, secrets, or configuration variables, you will have to setup your Google Authentication key :
