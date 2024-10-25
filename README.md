@@ -11,12 +11,12 @@ The key stakeholder for this application is the Associate Department Head, who i
 - **App** : https://faculty-teaching-assignment-31f5f9c405bc.herokuapp.com
 - **Code Climate Report**: https://codeclimate.com/github/tamu-edu-students/Faculty-Teaching-Assignment
 - **Team Working agreement** : https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Team%20Working%20Agreement.md
-- **Sprint Plans**:
-	- Sprint 1: 
+- **Sprint Documentation**:
+   - Sprint 1: 
 		- Goal: Setup and understand the project, get client data and enable user login and authentication
 		- (Sprint Plan)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Sprint_1_Plan.pdf]
 		- (Retrospective)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint%201%20Retrospective.pdf]
-    	- Sprint 2:
+   - Sprint 2:
        		- Goal: Have a raw views for all the data upload.
          	- (Sprint Plan)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_2_Plan.pdf]
 
@@ -47,10 +47,13 @@ Run `bundle install` to install all required dependencies.
 ```bash
 bundle install
 ```
-Generate your ```GOOGLE_CLIENT_ID``` and ```GOOGLE_CLIENT_SECRET```. Encrypt both of these using a ```RAILS_MASTER_KEY``` and store it in your ```config/credentials.ymc.enc``` 
-Make sure you ```config/master.key``` popuplated with your ```RAILS_MASTER_KEY```.
+Setup your Google OAuth Rails Credentials using Google Developer Console.
+For a more detailed explantion, see 
+[Setup Google OAuth on Google's End](https://github.com/tamu-edu-students/Google-Auth-Ruby-By-JD?tab=readme-ov-file#setup-google-oauth-on-googles-end) 
+and 
+[Add OAuth ID and Secret to Rails Credentials](https://github.com/tamu-edu-students/Google-Auth-Ruby-By-JD?tab=readme-ov-file#create-an-initializer-for-omniauth).
 
-or just store your Google OAuth credentials in your ```config/credentials.ymc.enc``` unencrypted but do not commit them.
+If steps are followed correctly you would have your ```RAILS_MASTER_KEY``` in ```config/master.key```. NEVER EVER COMMIT THIS TO GIT.
 
 ---
 
@@ -126,8 +129,4 @@ If you have used ```RAILS_MASTER_KEY``` to encrypt
 heroku config:set RAILS_MASTER_KEY=<YOUR_MASTER_KEY>
 ```
 
-or
-```bash
-heroku config:set GOOGLE_CLIENT_ID=<your_google_client_id>
-heroku config:set GOOGLE_CLIENT_SECRET=<your_google_client_secret>
-```
+If the above steps do not work, see [Deploy to Heroku](https://github.com/tamu-edu-students/Google-Auth-Ruby-By-JD?tab=readme-ov-file#deploy-to-heroku) for OmniAuth documentation.
