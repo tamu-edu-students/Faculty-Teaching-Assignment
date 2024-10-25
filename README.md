@@ -19,3 +19,7 @@ The key stakeholder for this application is the Associate Department Head, who i
     	- Sprint 2:
        		- Goal: Have a raw views for all the data upload.
          	- (Sprint Plan)[https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_2_Plan.pdf]
+			- (Retrospective) [https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_2_Retrospective.pdf]
+		- Sprint 3:
+			- Goal: Implement algorithm on actual data provided by the client
+			- (Sprint Plan) [https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_3_Plan.pdf]
