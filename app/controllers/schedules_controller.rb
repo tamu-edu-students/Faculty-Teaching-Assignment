@@ -72,6 +72,31 @@ class SchedulesController < ApplicationController
     redirect_to schedule_path(@schedule)
   end
 
+  def generate_schedule
+    # Join room data together
+    active_rooms = Room.where(is_active: true)
+    building_codes = active_rooms.map{|room| room['building_code']}
+    room_numbers = active_rooms.map{|room| room['room_number']}
+    rooms = building_codes.zip(room_numbers).map { |bld, num| "#{bld} #{num}" }
+    capacities = active_rooms.map{|room| room['capacity']}
+    
+    times = TimeSlot.pluck(:day, :start_time, :end_time)
+    
+    professors = Instructor.pluck(:last_name, :first_name).map{|n| "#{n[0]}, #{n[1]}"}
+    classes = (0...professors.length).to_a
+    enrollments = Array.new(classes.length) { rand(20..30) }
+
+    puts capacities.inspect
+    puts enrollments.inspect
+
+    num_locks = 2
+    # TODO: This needs to be a num_profs x num_classes matrix
+    # However, we can only run HA on square matrices
+    # We'll need to duplicate professors according to their contracted teaching load
+    unhappiness_matrix = Array.new(professors.length) {Array.new(classes.length) { rand(1..10)}}
+    assignment = ScheduleSolver.solve(classes, rooms, times, professors, capacities, enrollments, num_locks, unhappiness_matrix)
+  end
+
   # Only allow a list of trusted parameters through.
   def schedule_params
     params.require(:schedule).permit(:schedule_name, :semester_name, :room_file, :instructor_file)

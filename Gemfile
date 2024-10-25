@@ -38,6 +38,7 @@ gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection'
 
 # For the professor/class matching
+gem 'rulp'
 gem 'hungarian_algorithm'
 # CSV parsing
 gem 'csv'
