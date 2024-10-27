@@ -52,6 +52,7 @@ RSpec.describe CsvHandler do
         handler.upload(StringIO.new(valid_instructor_csv))
         handler.parse_instructor_csv(schedule.id)
         expect(Instructor.count).to eq(3)
+        expect(InstructorPreference.count).to eq(3*143)
       end
 
       it 'returns a success message' do
