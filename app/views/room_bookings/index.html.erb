@@ -6,9 +6,7 @@
             </div>
         </a>
         <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
-            <button class="col btn btn-secondary px-4 mx-1">
-                View Data
-            </button>
+            <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col btn btn-secondary px-4 mx-1' %>
             <button class="col btn btn-dark px-4">
                 Generate Remaining
             </button>
@@ -26,38 +24,34 @@
     </ul>
   </div>
 </nav>
-<div class="container w-12">
-
-<table class="table table-bordered table-hover">
-  <thead class="table-dark">
-    <tr>
-      <th>Room / Time Slot</th>
-      <% @time_slots.each do |time_slot| %>
-        <th><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
-      <% end %>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @rooms.each do |room| %>
-      <tr>
-        <td class="table-secondary"><%= room.building_code %> <%= room.room_number %></td>
-        
-        <% @time_slots.each do |time_slot| %>
-          <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
-          
-          <td>
-            <% if booking %>
-              <%= booking.is_available ? 'Available' : 'Booked' %> |
-              <%= booking.is_lab ? 'Lab' : 'Lecture' %>
-            <% else %>
-              NA
+<div class="w-12">
+    <table class="table table-bordered table-hover table-condensed">
+        <thead class="table-dark">
+            <tr>
+            <th>Room / Time Slot</th>
+            <% @time_slots.each do |time_slot| %>
+                <th scope="col"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
             <% end %>
-          </td>
-        <% end %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
+            </tr>
+        </thead>
+        <tbody>
+            <% @rooms.each do |room| %>
+            <tr>
+                <th scope="row" class="table-secondary"><%= room.building_code %> <%= room.room_number %></th>
+                
+                <% @time_slots.each do |time_slot| %>
+                <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
+                
+                <td>
+                    <% if booking %>
+                    <%= booking.is_available ? 'Available' : 'Booked' %> |
+                    <%= booking.is_lab ? 'Lab' : 'Lecture' %>
+                    <% else %>
+                    <% end %>
+                </td>
+                <% end %>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
 </div>
