@@ -1,3 +1,28 @@
-<div>
-    We are where you at <%= @schedule.schedule_name %> room bookings.
+<div class="px-4 py-2 border-bottom">
+    <div class="col-12 row justify-content-between align-items-center">
+        <a class="col-3 schedule-name" href=<%= schedule_path(@schedule) %>>
+            <div class="h1">
+                <%= @schedule.schedule_name %>
+            </div>
+        </a>
+        <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
+            <button class="col btn btn-secondary px-4 mx-1">
+                View Data
+            </button>
+            <button class="col btn btn-dark px-4">
+                Generate Remaining
+            </button>
+        </div>
+    </div>
 </div>
+<nav class="navbar navbar-expand-sm navbar-light border-bottom border-2 border-dark px-4 pb-0 fw-bold">
+  <div class="collapse navbar-collapse" id="scheduleNavbar">
+    <ul class="navbar-nav">
+        <% @tabs.each do |tab| %>
+            <li id="<%= tab %>" class="nav-item">
+                <a class="nav-link <%= "active" if @active_tab == tab %>" href="<%= (@active_tab == tab && "#") || schedule_room_bookings_path(@schedule, active_tab: tab) %>"><%= tab %></a>
+            </li>
+        <% end %>
+    </ul>
+  </div>
+</nav>
