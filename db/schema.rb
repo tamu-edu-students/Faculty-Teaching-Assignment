@@ -12,7 +12,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 20_241_018_191_419) do
+ActiveRecord::Schema[7.2].define(version: 20_241_027_152_021) do
+  create_table 'instructor_preferences', force: :cascade do |t|
+    t.integer 'instructor_id', null: false
+    t.string 'course'
+    t.string 'preference_level'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['instructor_id'], name: 'index_instructor_preferences_on_instructor_id'
+  end
+
   create_table 'instructors', force: :cascade do |t|
     t.integer 'id_number'
     t.string 'last_name'
@@ -25,6 +34,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_018_191_419) do
     t.integer 'schedule_id'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
+    t.integer 'max_course_load'
     t.index ['schedule_id'], name: 'index_instructors_on_schedule_id'
   end
 
@@ -71,6 +81,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_018_191_419) do
     t.index ['email'], name: 'index_users_on_email', unique: true
   end
 
+  add_foreign_key 'instructor_preferences', 'instructors'
   add_foreign_key 'instructors', 'schedules'
   add_foreign_key 'rooms', 'schedules'
 end
