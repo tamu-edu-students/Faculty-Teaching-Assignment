@@ -2,7 +2,7 @@ class RoomBookingsController < ApplicationController
     def index
         schedule_id = params[:schedule_id]
         @schedule = Schedule.find(params[:schedule_id])
-        @rooms = @schedule.rooms
+        @rooms = @schedule.rooms.where(is_active: true)
         @tabs = TimeSlot.distinct.pluck(:day)
         @active_tab = params[:active_tab] || @tabs[0]
         @time_slots = TimeSlot.where(time_slots: {day: @active_tab})
