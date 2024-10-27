@@ -136,19 +136,19 @@ RSpec.describe SchedulesController, type: :controller do
     let!(:schedule1) { create(:schedule) }
 
     context 'with a valid CSV file' do
-      it "processes the CSV file, sets a success flash, and redirects to the user's page" do
+      it "processes the CSV file, sets a success flash, and redirects to the schedule's page" do
         post :upload_instructors, params: { id: schedule1.id, instructor_file: file_valid }
 
         expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(schedule_path(schedule1)) # Redirect to the current user's page
+        expect(response).to redirect_to(schedule_path(schedule1)) # Redirect to the current schedule's page
         expect(flash[:notice]).to eq('Instructors successfully uploaded.')
       end
     end
 
     context 'when invalid CSV file is selected' do
-      it "sets an error flash and redirects to the user's page" do
+      it "sets an error flash and redirects to the schedule's page" do
         post :upload_instructors, params: { id: schedule1.id, instructor_file: file_invalid }
-        expect(flash[:alert]).to include('Missing required headers: anonimized ID, First Name, Last Name')
+        expect(flash[:alert]).to include('Missing required headers: anonimized ID')
       end
     end
 

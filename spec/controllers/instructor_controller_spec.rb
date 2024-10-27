@@ -29,8 +29,8 @@ RSpec.describe InstructorsController, type: :controller do
       end
     end
     context 'with added instructors ' do
-      let!(:instructor1) { create(:instructor, schedule: schedule) } # Associate instructor with the schedule
-      let!(:instructor2) { create(:instructor, schedule: schedule) } # Associate another instructor with the schedule
+      let!(:instructor1) { create(:instructor, schedule:) } # Associate instructor with the schedule
+      let!(:instructor2) { create(:instructor, schedule:) } # Associate another instructor with the schedule
       it 'assigns all instructors to @instructors' do
         get :index, params: { schedule_id: schedule.id }
         expect(assigns(:instructors)).to match_array([instructor1, instructor2])

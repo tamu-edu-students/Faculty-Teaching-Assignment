@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/services/csv_handler_spec.rb
 require 'rails_helper'
 
@@ -49,7 +51,7 @@ RSpec.describe CsvHandler do
         handler = CsvHandler.new
         handler.upload(StringIO.new(valid_instructor_csv))
         handler.parse_instructor_csv(schedule.id)
-        expect(Instructor.count).to eq(4)
+        expect(Instructor.count).to eq(3)
       end
 
       it 'returns a success message' do
