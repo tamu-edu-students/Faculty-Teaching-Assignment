@@ -29,4 +29,10 @@ FactoryBot.define do
     beaware_of { 'Some notes or warnings.' } # Default text
     association :schedule # Associate with a Schedule, assuming you have a Schedule factory as well
   end
+
+  factory :instructor_preference do
+    association :instructor
+    course { '111/708' }
+    preference_level { '2' }
+  end
 end
