@@ -3,6 +3,7 @@
 # Room Model
 class Room < ApplicationRecord
   belongs_to :schedule
+  has_many :room_bookings, dependent: :destroy
   enum :campus, { NONE: 0, CS: 1, GV: 2 }
 
   validates :building_code, presence: true
