@@ -5,7 +5,7 @@ class CoursesController < ApplicationController
   before_action :set_schedule, only: [:index]
   def index
     @schedule = Schedule.find(params[:schedule_id])
-    @courses  = @schedule.courses
+    @courses  = @schedule.courses.includes(:sections).all
     direction = params[:direction] == 'desc' ? 'desc' : 'asc'
     @courses = @courses.order("#{sort_column} #{direction}")
   end

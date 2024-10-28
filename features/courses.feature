@@ -34,6 +34,7 @@ Feature: Courses Page
         And I should see "Max Seats"
         And I should see "Lecture Type"
         And I should see "Number of Labs"
+        And I should see "Sections"
 
         When I click "Course Number"
         Then I should see "435/735/735D" first

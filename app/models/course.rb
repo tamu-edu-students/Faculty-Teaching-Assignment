@@ -2,4 +2,5 @@
 
 class Course < ApplicationRecord
   belongs_to :schedule
+  has_many :sections
 end

@@ -13,6 +13,7 @@
             <th scope="col"><%= sortable "max_seats", "Max Seats" %></th>
             <th scope="col"><%= sortable "lecture_type", "Lecture Type" %></th>
             <th scope="col"><%= sortable "num_labs", "Number of Labs" %></th>
+            <th scope="col">Sections</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +25,13 @@
                 <td><%= course.max_seats %></td>
                 <td><%= course.lecture_type %></td>
                 <td><%= course.num_labs %></td>
+                <td>
+                    <% if course.sections.any? %>
+                        <%= course.sections.order(:section_number).map(&:section_number).join(', ') %>
+                    <% else %>
+                        No Sections
+                    <% end %>
+                </td>
                 
                 
             </tr>

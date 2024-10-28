@@ -9,11 +9,11 @@ When(/I visit the courses page for "(.*)"/) do |_schedule_name|
   visit schedule_courses_path(schedule_id: @schedule.id)
 end
 
-  Then(/I should see "(.*)" first/) do |course_num|
-    first_row = find('#courses tbody tr', match: :first)
-    actual_course_number = first_row.find('td:nth-child(1)').text.strip
-    expect(actual_course_number).to eq(course_num)
-  end
+Then(/I should see "(.*)" first/) do |course_num|
+  first_row = find('#courses tbody tr', match: :first)
+  actual_course_number = first_row.find('td:nth-child(1)').text.strip
+  expect(actual_course_number).to eq(course_num)
+end
 #   Given(/^a schedule exists with the schedule name "(.*)" and semester name "(.*)"$/) do |schedule_name, semester_name|
 #     @schedule = Schedule.create!(schedule_name: schedule_name, semester_name: semester_name)
 #   end
