@@ -25,21 +25,22 @@
   </div>
 </nav>
 <div class="w-12">
-    <table class="table table-bordered table-hover table-condensed">
-        <thead class="table-dark">
+    <table class="table table-bordered table-hover grid-view-matrix">
+        <thead class="table-secondary">
             <tr>
-            <th>Room / Time Slot</th>
-            <% @time_slots.each do |time_slot| %>
-                <th scope="col"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
+            <th>Times \ Rooms</th>
+            <% @rooms.each do |room| %>
+                <th scope="col" ><%= room.building_code %> <%= room.room_number %></th>
+                
             <% end %>
             </tr>
         </thead>
         <tbody>
-            <% @rooms.each do |room| %>
+            <% @time_slots.each do |time_slot| %>
             <tr>
-                <th scope="row" class="table-secondary"><%= room.building_code %> <%= room.room_number %></th>
+                <th scope="row" class="table-secondary"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
                 
-                <% @time_slots.each do |time_slot| %>
+                <% @rooms.each do |room| %>
                 <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
                 
                 <td>
