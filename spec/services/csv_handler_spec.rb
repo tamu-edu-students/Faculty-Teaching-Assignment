@@ -9,6 +9,8 @@ RSpec.describe CsvHandler do
   let(:invalid_room_csv) { File.read(Rails.root.join('spec', 'fixtures', 'rooms', 'rooms_invalid.csv')) }
   let(:valid_instructor_csv) { File.read(Rails.root.join('spec', 'fixtures', 'instructors', 'instructors_valid.csv')) }
   let(:invalid_instructor_csv) { File.read(Rails.root.join('spec', 'fixtures', 'instructors', 'instructors_missing_headers.csv')) }
+  let(:valid_course_csv) { File.read(Rails.root.join('spec', 'fixtures', 'courses', 'Course_list_valid.csv')) }
+  let(:invalid_course_csv) { File.read(Rails.root.join('spec', 'fixtures', 'courses', 'Course_list_invalid.csv')) }
 
   describe '#initialize' do
     it 'initializes with a file' do
@@ -68,6 +70,33 @@ RSpec.describe CsvHandler do
         handler.upload(StringIO.new(invalid_instructor_csv))
         result = handler.parse_instructor_csv(schedule.id)
         expect(result[:alert]).to include('Missing required headers')
+      end
+    end
+  end
+
+  describe '#parse_course_csv' do
+    context 'with valid data' do
+      it 'creates course records' do
+        handler = CsvHandler.new
+        handler.upload(StringIO.new(valid_course_csv))
+        handler.parse_course_csv(schedule.id)
+        expect(Course.count).to eq(10)
+      end
+
+      it 'returns a success message' do
+        handler = CsvHandler.new
+        handler.upload(StringIO.new(valid_course_csv))
+        result = handler.parse_course_csv(schedule.id)
+        expect(result[:notice]).to eq('Courses successfully uploaded.')
+      end
+    end
+
+    context 'with invalid data' do
+      it 'prints an alert' do
+        handler = CsvHandler.new
+        handler.upload(StringIO.new(invalid_course_csv))
+        result = handler.parse_course_csv(schedule.id)
+        expect(result[:alert]).to include('Missing required headers: Class, Max. Seats, Lecture Type, #Labs, Section number, Seat Split')
       end
     end
   end
