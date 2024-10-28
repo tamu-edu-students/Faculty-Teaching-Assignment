@@ -10,8 +10,7 @@
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
-# It's strongly recommended that you check this file into your version control system.
-
+# It's strongly recommended that you check this file into your version control syste
 
 ActiveRecord::Schema[7.2].define(version: 20_241_023_233_115) do
   create_table 'courses', force: :cascade do |t|
@@ -39,7 +38,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_023_233_115) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.index ['schedule_id'], name: 'index_instructors_on_schedule_id'
-
+  end
 
   create_table 'rooms', force: :cascade do |t|
     t.integer 'campus'
