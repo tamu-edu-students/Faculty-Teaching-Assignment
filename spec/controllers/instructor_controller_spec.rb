@@ -32,8 +32,8 @@ RSpec.describe InstructorsController, type: :controller do
       let!(:instructor1) { create(:instructor, schedule:) } # Associate instructor with the schedule
       let!(:instructor2) { create(:instructor, schedule:) } # Associate another instructor with the schedule
 
-      let!(:preference1) { create(:instructor_preference, instructor: instructor1, course: "111/708", preference_level: "2") }
-      let!(:preference2) { create(:instructor_preference, instructor: instructor2, course: "222/708", preference_level: "3") }
+      let!(:preference1) { create(:instructor_preference, instructor: instructor1, course: '111/708', preference_level: '2') }
+      let!(:preference2) { create(:instructor_preference, instructor: instructor2, course: '222/708', preference_level: '3') }
 
       it 'assigns all instructors to @instructors' do
         get :index, params: { schedule_id: schedule.id }
@@ -44,7 +44,7 @@ RSpec.describe InstructorsController, type: :controller do
         instructor_with_prefs = assigns(:instructors).find { |instructor| instructor.id == instructor1.id }
         expect(instructor_with_prefs.instructor_preferences).to include(preference1)
         expect(instructor_with_prefs.instructor_preferences).not_to include(preference2)
-    
+
         instructor_with_prefs = assigns(:instructors).find { |instructor| instructor.id == instructor2.id }
         expect(instructor_with_prefs.instructor_preferences).to include(preference2)
       end
