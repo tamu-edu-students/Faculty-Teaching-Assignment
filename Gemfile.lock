@@ -359,6 +359,7 @@ GEM
       rubocop-rails
     ruby-progressbar (1.13.0)
     rubyzip (2.3.2)
+    rulp (0.0.50)
     securerandom (0.3.1)
     selenium-webdriver (4.25.0)
       base64 (~> 0.2)
@@ -462,6 +463,7 @@ DEPENDENCIES
   rails-controller-testing
   rspec-rails
   rubocop-rails-omakase
+  rulp
   selenium-webdriver
   shoulda-matchers
   simplecov

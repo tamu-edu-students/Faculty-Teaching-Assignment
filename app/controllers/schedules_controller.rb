@@ -94,6 +94,8 @@ class SchedulesController < ApplicationController
     # We'll need to duplicate professors according to their contracted teaching load
     unhappiness_matrix = Array.new(professors.length) {Array.new(classes.length) { rand(1..10)}}
     assignment = ScheduleSolver.solve(classes, rooms, times, professors, capacities, enrollments, locks, unhappiness_matrix)
+
+
   end
 
   # Only allow a list of trusted parameters through.

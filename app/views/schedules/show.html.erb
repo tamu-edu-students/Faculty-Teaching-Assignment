@@ -3,6 +3,7 @@
 Semester:<%= @schedule.semester_name %></h5>
 <%= link_to 'Back', schedules_path, class: 'btn btn-secondary' %>
 <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'btn btn-primary' %>
+<%= button_to 'Generate Schedule', generate_schedule_schedule_path(@schedule), method: :post, data: { confirm: 'Are you sure you want to generate the schedule?' } %>
 
 <%= form_with url: upload_rooms_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
   <div class='col-4'>
