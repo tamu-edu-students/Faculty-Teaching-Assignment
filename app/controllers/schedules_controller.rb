@@ -86,15 +86,14 @@ class SchedulesController < ApplicationController
     classes = (0...professors.length).to_a
     enrollments = Array.new(classes.length) { rand(20..30) }
 
-    puts capacities.inspect
-    puts enrollments.inspect
+    # TODO: Garbage value for now
+    locks = [[0,0,0]]
 
-    num_locks = 2
     # TODO: This needs to be a num_profs x num_classes matrix
     # However, we can only run HA on square matrices
     # We'll need to duplicate professors according to their contracted teaching load
     unhappiness_matrix = Array.new(professors.length) {Array.new(classes.length) { rand(1..10)}}
-    assignment = ScheduleSolver.solve(classes, rooms, times, professors, capacities, enrollments, num_locks, unhappiness_matrix)
+    assignment = ScheduleSolver.solve(classes, rooms, times, professors, capacities, enrollments, locks, unhappiness_matrix)
   end
 
   # Only allow a list of trusted parameters through.
