@@ -16,7 +16,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_027_152_021) do
   create_table 'instructor_preferences', force: :cascade do |t|
     t.integer 'instructor_id', null: false
     t.string 'course'
-    t.string 'preference_level'
+    t.integer 'preference_level'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.index ['instructor_id'], name: 'index_instructor_preferences_on_instructor_id'

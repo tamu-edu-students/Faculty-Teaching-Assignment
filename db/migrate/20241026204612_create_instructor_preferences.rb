@@ -5,7 +5,7 @@ class CreateInstructorPreferences < ActiveRecord::Migration[7.2]
     create_table :instructor_preferences do |t|
       t.references :instructor, null: false, foreign_key: true
       t.string :course
-      t.string :preference_level
+      t.integer :preference_level
 
       t.timestamps
     end
