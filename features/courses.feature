@@ -46,7 +46,7 @@ Feature: Courses Page
         Given a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         And I am logged in as a user with first name "Test"
         And I am on the details page for "Sched 1"
-        When I attach a valid "course_file" with path "spec/fixtures/courses/course_list_valid.csv"
+        When I attach a valid "course_file" with path "spec/fixtures/courses/Course_list_valid.csv"
         And I click the "Upload Course Data" button
         Then I should see "Courses successfully uploaded."
     Scenario: Upload courses data empty
