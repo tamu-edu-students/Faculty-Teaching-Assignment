@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/services/csv_handler_spec.rb
 require 'rails_helper'
 
