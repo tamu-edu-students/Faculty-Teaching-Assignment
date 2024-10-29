@@ -2,7 +2,7 @@
 
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
-  before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors]
+  before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors upload_courses]
   def index
     @schedules = Schedule.all
 
@@ -65,7 +65,22 @@ class SchedulesController < ApplicationController
       csv_handler = CsvHandler.new
       csv_handler.upload(params[:instructor_file])
       flash_result = csv_handler.parse_instructor_csv(@schedule.id)
-      flash[flash_result.keys.first] = flash_result.values.first     
+      flash[flash_result.keys.first] = flash_result.values.first
+    else
+      flash[:alert] = 'Please upload a CSV file.'
+    end
+    redirect_to schedule_path(@schedule)
+  end
+
+  def upload_courses
+    if params[:course_file].present?
+      # FIXME: See concern in upload_rooms
+      Section.where(course_id: @schedule.courses.pluck(:id)).destroy_all
+      @schedule.courses.destroy_all
+      csv_handler = CsvHandler.new
+      csv_handler.upload(params[:course_file])
+      flash_result = csv_handler.parse_course_csv(@schedule.id)
+      flash[flash_result.keys.first] = flash_result.values.first
     else
       flash[:alert] = 'Please upload a CSV file.'
     end

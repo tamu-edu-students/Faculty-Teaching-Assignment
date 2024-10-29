@@ -23,6 +23,9 @@
 - Developers "start" and "finish" stories, PO "delivers" them
 - Attend meetings or inform about unavailibility
 - Always squash and merge
+- Give scrum updates daily on slack
+- Add coverage% of tests and rubocop offenses in the description of PR
+- Delete stale branches after merging to main
 
 ### Disagreement Handling
 - Talk about it
@@ -33,6 +36,8 @@
 - Team agrees it's done
 - Properly tested
 - Rubocop has at most 1 offense per file
+- Ensure tests cover all the scenarios including corner cases
+- 
 - Run cucumber and maintain coverage above 90% for your feature
 - Run rspec and maintain coverage above 90% for your feature
 
