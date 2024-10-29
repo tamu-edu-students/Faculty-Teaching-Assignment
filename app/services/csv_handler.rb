@@ -79,4 +79,58 @@ class CsvHandler
   rescue StandardError => e
     { alert: "There was an error uploading the CSV file: #{e.message}" }
   end
+
+  def parse_course_csv(schedule_id)
+    ActiveRecord::Base.transaction do
+      course_data = CSV.parse(@file.read)
+      actual_headers = course_data[0]
+      required_headers = [
+        'Class',
+        'Max. Seats',
+        'Lecture Type',
+        '#Labs',
+        'Section number',
+        'Seat Split'
+      ]
+
+      missing_headers = required_headers - actual_headers
+      return { alert: "Missing required headers: #{missing_headers.join(', ')}" } unless missing_headers.empty?
+
+      course_data[1..].each do |row|
+        # Extracting values and checking for nulls
+        course_number = row[actual_headers.index('Class')]
+        max_seats = row[actual_headers.index('Max. Seats')]
+        labs = row[actual_headers.index('#Labs')]
+        lecture_type = row[actual_headers.index('Lecture Type')]
+        section_number = row[actual_headers.index('Section number')]
+        seats_allocated = row[actual_headers.index('Seat Split')]
+
+        course_data = {
+          schedule_id: schedule_id,
+          course_number: course_number,
+          max_seats: max_seats.to_i,
+          lecture_type: lecture_type,
+          num_labs: labs.to_i
+        }
+
+        course = Course.create(course_data)
+
+        section_array = section_number.split(',')
+        seats_array = seats_allocated.split(',')
+
+        section_array.each_with_index do |section, index|
+          section_data = {
+            course_id: course.id,
+            section_number: section,
+            seats_alloted: seats_array[index].to_i
+          }
+
+          Section.create(section_data)
+        end
+      end
+    end
+    { notice: 'Courses successfully uploaded.' }
+  rescue StandardError => e
+    { alert: "There was an error uploading the CSV file: #{e.message}" }
+  end
 end

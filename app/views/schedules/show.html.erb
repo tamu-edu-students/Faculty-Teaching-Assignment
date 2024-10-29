@@ -23,3 +23,13 @@ Semester:<%= @schedule.semester_name %></h5>
     <%= f.submit "Upload Instructor Data" %>
   </div>
 <% end %>
+
+  <%= form_with url: upload_courses_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
+  <div class='col-4'>
+    <%= f.label :instructor_file, "Select Course Data (CSV)", class: "form-label fw-bold" %>
+    <%= f.file_field :course_file, class: "form-control" %>
+  </div>
+  <div>
+    <%= f.submit "Upload Course Data" %>
+  </div>
+<% end %>

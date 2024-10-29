@@ -1,0 +1,42 @@
+<%= render_navbar("courses", @schedule) %>
+
+<% if @courses.empty? %>
+    <p class="container h1 text-secondary">No courses added to this schedule!</p>
+<% else %>
+<div class="container border-2 border-dark">
+  
+    <table id= "courses" class="table col-8 border-2 border-dark table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+            
+            <th scope="col"><%= sortable "course_number", "Course Number" %></th>
+            <th scope="col"><%= sortable "max_seats", "Max Seats" %></th>
+            <th scope="col"><%= sortable "lecture_type", "Lecture Type" %></th>
+            <th scope="col"><%= sortable "num_labs", "Number of Labs" %></th>
+            <th scope="col">Sections</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @courses.each do |course| %>
+            <tr>
+                
+                
+                <td><%= course.course_number %></td>
+                <td><%= course.max_seats %></td>
+                <td><%= course.lecture_type %></td>
+                <td><%= course.num_labs %></td>
+                <td>
+                    <% if course.sections.any? %>
+                        <%= course.sections.order(:section_number).map(&:section_number).join(', ') %>
+                    <% else %>
+                        No Sections
+                    <% end %>
+                </td>
+                
+                
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>
+<% end %>
