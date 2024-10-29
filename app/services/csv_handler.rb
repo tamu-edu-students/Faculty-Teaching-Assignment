@@ -13,7 +13,7 @@ class CsvHandler
       room_data = CSV.parse(@file.read, headers: true)
       room_data.each do |row|
         Room.create!(
-          schedule_id: schedule_id,
+          schedule_id:,
           campus: row['campus'],
           building_code: row['building_code'],
           room_number: row['room_number'],
@@ -133,10 +133,10 @@ class CsvHandler
         seats_allocated = row[actual_headers.index('Seat Split')]
 
         course_data = {
-          schedule_id: schedule_id,
-          course_number: course_number,
+          schedule_id:,
+          course_number:,
           max_seats: max_seats.to_i,
-          lecture_type: lecture_type,
+          lecture_type:,
           num_labs: labs.to_i
         }
 
