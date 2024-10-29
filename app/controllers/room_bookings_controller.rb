@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Room Bookings Controller
 class RoomBookingsController < ApplicationController
   def index
     schedule_id = params[:schedule_id]
