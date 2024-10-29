@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# CSV Handler for uploading room and instructor data
 class CsvHandler
   require 'csv'
 
@@ -38,7 +39,7 @@ class CsvHandler
 
       # FIXME: This should be removed before go-live. This is to add missing data to the csv so that we can work with it
       missing_names = !actual_headers.include?('First Name') || !actual_headers.include?('Last Name') || !actual_headers.include?('Email')
-      instructor_data, actual_headers = add_Missing_Data(instructor_data, actual_headers) if missing_names
+      instructor_data, actual_headers = add_missing_data(instructor_data, actual_headers) if missing_names
 
       required_headers = [
         'anonimized ID',
@@ -66,7 +67,9 @@ class CsvHandler
         email = row[actual_headers.index('Email')]
         before_9 = row[actual_headers.index('Teaching before 9:00 am.')]
         after_3 = row[actual_headers.index('Teaching after 3:00 pm.')]
-        beaware_of = row[actual_headers.index('Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)')]
+        beaware_of = row[actual_headers.index(
+          'Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)'
+        )]
         course_load = row[actual_headers.index('Number of courses to assign')]
 
         instructor_data = {
@@ -106,7 +109,7 @@ class CsvHandler
   private
 
   # Function to add random names and emails to the csv
-  def add_Missing_Data(instructor_data, actual_headers)
+  def add_missing_data(instructor_data, actual_headers)
     # Modify the header row
     actual_headers += ['First Name', 'Middle Name', 'Last Name', 'Email']
 

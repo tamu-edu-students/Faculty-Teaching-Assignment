@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Migration for creating instructor preferences
 class CreateInstructorPreferences < ActiveRecord::Migration[7.2]
   def change
     create_table :instructor_preferences do |t|

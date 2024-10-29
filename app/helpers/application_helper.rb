@@ -26,6 +26,6 @@ module ApplicationHelper
   ].freeze
 
   def render_navbar(active_tab, schedule)
-    render partial: '/shared/insched_nav', locals: { tabs: TAB_LIST, active_tab: active_tab, schedule: schedule }
+    render partial: '/shared/insched_nav', locals: { tabs: TAB_LIST, active_tab:, schedule: }
   end
 end

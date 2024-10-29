@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Model for Time Slots
 class TimeSlot < ApplicationRecord
   validates :day, presence: true
   validates :start_time, presence: true
