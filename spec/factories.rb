@@ -38,9 +38,9 @@ FactoryBot.define do
   end
 
   factory :time_slot do
-    day { "Monday" }
-    start_time { "09:00" }
-    end_time { "10:00" }
-    slot_type { "Lecture" }
+    day { 'Monday' }
+    start_time { '09:00' }
+    end_time { '10:00' }
+    slot_type { 'Lecture' }
   end
 end
