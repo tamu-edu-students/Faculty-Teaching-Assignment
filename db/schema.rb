@@ -10,9 +10,20 @@
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
-# It's strongly recommended that you check this file into your version control system.
+# It's strongly recommended that you check this file into your version control syste
 
-ActiveRecord::Schema[7.2].define(version: 20_241_027_152_021) do
+ActiveRecord::Schema[7.2].define(version: 20_241_023_233_115) do
+  create_table 'courses', force: :cascade do |t|
+    t.string 'course_number'
+    t.integer 'max_seats'
+    t.string 'lecture_type'
+    t.integer 'num_labs'
+    t.integer 'schedule_id', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['schedule_id'], name: 'index_courses_on_schedule_id'
+  end
+
   create_table 'instructor_preferences', force: :cascade do |t|
     t.integer 'instructor_id', null: false
     t.string 'course'
@@ -61,6 +72,20 @@ ActiveRecord::Schema[7.2].define(version: 20_241_027_152_021) do
     t.datetime 'updated_at', null: false
   end
 
+  create_table 'sections', force: :cascade do |t|
+    t.string 'section_number'
+    t.integer 'seats_alloted'
+    t.integer 'course_id', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['course_id'], name: 'index_sections_on_course_id'
+
+  end
+
+  
+
+  
+
   create_table 'time_slots', force: :cascade do |t|
     t.string 'day'
     t.string 'start_time'
@@ -81,7 +106,11 @@ ActiveRecord::Schema[7.2].define(version: 20_241_027_152_021) do
     t.index ['email'], name: 'index_users_on_email', unique: true
   end
 
+
+  add_foreign_key 'courses', 'schedules'
   add_foreign_key 'instructor_preferences', 'instructors'
   add_foreign_key 'instructors', 'schedules'
   add_foreign_key 'rooms', 'schedules'
+  add_foreign_key 'sections', 'courses'
+
 end

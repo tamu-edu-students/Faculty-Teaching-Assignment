@@ -11,7 +11,7 @@ module ApplicationHelper
     {
       id: 'courses',
       title: 'Courses',
-      link: '#'
+      link: '/courses'
     },
     {
       id: 'instructors',
