@@ -51,7 +51,11 @@ RSpec.describe CsvHandler do
     context 'with valid data' do
       before do
         handler = CsvHandler.new
-        handler.upload(StringIO.new(valid_instructor_csv))
+        handler.upload(StringIO.new(valid_course_csv))
+        handler.parse_course_csv(schedule.id)
+
+        handler = CsvHandler.new
+        handler.upload(StringIO.new(valid_instructor_csv))        
         @result = handler.parse_instructor_csv(schedule.id)
       end
       it 'creates instructor records' do
@@ -59,17 +63,21 @@ RSpec.describe CsvHandler do
       end
 
       it 'creates instructor prefrences with correct values' do
-        expect(InstructorPreference.count).to eq(3 * 4) # 3 instructors with 4 preferences each in the dummy data
+        expect(InstructorPreference.count).to eq(3 * 5) # 3 instructors with 4 preferences each in the dummy data and 1 extra course in the courses table
         instructor = Instructor.find_by(id_number: 2_755_728)
         expect(instructor).not_to be_nil
         preferences = InstructorPreference.where(instructor_id: instructor.id)
-        expect(preferences.count).to eq(4)
-        preference1 = preferences.find_by(course: '110/707')
+        expect(preferences.count).to eq(5)
+        course = Course.find_by(course_number: '120')
+        preference1 = preferences.find_by(course: course)
         expect(preference1.preference_level).to eq(2)
+        course = Course.find_by(course_number: '435/735/735D')
+        preference1 = preferences.find_by(course: course)
+        expect(preference1.preference_level).to eq(3)
       end
 
       it 'returns a success message' do
-        expect(@result[:notice]).to eq('Instructors successfully uploaded.')
+        expect(@result[:notice]).to eq('Instructors and Preferences successfully uploaded.')
       end
     end
 
