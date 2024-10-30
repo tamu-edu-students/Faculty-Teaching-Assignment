@@ -13,16 +13,17 @@ class SchedulesController < ApplicationController
   end
 
   def show
-    Time.zone = "America/Chicago"
+    Time.zone = 'America/Chicago'
     @rooms_count = @schedule.rooms.count
     @rooms_last_uploaded = @schedule.rooms.order(created_at: :desc).first&.created_at&.in_time_zone
-    
+
     @courses_count = @schedule.courses.count
     @courses_last_uploaded = @schedule.courses.order(created_at: :desc).first&.created_at&.in_time_zone
-    
+
     @instructors_count = @schedule.instructors.count
     @instructors_last_uploaded = @schedule.instructors.order(created_at: :desc).first&.created_at&.in_time_zone
   end
+
   # GET /schedules/new
   def new
     @schedule = Schedule.new
@@ -109,5 +110,5 @@ class SchedulesController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     flash[:alert] = 'Schedule not found.'
     redirect_to schedules_path
-  end  
+  end
 end

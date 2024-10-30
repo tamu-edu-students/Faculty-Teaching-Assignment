@@ -57,6 +57,7 @@ class CsvHandler
 
       missing_headers = required_headers - actual_headers
       return { alert: "Missing required headers: #{missing_headers.join(', ')}" } unless missing_headers.empty?
+
       preferences_to_upload = []
       courses_with_preferences = []
       missing_courses = []
@@ -103,7 +104,7 @@ class CsvHandler
             # Store valid preferences temporarily
             preferences_to_upload << {
               instructor_id: instructor.id,
-              course: course,
+              course:,
               preference_level: row[col_index]
             }
             courses_with_preferences << course_number
@@ -113,17 +114,17 @@ class CsvHandler
       missing_courses = schedule.courses.pluck(:course_number).uniq - courses_with_preferences.uniq
       if missing_courses.any?
         instructors = schedule.instructors.pluck(:id).uniq
-        for instructor_id in instructors
-          for course in missing_courses
+        instructors.each do |instructor_id|
+          missing_courses.each do |course|
             preferences_to_upload << {
-                instructor_id: instructor_id,
-                course: schedule.courses.find_by(course_number: course),
-                preference_level: 3
-              } # Default preference level for missing courses
+              instructor_id:,
+              course: schedule.courses.find_by(course_number: course),
+              preference_level: 3
+            } # Default preference level for missing courses
           end
         end
       end
-      
+
       # Create instructor preferences if all courses are valid
       preferences_to_upload.each do |preference|
         InstructorPreference.create(preference)

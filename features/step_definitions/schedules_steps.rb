@@ -58,4 +58,3 @@ end
 Then('I should see the {string} button is disabled') do |button_text|
   expect(page).to have_button(button_text, disabled: true)
 end
-
