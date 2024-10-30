@@ -53,7 +53,7 @@
             <tbody>
               <% instructor.instructor_preferences.each do |preference| %>
                 <tr>
-                  <td><%= preference.course %></td>
+                  <td><%= preference.course.course_number %></td>
                   <td><%= preference.preference_level %></td>
                 </tr>
               <% end %>
