@@ -1,0 +1,64 @@
+<div class="px-4 py-2 border-bottom">
+    <div class="col-12 row justify-content-between align-items-center">
+        <a class="col-3 schedule-name" href=<%= schedule_path(@schedule) %>>
+            <div class="h1">
+                <%= @schedule.schedule_name %>
+            </div>
+        </a>
+        <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
+            <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col-5 btn btn-secondary px-4 mx-1' %>
+            <% if !@rooms.empty? %>
+                <button class="col-5 btn btn-dark px-4">
+                    Generate Remaining
+                </button>
+            <% end %>
+        </div>
+    </div>
+</div>
+<% if !@rooms.empty? %>
+<nav class="navbar navbar-expand-sm navbar-light border-bottom border-2 border-dark px-4 pb-0 fw-bold">
+  <div class="collapse navbar-collapse" id="scheduleNavbar">
+    <ul class="navbar-nav">
+        <% @tabs.each do |tab| %>
+            <li id="<%= tab %>" class="nav-item">
+                <a class="nav-link <%= "active" if @active_tab == tab %>" href="<%= (@active_tab == tab && "#") || schedule_room_bookings_path(@schedule, active_tab: tab) %>"><%= tab %></a>
+            </li>
+        <% end %>
+    </ul>
+  </div>
+</nav>
+<div class="w-12">
+    <table class="table table-bordered table-hover grid-view-matrix">
+        <thead class="table-secondary">
+            <tr>
+            <th>Times \ Rooms</th>
+            <% @rooms.each do |room| %>
+                <th scope="col" ><%= room.building_code %> <%= room.room_number %></th>
+                
+            <% end %>
+            </tr>
+        </thead>
+        <tbody>
+            <% @time_slots.each do |time_slot| %>
+            <tr>
+                <th scope="row" class="table-secondary"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
+                
+                <% @rooms.each do |room| %>
+                <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
+                
+                <td>
+                    <% if booking %>
+                    <%= booking.is_available ? 'Available' : 'Booked' %> |
+                    <%= booking.is_lab ? 'Lab' : 'Lecture' %>
+                    <% else %>
+                    <% end %>
+                </td>
+                <% end %>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>
+<% else %>
+    <p class="container h1 text-secondary">No rooms added to this schedule, click on View Data to Add Rooms!</p>
+<% end %>

@@ -130,6 +130,7 @@ RSpec.describe SchedulesController, type: :controller do
       end
     end
   end
+
   describe 'POST #upload_instructors' do
     let(:file_valid) { fixture_file_upload(Rails.root.join('spec/fixtures/instructors/instructors_valid.csv'), 'text/csv') }
     let(:file_invalid) { fixture_file_upload(Rails.root.join('spec/fixtures/rooms/rooms_invalid.csv'), 'text/csv') }
@@ -155,6 +156,39 @@ RSpec.describe SchedulesController, type: :controller do
     context 'when no CSV file is selected' do
       it "sets an error flash and redirects to the user's page" do
         post :upload_instructors, params: { id: schedule1.id, instructor_file: nil }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(schedule_path(schedule1)) # Redirect to the current user's page
+        expect(flash[:alert]).to eq('Please upload a CSV file.')
+      end
+    end
+  end
+
+  describe 'POST #upload_courses' do
+    let(:file_valid) { fixture_file_upload(Rails.root.join('spec/fixtures/courses/Course_list_valid.csv'), 'text/csv') }
+    let(:file_invalid) { fixture_file_upload(Rails.root.join('spec/fixtures/courses/Course_list_invalid.csv'), 'text/csv') }
+    let!(:schedule1) { create(:schedule) }
+
+    context 'with a valid CSV file' do
+      it "processes the CSV file, sets a success flash, and redirects to the user's page" do
+        post :upload_courses, params: { id: schedule1.id, course_file: file_valid }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(schedule_path(schedule1)) # Redirect to the current user's page
+        expect(flash[:notice]).to eq('Courses successfully uploaded.')
+      end
+    end
+
+    context 'when invalid CSV file is selected' do
+      it "sets an error flash and redirects to the user's page" do
+        post :upload_courses, params: { id: schedule1.id, course_file: file_invalid }
+        expect(flash[:alert]).to include('Missing required headers:')
+      end
+    end
+
+    context 'when no CSV file is selected' do
+      it "sets an error flash and redirects to the user's page" do
+        post :upload_courses, params: { id: schedule1.id, room_file: nil }
 
         expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to(schedule_path(schedule1)) # Redirect to the current user's page

@@ -10,3 +10,5 @@ Metrics/ClassLength:
   Max: 250
 AllCops:
   NewCops: enable
+Documentation:
+  Enabled: false

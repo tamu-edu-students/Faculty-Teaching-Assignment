@@ -10,9 +10,9 @@
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
-# It's strongly recommended that you check this file into your version control syste
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 20_241_023_233_115) do
+ActiveRecord::Schema[7.2].define(version: 20_241_027_021_034) do
   create_table 'courses', force: :cascade do |t|
     t.string 'course_number'
     t.integer 'max_seats'
@@ -23,7 +23,6 @@ ActiveRecord::Schema[7.2].define(version: 20_241_023_233_115) do
     t.datetime 'updated_at', null: false
     t.index ['schedule_id'], name: 'index_courses_on_schedule_id'
   end
-
 
   create_table 'instructors', force: :cascade do |t|
     t.integer 'id_number'
@@ -38,6 +37,17 @@ ActiveRecord::Schema[7.2].define(version: 20_241_023_233_115) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.index ['schedule_id'], name: 'index_instructors_on_schedule_id'
+  end
+
+  create_table 'room_bookings', force: :cascade do |t|
+    t.integer 'room_id', null: false
+    t.integer 'time_slot_id', null: false
+    t.boolean 'is_available'
+    t.boolean 'is_lab'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['room_id'], name: 'index_room_bookings_on_room_id'
+    t.index ['time_slot_id'], name: 'index_room_bookings_on_time_slot_id'
   end
 
   create_table 'rooms', force: :cascade do |t|
@@ -70,12 +80,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_023_233_115) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.index ['course_id'], name: 'index_sections_on_course_id'
-
   end
-
-  
-
-  
 
   create_table 'time_slots', force: :cascade do |t|
     t.string 'day'
@@ -97,10 +102,10 @@ ActiveRecord::Schema[7.2].define(version: 20_241_023_233_115) do
     t.index ['email'], name: 'index_users_on_email', unique: true
   end
 
-
   add_foreign_key 'courses', 'schedules'
   add_foreign_key 'instructors', 'schedules'
+  add_foreign_key 'room_bookings', 'rooms'
+  add_foreign_key 'room_bookings', 'time_slots'
   add_foreign_key 'rooms', 'schedules'
   add_foreign_key 'sections', 'courses'
-
 end
