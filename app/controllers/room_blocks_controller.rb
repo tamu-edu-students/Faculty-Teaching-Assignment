@@ -13,7 +13,7 @@ class RoomBlocksController < ApplicationController
           related_block.update(is_blocked: true)
         end
       
-        redirect_to schedule_time_slots_path(params[:schedule_id]), notice: "Room #{room.building_code} #{room.room_number} blocked for #{time_slot.start_time} - #{time_slot.end_time}"
+        redirect_back(fallback_location: schedule_time_slots_path(params[:schedule_id]))
       end
 
       def destroy
@@ -30,6 +30,6 @@ class RoomBlocksController < ApplicationController
           related_block&.destroy # Destroy related blocks if they exist
         end
       
-        redirect_to schedule_time_slots_path(params[:schedule_id]), notice: "Room #{room.building_code} #{room.room_number} unblocked for #{time_slot.start_time} - #{time_slot.end_time}"
+        redirect_back(fallback_location: schedule_time_slots_path(params[:schedule_id]))
       end
     end
