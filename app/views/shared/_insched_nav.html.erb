@@ -6,9 +6,7 @@
             </div>
         </a>
         <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
-            <button class="col btn btn-secondary px-4 mx-1">
-                Add Predefined Courses
-            </button>
+            <%= link_to 'Add Predefined Courses', schedule_room_bookings_path(@schedule), class: 'col btn btn-secondary px-4 mx-1' %>
             <button class="col btn btn-dark px-4">
                 Export
             </button>

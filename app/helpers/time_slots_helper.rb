@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-# Helper for time slots
+# Time Slot Helper
 module TimeSlotsHelper
 end

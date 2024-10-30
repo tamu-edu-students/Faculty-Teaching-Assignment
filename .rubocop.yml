@@ -11,3 +11,5 @@ Metrics/ClassLength:
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.3.x
+Documentation:
+  Enabled: false

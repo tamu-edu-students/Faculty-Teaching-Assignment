@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-# Helper for courses
+# Courses Helper
 module CoursesHelper
 end

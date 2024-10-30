@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     post 'time_slots', to: 'time_slots#filter', as: 'filter_time_slots'
 
     get '/time_slots', to: 'time_slots#index'
+    resources :room_bookings, only: [:index]
   end
 
   # Show Time Slot View
