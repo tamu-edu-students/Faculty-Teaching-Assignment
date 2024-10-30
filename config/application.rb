@@ -19,6 +19,9 @@ module AggieAssign
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Ensure that application can find glpsol for scheduling
+    ENV['PATH'] = "#{Rails.root}/bin:#{ENV['PATH']}"
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
