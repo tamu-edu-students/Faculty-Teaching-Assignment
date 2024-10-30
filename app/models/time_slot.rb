@@ -2,6 +2,8 @@
 
 class TimeSlot < ApplicationRecord
   has_many :room_bookings, dependent: :destroy
+  has_many :room_blocks
+  has_many :blocked_rooms, through: :room_blocks, source: :room
 
   validates :day, presence: true
   validates :start_time, presence: true

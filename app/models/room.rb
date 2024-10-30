@@ -4,6 +4,8 @@
 class Room < ApplicationRecord
   belongs_to :schedule
   has_many :room_bookings, dependent: :destroy
+  has_many :room_blocks
+  has_many :blocked_time_slots, through: :room_blocks, source: :time_slot
   enum :campus, { NONE: 0, CS: 1, GV: 2 }
 
   validates :building_code, presence: true
