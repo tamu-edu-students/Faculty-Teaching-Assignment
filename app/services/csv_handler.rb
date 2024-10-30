@@ -35,6 +35,7 @@ class CsvHandler
 
   def parse_instructor_csv(schedule_id)
     ActiveRecord::Base.transaction do
+      schedule = Schedule.find(schedule_id)
       instructor_data = CSV.parse(@file.read)
       actual_headers = instructor_data[1]
 
@@ -56,7 +57,9 @@ class CsvHandler
 
       missing_headers = required_headers - actual_headers
       return { alert: "Missing required headers: #{missing_headers.join(', ')}" } unless missing_headers.empty?
-
+      preferences_to_upload = []
+      courses_with_preferences = []
+      missing_courses = []
       instructor_data[2..].each_with_index do |row, _index|
         next if row.join.include?('ImportId')
 
@@ -86,7 +89,6 @@ class CsvHandler
           max_course_load: course_load
         }
         instructor = Instructor.create(instructor_data)
-
         row.each_with_index do |_cell, col_index|
           # Match headers that contain "capability/interest" and "course"
           match = actual_headers[col_index].match(%r{.*capability/interest.*course.*- (\d+(?:/\d+)?) - (.+)}i)
@@ -94,15 +96,40 @@ class CsvHandler
 
           course_number = match[1]
           match[2]
-          InstructorPreference.create(
-            instructor_id: instructor.id,
-            course: course_number,
-            preference_level: row[col_index]
-          )
+          course = Course.find_by(course_number:)
+          if course.nil?
+            missing_courses << course_number
+          else
+            # Store valid preferences temporarily
+            preferences_to_upload << {
+              instructor_id: instructor.id,
+              course: course,
+              preference_level: row[col_index]
+            }
+            courses_with_preferences << course_number
+          end
         end
       end
+      missing_courses = schedule.courses.pluck(:course_number).uniq - courses_with_preferences.uniq
+      if missing_courses.any?
+        instructors = schedule.instructors.pluck(:id).uniq
+        for instructor_id in instructors
+          for course in missing_courses
+            preferences_to_upload << {
+                instructor_id: instructor_id,
+                course: schedule.courses.find_by(course_number: course),
+                preference_level: 3
+              } # Default preference level for missing courses
+          end
+        end
+      end
+      
+      # Create instructor preferences if all courses are valid
+      preferences_to_upload.each do |preference|
+        InstructorPreference.create(preference)
+      end
     end
-    { notice: 'Instructors successfully uploaded.' }
+    { notice: 'Instructors and Preferences successfully uploaded.' }
   rescue StandardError => e
     { alert: "There was an error uploading the CSV file: #{e.message}" }
   end
