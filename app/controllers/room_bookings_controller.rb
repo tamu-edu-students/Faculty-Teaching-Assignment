@@ -8,7 +8,8 @@ class RoomBookingsController < ApplicationController
     @rooms = @schedule.rooms.where(is_active: true).where.not(building_code: 'ONLINE')
     @tabs = TimeSlot.distinct.pluck(:day)
     @active_tab = params[:active_tab] || @tabs[0]
-    @time_slots = TimeSlot.where(time_slots: { day: @active_tab })
+    @time_slots = TimeSlot.where(time_slots: { day: @active_tab }).to_a
+    @time_slots.sort_by! { |ts| Time.parse(ts.start_time) }
 
     # Fetch room bookings only for the specified schedule
     @room_bookings = RoomBooking.joins(:room, :time_slot)
