@@ -32,7 +32,7 @@ FactoryBot.define do
 
   factory :instructor_preference do
     association :instructor
-    course { '111/708' }
+    association :course
     preference_level { '2' }
   end
 end

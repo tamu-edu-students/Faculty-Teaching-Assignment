@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+Given('the following courses exist:') do |courses_table|
+  courses_table.hashes.each do |course|
+    @schedule = Schedule.find_by(schedule_name: "Sched 1")
+    @schedule.courses.create!(course_number: course['course_id'])
+  end
+end
+
 Given('the following instructors exist:') do |table|
   table.hashes.each do |hash|
     Instructor.create!(
@@ -20,7 +27,10 @@ end
 Given('the following preferences exist for {string}:') do |instructor_name, table|
   instructor = Instructor.find_by(first_name: instructor_name.split.first, last_name: instructor_name.split.last)
   table.hashes.each do |preference_data|
+    course = @schedule.courses.find_by!(course_number: preference_data['course'].to_s)
+    preference_data['course']=course
     instructor.instructor_preferences.create!(preference_data)
+    # instructor.instructor_preferences.create!(preference_data)
   end
 end
 

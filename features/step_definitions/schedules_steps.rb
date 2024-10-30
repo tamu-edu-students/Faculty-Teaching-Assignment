@@ -54,3 +54,8 @@ When('I upload a valid room file') do
   @room_file.rewind
   attach_file('Select Room Data (CSV)', @room_file.path)
 end
+
+Then('I should see the {string} button is disabled') do |button_text|
+  expect(page).to have_button(button_text, disabled: true)
+end
+

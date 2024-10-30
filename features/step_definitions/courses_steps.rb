@@ -40,3 +40,7 @@ end
 When(/^I visit the courses page for id "(.*)"$/) do |schedule_id|
   visit schedule_courses_path(schedule_id:)
 end
+
+When('I upload a valid course file') do
+  
+end
