@@ -43,13 +43,15 @@
                     <th scope="row" class="table-secondary"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
                     <% @rooms.each do |room| %>
                         <% block = RoomBlock.find_by(room: room, time_slot: time_slot) %>
-                        <td class="<%= block&.is_blocked ? 'bg-danger' : 'bg-success' %>">
-    <% if block&.is_blocked %>
-        <%= button_to 'U', room_block_path(id: block.id, schedule_id: @schedule.id), method: :delete, class: 'btn btn-sm btn-light' %>
-    <% else %>
-        <%= button_to 'B', room_blocks_path(room_id: room.id, time_slot_id: time_slot.id, schedule_id: @schedule.id), method: :post, class: 'btn btn-sm btn-warning' %>
-    <% end %>
+<td class="room-cell" style="background-color: <%= block&.is_blocked ? 'rgba(255, 77, 77, 0.2)' : 'rgba(77, 255, 77, 0.2)' %>">
+  <% if block&.is_blocked %>
+    <%= button_to 'UB', room_block_path(id: block.id, schedule_id: @schedule.id), method: :delete, class: 'btn btn-sm btn-warning', style: 'background-color: rgba(77, 255, 77, 0.4); color: black;' %>
+  <% else %>
+    <%= button_to 'B', room_blocks_path(room_id: room.id, time_slot_id: time_slot.id, schedule_id: @schedule.id), method: :post, class: 'btn btn-sm btn-light', style: 'background-color: rgba(255, 77, 77, 0.4); color: white;' %>
+  <% end %>
 </td>
+
+
 
                     <% end %>
                 </tr>
