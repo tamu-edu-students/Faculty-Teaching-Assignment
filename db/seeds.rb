@@ -10,6 +10,8 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+TimeSlot.delete_all
+
 TimeSlot.create([
                   { day: 'MWF', start_time: '8:00', end_time: '8:50', slot_type: 'LEC' },
                   { day: 'MWF', start_time: '9:10', end_time: '10:00', slot_type: 'LEC' },

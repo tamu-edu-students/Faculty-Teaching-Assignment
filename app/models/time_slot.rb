@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class TimeSlot < ApplicationRecord
+  has_many :room_bookings, dependent: :destroy
+
   validates :day, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true

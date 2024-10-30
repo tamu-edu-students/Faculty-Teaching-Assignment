@@ -16,6 +16,7 @@ FactoryBot.define do
     is_learning_studio { false }
     is_lecture_hall { false }
     comments { 'A large lecture hall.' }
+    association :schedule
   end
 
   factory :instructor do
@@ -28,5 +29,18 @@ FactoryBot.define do
     after_3 { [true, false].sample } # Random boolean
     beaware_of { 'Some notes or warnings.' } # Default text
     association :schedule # Associate with a Schedule, assuming you have a Schedule factory as well
+  end
+
+  factory :room_booking do
+    association :room
+    association :time_slot
+    is_available { true }
+  end
+
+  factory :time_slot do
+    day { 'Monday' }
+    start_time { '09:00' }
+    end_time { '10:00' }
+    slot_type { 'Lecture' }
   end
 end

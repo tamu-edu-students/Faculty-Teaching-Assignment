@@ -25,7 +25,6 @@ class CsvHandler
         )
       end
     end
-
     # Flash data to be received by controller
     { notice: 'Rooms successfully uploaded.' }
   rescue StandardError => e
