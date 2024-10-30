@@ -4,7 +4,7 @@ require 'hungarian_algorithm'
 
 class ScheduleSolver
 
-  def self.solve(classes, rooms, times, professors, capacities, enrollments, locks, unhappiness_matrix)    
+  def self.solve(classes, rooms, times, professors, capacities, enrollments, locks)    
     num_classes = classes.length 
     num_rooms = rooms.length 
     num_times = times.length 
@@ -103,6 +103,46 @@ class ScheduleSolver
 
     # Now that the courses have been assigned rooms and times, we now add professors
     # This can be viewed as a bipartite matching (see ILP doc)
+    unhappiness_matrix = Array.new(num_professors) {Array.new(num_classes) {0}}
+    morning_haters = Instructor.where(before_9: false).pluck(:last_name, :first_name).map{|last, first| "#{last}, #{first}"}
+    evening_haters = Instructor.where(after_3: false).pluck(:last_name, :first_name).map{|last, first| "#{last}, #{first}"}
+
+    # Map professor name in database to (0...num_professors) so we can use them as array indices
+    hash = Hash.new
+    (0...num_professors).each do |i|
+      hash[professors[i]] = i
+    end
+
+    morning_classes = []
+    evening_classes = []
+    (0...num_classes).each do |c|
+      class_name = classes[c]
+      (0...num_rooms).each do |r|
+        (0...num_times).each do |t|
+          if sched[c][r][t].value
+            if before_9?(times[t])
+              morning_classes.append(c)
+            elsif after_3?(times[t])
+              evening_classes.append(c)
+            end
+            next
+          end
+        end
+      end
+    end
+
+    # Fill in unhappiness matrix
+    morning_haters.each do |p|
+      morning_classes.each do |c|
+        unhappiness_matrix[hash[p]][c] = 1
+      end
+    end
+
+    evening_haters.each do |p|
+      evening_classes.each do |c|
+        unhappiness_matrix[hash[p]][c] = 1
+      end
+    end
 
     # Solve the min weight perfect matching via the Hungarian algorithm
     # While extensions to nonperfect matchings exist for HA, this particular library doesn't support them
@@ -118,20 +158,23 @@ class ScheduleSolver
     # Generate assignment as a map
     # Map room/timeslot ID => course/professor
     assignment = {}
+    total_unhappiness = 0
     (0...num_classes).each do |c|
       class_name = classes[c]
       assigned_prof = professors[matching.index(c)]
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           if sched[c][r][t].value
+            unhappiness = copy[hash[assigned_prof]][c]
             key = rooms[r] + "/" + times[t][0] + "/" + times[t][1] + "-" + times[t][2]
-            assignment[key] = "#{class_name}/#{assigned_prof}"
+            assignment[key] = "#{class_name}/#{assigned_prof}/(#{unhappiness})"
+            total_unhappiness += unhappiness
             next
           end
         end
       end
     end
-
+    puts "Average unhappiness: #{total_unhappiness.to_f / num_professors}"
     return assignment
   end
 
@@ -157,5 +200,14 @@ class ScheduleSolver
     !(d1 & d2).empty?
   end
 
+  def self.before_9?(time)
+    start_time = time[1]
+    Time.parse(start_time) <= Time.parse("9:00")
+  end 
+
+  def self.after_3?(time)
+    start_time = time[1]
+    Time.parse(start_time) >= Time.parse("15:00")
+  end  
 
 end

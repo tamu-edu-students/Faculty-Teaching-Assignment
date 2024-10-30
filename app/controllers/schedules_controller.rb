@@ -97,7 +97,7 @@ class SchedulesController < ApplicationController
     
     times = TimeSlot.pluck(:day, :start_time, :end_time)
     
-    professors = Instructor.pluck(:last_name, :first_name).map{|n| "#{n[0]}, #{n[1]}"}
+    professors = Instructor.pluck(:last_name, :first_name).map{|last, first| "#{last}, #{first}"}
     classes = Course.pluck(:course_number)
     enrollments = Course.pluck(:max_seats)
 
@@ -111,13 +111,7 @@ class SchedulesController < ApplicationController
     # TODO: Garbage value for now
     locks = [[0,0,0]]
 
-    # TODO: This needs to be a num_profs x num_classes matrix
-    # However, we can only run HA on square matrices
-    # We'll need to duplicate professors according to their contracted teaching load
-    unhappiness_matrix = Array.new(professors.length) {Array.new(classes.length) { rand(1..10)}}
-    assignment = ScheduleSolver.solve(classes, rooms, times, professors, capacities, enrollments, locks, unhappiness_matrix)
-
-
+    assignment = ScheduleSolver.solve(classes, rooms, times, professors, capacities, enrollments, locks)
   end
 
   # Only allow a list of trusted parameters through.
