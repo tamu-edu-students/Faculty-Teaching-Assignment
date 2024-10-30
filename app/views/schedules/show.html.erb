@@ -20,7 +20,7 @@
           <h5 class="card-title text-center fw-bold">Upload Room Data</h5>
           <% if @rooms_count.positive? %>
             <p class="text-success text-center">
-              <%= @rooms_count %> rooms uploaded at <%= @rooms_last_uploaded.strftime("%I:%M %p") %>
+              <%= @rooms_count %> rooms uploaded on <%= @rooms_last_uploaded.strftime("%B %d, %Y at %I:%M %p") %>
             </p>
           <% end %>
           <%= form_with url: upload_rooms_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
@@ -43,7 +43,7 @@
           <h5 class="card-title text-center fw-bold">Upload Course Data</h5>
           <% if @courses_count.positive? %>
             <p class="text-success text-center">
-              <%= @courses_count %> courses uploaded at <%= @courses_last_uploaded.strftime("%I:%M %p") %>
+              <%= @courses_count %> courses uploaded on <%= @courses_last_uploaded.strftime("%B %d, %Y at %I:%M %p") %>
             </p>
           <% end %>
           <%= form_with url: upload_courses_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
@@ -66,7 +66,7 @@
           <h5 class="card-title text-center fw-bold">Upload Instructor Data</h5>
           <% if @instructors_count.positive? %>
             <p class="text-success text-center">
-              <%= @instructors_count %> instructors uploaded at <%= @instructors_last_uploaded.strftime("%I:%M %p") %>
+              <%= @instructors_count %> instructors uploaded on <%= @instructors_last_uploaded.strftime("%B %d, %Y at %I:%M %p") %>
             </p>
           <% end %>
           <%= form_with url: upload_instructors_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
