@@ -98,8 +98,15 @@ class SchedulesController < ApplicationController
     times = TimeSlot.pluck(:day, :start_time, :end_time)
     
     professors = Instructor.pluck(:last_name, :first_name).map{|n| "#{n[0]}, #{n[1]}"}
-    classes = (0...professors.length).to_a
-    enrollments = Array.new(classes.length) { rand(20..30) }
+    classes = Course.pluck(:course_number)
+    enrollments = Course.pluck(:max_seats)
+
+    # TODO: Get rid of this and add duplication of professors
+    # Blocked by course load branch
+    if classes.length > professors.length 
+      classes = classes.first(professors.length)
+      enrollments = enrollments.first(professors.length)
+    end
 
     # TODO: Garbage value for now
     locks = [[0,0,0]]

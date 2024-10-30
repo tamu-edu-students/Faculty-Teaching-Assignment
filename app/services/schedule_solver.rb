@@ -116,7 +116,7 @@ class ScheduleSolver
     matching = matching.map{ |u,v| v}
 
     # Generate assignment as a map
-    # Map class name => room/time/professor
+    # Map room/timeslot ID => course/professor
     assignment = {}
     (0...num_classes).each do |c|
       class_name = classes[c]
@@ -124,7 +124,8 @@ class ScheduleSolver
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           if sched[c][r][t].value
-            assignment[class_name] = "#{rooms[r]}/#{times[t]}/#{assigned_prof}"
+            key = rooms[r] + "/" + times[t][0] + "/" + times[t][1] + "-" + times[t][2]
+            assignment[key] = "#{class_name}/#{assigned_prof}"
             next
           end
         end
