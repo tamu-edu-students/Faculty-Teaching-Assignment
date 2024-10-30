@@ -11,6 +11,11 @@ class TimeSlot < ApplicationRecord
   validates :slot_type, presence: true
   validate :end_time_after_start_time
 
+  def related_time_slots
+    TimeSlot.where(start_time: self.start_time, end_time: self.end_time)
+            .where.not(id: self.id)
+  end
+  
   private
 
   def end_time_after_start_time
@@ -18,4 +23,6 @@ class TimeSlot < ApplicationRecord
 
     errors.add(:end_time, 'must be after the start time')
   end
+
+  
 end
