@@ -31,9 +31,10 @@ RSpec.describe InstructorsController, type: :controller do
     context 'with added instructors ' do
       let!(:instructor1) { create(:instructor, schedule:) } # Associate instructor with the schedule
       let!(:instructor2) { create(:instructor, schedule:) } # Associate another instructor with the schedule
-
-      let!(:preference1) { create(:instructor_preference, instructor: instructor1, course: '111/708', preference_level: '2') }
-      let!(:preference2) { create(:instructor_preference, instructor: instructor2, course: '222/708', preference_level: '3') }
+      let!(:course1) { create(:course, schedule:, course_number: '111/708') }
+      let!(:course2) { create(:course, schedule:, course_number: '222/708') }
+      let!(:preference1) { create(:instructor_preference, instructor: instructor1, course: course1, preference_level: '2') }
+      let!(:preference2) { create(:instructor_preference, instructor: instructor2, course: course2, preference_level: '3') }
 
       it 'assigns all instructors to @instructors' do
         get :index, params: { schedule_id: schedule.id }
