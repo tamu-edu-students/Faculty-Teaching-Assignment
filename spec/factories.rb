@@ -43,4 +43,10 @@ FactoryBot.define do
     end_time { '10:00' }
     slot_type { 'Lecture' }
   end
+
+  factory :instructor_preference do
+    association :instructor
+    association :course
+    preference_level { '2' }
+  end
 end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Model for Time Slots
 class TimeSlot < ApplicationRecord
   has_many :room_bookings, dependent: :destroy
 

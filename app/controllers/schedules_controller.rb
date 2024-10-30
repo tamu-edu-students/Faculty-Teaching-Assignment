@@ -12,7 +12,17 @@ class SchedulesController < ApplicationController
                                   "%#{params[:search_by_name]}%")
   end
 
-  def show; end
+  def show
+    Time.zone = 'America/Chicago'
+    @rooms_count = @schedule.rooms.count
+    @rooms_last_uploaded = @schedule.rooms.order(created_at: :desc).first&.created_at&.in_time_zone
+
+    @courses_count = @schedule.courses.count
+    @courses_last_uploaded = @schedule.courses.order(created_at: :desc).first&.created_at&.in_time_zone
+
+    @instructors_count = @schedule.instructors.count
+    @instructors_last_uploaded = @schedule.instructors.order(created_at: :desc).first&.created_at&.in_time_zone
+  end
 
   # GET /schedules/new
   def new
