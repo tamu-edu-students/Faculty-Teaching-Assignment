@@ -49,29 +49,25 @@ RSpec.describe RoomBookingsController, type: :controller do
   describe 'POST #toggle_availability' do
     context 'when booking is currently available' do
       it 'toggles availability to false' do
-        expect {
+        expect do
           post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
           room_booking1.reload
-        }.to change { room_booking1.is_available }.from(true).to(false)
+        end.to change { room_booking1.is_available }.from(true).to(false)
 
-        # Check redirect
         expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
       end
 
       it 'toggles availability for overlapping bookings' do
-        # Create another overlapping time slot
         overlapping_slot = create(:time_slot, day: 'Monday', start_time: '09:30', end_time: '10:30')
         create(:room_booking, room: room1, time_slot: overlapping_slot, is_available: true)
 
-        expect {
+        expect do
           post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
-        }.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(true).to(false)
+        end.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(true).to(false)
 
-        # Check if the overlapping booking is updated correctly
         overlapping_booking = RoomBooking.find_by(room: room1, time_slot: overlapping_slot)
         expect(overlapping_booking.is_available).to eq(false)
 
-        # Check redirect
         expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
       end
     end
@@ -80,29 +76,25 @@ RSpec.describe RoomBookingsController, type: :controller do
       before { room_booking1.update(is_available: false) }
 
       it 'toggles availability to true' do
-        expect {
+        expect do
           post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
           room_booking1.reload
-        }.to change { room_booking1.is_available }.from(false).to(true)
+        end.to change { room_booking1.is_available }.from(false).to(true)
 
-        # Check redirect
         expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
       end
 
       it 'toggles availability for overlapping bookings' do
-        # Create another overlapping time slot
         overlapping_slot = create(:time_slot, day: 'Monday', start_time: '09:30', end_time: '10:30')
         create(:room_booking, room: room1, time_slot: overlapping_slot, is_available: false)
 
-        expect {
+        expect do
           post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
-        }.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(false).to(true)
+        end.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(false).to(true)
 
-        # Check if the overlapping booking is updated correctly
         overlapping_booking = RoomBooking.find_by(room: room1, time_slot: overlapping_slot)
         expect(overlapping_booking.is_available).to eq(true)
 
-        # Check redirect
         expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
       end
     end

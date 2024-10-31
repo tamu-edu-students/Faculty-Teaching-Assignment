@@ -1,4 +1,5 @@
-# Room Bookings Controller
+# frozen_string_literal: true
+
 class RoomBookingsController < ApplicationController
   before_action :set_schedule
 
@@ -22,7 +23,6 @@ class RoomBookingsController < ApplicationController
     new_status = !room_booking.is_available
     room_booking.update(is_available: new_status)
 
-    # Apply changes to overlapping time slots across relevant days
     overlapping_time_slots = find_overlapping_time_slots(room_booking.time_slot)
     overlapping_time_slots.each do |overlapping_slot|
       overlapping_booking = RoomBooking.find_or_initialize_by(room_id: params[:room_id], time_slot_id: overlapping_slot.id)
@@ -38,16 +38,13 @@ class RoomBookingsController < ApplicationController
     @schedule = Schedule.find(params[:schedule_id])
   end
 
-  # Finds overlapping time slots based on start and end time
   def find_overlapping_time_slots(time_slot)
     relevant_days = calculate_relevant_days(time_slot.day)
 
-    # Select time slots on relevant days that overlap in time
     TimeSlot.where(day: relevant_days)
-            .where("start_time < ? AND end_time > ?", time_slot.end_time, time_slot.start_time)
+            .where('start_time < ? AND end_time > ?', time_slot.end_time, time_slot.start_time)
   end
 
-  # Determine relevant days based on the current day pattern (e.g., 'MWF' overlaps with 'MW' and 'F')
   def calculate_relevant_days(current_day)
     case current_day
     when 'MWF'
@@ -57,7 +54,7 @@ class RoomBookingsController < ApplicationController
     when 'F'
       %w[MWF F]
     else
-      [current_day] # Only affect the current day, such as TR or any isolated day
+      [current_day]
     end
   end
 end

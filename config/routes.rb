@@ -42,7 +42,6 @@ Rails.application.routes.draw do
     get '/time_slots', to: 'time_slots#index'
     resources :room_bookings, only: [:index]
     post 'room_bookings/toggle_availability', to: 'room_bookings#toggle_availability'
-
   end
 
   resources :room_bookings do
