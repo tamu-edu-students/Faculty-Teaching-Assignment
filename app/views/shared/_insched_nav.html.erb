@@ -3,9 +3,11 @@
         <a class="col-3 schedule-name" href=<%= schedule_path(@schedule) %>>
             <div class="h1">
                 <%= @schedule.schedule_name %>
+                &#x1F50D;
             </div>
         </a>
         <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
+            <%= link_to 'Back to Schedules', schedules_path, class: 'col btn btn-dark px-4' %> 
             <%= link_to 'Add Predefined Courses', schedule_room_bookings_path(@schedule), class: 'col btn btn-secondary px-4 mx-1' %>
             <button class="col btn btn-dark px-4">
                 Export
