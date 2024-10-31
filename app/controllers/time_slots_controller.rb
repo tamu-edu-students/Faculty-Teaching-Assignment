@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Time Slot Controller
+# Controller for uploaded time slots
 class TimeSlotsController < ApplicationController
   def filter
     @schedule = Schedule.find(params[:schedule_id])

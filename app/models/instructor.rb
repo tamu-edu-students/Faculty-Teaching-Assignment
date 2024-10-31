@@ -3,4 +3,5 @@
 # Instructor model
 class Instructor < ApplicationRecord
   belongs_to :schedule
+  has_many :instructor_preferences, dependent: :destroy
 end

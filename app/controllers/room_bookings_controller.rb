@@ -10,7 +10,7 @@ class RoomBookingsController < ApplicationController
     @time_slots = TimeSlot.where(day: @active_tab).order(:start_time)
 
     @room_bookings = RoomBooking.joins(:room, :time_slot)
-                                .where(rooms: { schedule_id: @schedule.id }, time_slots: { day: @active_tab })
+                                 .where(rooms: { schedule_id: @schedule.id }, time_slots: { day: @active_tab })
     @bookings_matrix = @room_bookings.each_with_object({}) do |booking, hash|
       hash[[booking.room_id, booking.time_slot_id]] = booking
     end
