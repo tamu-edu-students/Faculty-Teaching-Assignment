@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# spec/controllers/room_bookings_controller_spec.rb
 require 'rails_helper'
 
 RSpec.describe RoomBookingsController, type: :controller do
