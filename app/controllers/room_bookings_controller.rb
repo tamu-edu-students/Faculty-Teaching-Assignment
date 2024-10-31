@@ -23,18 +23,28 @@ class RoomBookingsController < ApplicationController
 
 
   def create
-    room_booking = RoomBooking.new(room_booking_params)
+    room_booking = RoomBooking.new!(room_booking_params)
+    puts (params[:room_id])
+    puts (params[:time_slot_id])
+    puts params[:section_id]
+    puts params[:schedule_id]
+    @schedule = Schedule.find(params[:schedule_id]);
 
-    if room_booking.save
-      render json: { message: 'Room booking created successfully', room_booking: room_booking }, status: :created
-    else
-      render json: { error: 'Failed to create room booking', details: room_booking.errors.full_messages }, status: :unprocessable_entity
+    respond_to do |format|
+      if room_booking.save!
+        format.html { redirect_to schedule_room_booking_path(@schedule), notice: "Movie was successfully created." }
+        format.json { render :index, status: :created }
+      else
+        render json: { error: 'Failed to create room booking', details: room_booking.errors.full_messages }, status: :unprocessable_entity
+        flash[:alert] = "Did not work"
+      end
     end
   end
 
   private
 
   def room_booking_params
-    params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id)
+    puts "HERE"
+    params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id, :section_id)
   end
 end

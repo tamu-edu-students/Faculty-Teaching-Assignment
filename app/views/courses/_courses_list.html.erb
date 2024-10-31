@@ -10,37 +10,21 @@
                     <small class="text-muted">Seats: <%= section.seats_alloted %></small>
                 </div>
                 <div class="badge bg-info-subtle text-dark rounded">Type: <%= section.course.lecture_type %></div>
+                <%= link_to(
+                'Select',
+                schedule_room_bookings_path(
+                    schedule_id: @schedule.id,
+                    room_id: params[:room_id],
+                    time_slot_id: params[:time_slot_id],
+                    section_id: section.id,
+                    instructor_id: -1
+                ),
+                data: { turbo_method: :post },
+                class: 'btn btn-primary my-1 text-xs'
+            ) %>
             </div>
         <% end %>
     </div>
 <% else %>
     <p>No courses available for the selected room and time slot.</p>
 <% end %>
-<script language="javascript" type="text/javascript">
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".section-item").forEach(item => {
-      item.addEventListener("click", function() {
-        const roomId = this.dataset.roomId;
-        const timeSlotId = this.dataset.timeSlotId;
-        const sectionId = this.dataset.sectionId;
-
-        fetch("/room_bookings", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-Token": "<%= form_authenticity_token %>"
-          },
-          body: JSON.stringify({ room_id: roomId, time_slot_id: timeSlotId, section_id: sectionId })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert(data.message);
-          } else {
-            alert("Failed to create room booking.");
-          }
-        });
-      });
-    });
-  });
-</script>

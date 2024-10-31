@@ -42,7 +42,7 @@ Rails.application.routes.draw do
     get '/time_slots', to: 'time_slots#index'
     post '/courses/fetch_courses', to: 'courses#fetch_courses'
 
-    resources :room_bookings, only: [:index]
+    resources :room_bookings, only: [:index, :create]
   end
 
   # Show Time Slot View

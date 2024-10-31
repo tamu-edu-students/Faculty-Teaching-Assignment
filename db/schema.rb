@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_31_023936) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_31_204719) do
   create_table "courses", force: :cascade do |t|
     t.string "course_number"
     t.integer "max_seats"
@@ -55,9 +55,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_023936) do
     t.boolean "is_lab"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "instructor_id", null: false
+    t.integer "instructor_id"
+    t.integer "section_id"
     t.index ["instructor_id"], name: "index_room_bookings_on_instructor_id"
     t.index ["room_id"], name: "index_room_bookings_on_room_id"
+    t.index ["section_id"], name: "index_room_bookings_on_section_id"
     t.index ["time_slot_id"], name: "index_room_bookings_on_time_slot_id"
   end
 
@@ -119,6 +121,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_023936) do
   add_foreign_key "instructors", "schedules"
   add_foreign_key "room_bookings", "instructors"
   add_foreign_key "room_bookings", "rooms"
+  add_foreign_key "room_bookings", "sections"
   add_foreign_key "room_bookings", "time_slots"
   add_foreign_key "rooms", "schedules"
   add_foreign_key "sections", "courses"
