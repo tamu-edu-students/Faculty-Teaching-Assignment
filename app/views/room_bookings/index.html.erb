@@ -50,8 +50,29 @@
                         
                         <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>">
                             <% if booking %>
-                            <%= booking.is_available ? 'Available' : 'Booked' %> |
-                            <%= booking.is_lab ? 'Lab' : 'Lecture' %>
+                                <strong>
+                                    <%= booking.section.course.course_number %>
+                                    (<%= booking.section.section_number %>)
+                                </strong> |
+                                <%= booking.section.seats_alloted %>
+                                <%
+=begin%>
+ <% if booking.instructor %>
+                                    <%= link_to booking.instructor.first_name, schedule_room_bookings_path(@schedule), class: 'btn btn-primary' %>
+                                <% else %>
+                                    <%= link_to 'Assign Instructor', schedule_room_bookings_path(@schedule), class: 'btn btn-primary' %>
+                                <% end %> 
+<%
+=end%>
+                                <%= form_with model: @room_booking, local: true do |form| %>
+                                    <div class="field">
+                                        <%= form.select :instructor_id, options_from_collection_for_select(@instructors, :id, :first_name, :last_name) %>
+                                    </div>
+
+                                    <div class="actions">
+                                        <%= form.submit "Assign Instructor" %>
+                                    </div>
+                                <% end %>
                             <% else %>
                             <% end %>
                         </td>

@@ -10,10 +10,16 @@ class RoomBookingsController < ApplicationController
     @active_tab = params[:active_tab] || @tabs[0]
     @time_slots = TimeSlot.where(time_slots: { day: @active_tab }).to_a
     @time_slots.sort_by! { |ts| Time.parse(ts.start_time) }
+    @instructors = @schedule.instructors
 
     # Fetch room bookings only for the specified schedule
-    @room_bookings = RoomBooking.joins(:room, :time_slot)
-                                .where(rooms: { schedule_id: }, time_slots: { day: @active_tab })
+    @room_bookings = RoomBooking.includes(
+                        room: {},
+                        section: [:course],
+                        time_slot: {},
+                        instructor: {}
+                      ).where(rooms: { schedule_id: schedule_id }, time_slots: { day: @active_tab })
+                      
 
     # Organize room bookings in a hash with room_id and time_slot_id as keys
     @bookings_matrix = @room_bookings.each_with_object({}) do |booking, hash|
@@ -24,10 +30,6 @@ class RoomBookingsController < ApplicationController
 
   def create
     room_booking = RoomBooking.new(room_booking_params)
-    puts (params[:room_id])
-    puts (params[:time_slot_id])
-    puts params[:section_id]
-    puts params[:schedule_id]
     @schedule = Schedule.find(params[:schedule_id]);
 
     respond_to do |format|
@@ -44,8 +46,6 @@ class RoomBookingsController < ApplicationController
   private
 
   def room_booking_params
-    puts "HERE"
-    puts :room_booking
     params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id, :section_id)
   end
 end
