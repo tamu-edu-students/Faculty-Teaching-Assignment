@@ -13,38 +13,108 @@ RSpec.describe RoomBookingsController, type: :controller do
   let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, is_available: false) }
 
   before do
-    @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
-                         last_name: 'Doe')
+    @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John', last_name: 'Doe')
     allow(controller).to receive(:logged_in?).and_return(true)
     controller.instance_variable_set(:@current_user, @user)
   end
 
   describe 'GET #index' do
-    context 'when room_booking already exists' do
-      before do
-        get :index, params: { schedule_id: schedule.id }
+    before do
+      get :index, params: { schedule_id: schedule.id }
+    end
+
+    it 'returns a successful response' do
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'assigns @rooms' do
+      expect(assigns(:rooms)).to match_array([room1, room2])
+    end
+
+    it 'assigns @time_slots' do
+      expect(assigns(:time_slots)).to match_array([time_slot1, time_slot2])
+    end
+
+    it 'assigns @bookings_matrix with room_booking data' do
+      bookings_matrix = assigns(:bookings_matrix)
+      expect(bookings_matrix[[room1.id, time_slot1.id]]).to eq(room_booking1)
+      expect(bookings_matrix[[room2.id, time_slot2.id]]).to eq(room_booking2)
+    end
+
+    it 'renders the index template' do
+      expect(response).to render_template(:index)
+    end
+  end
+
+  describe 'POST #toggle_availability' do
+    context 'when booking is currently available' do
+      it 'toggles availability to false' do
+        expect {
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
+          room_booking1.reload
+        }.to change { room_booking1.is_available }.from(true).to(false)
+
+        # Check redirect
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
       end
 
-      it 'returns a successful response' do
-        expect(response).to have_http_status(:success)
+      it 'toggles availability for overlapping bookings' do
+        # Create another overlapping time slot
+        overlapping_slot = create(:time_slot, day: 'Monday', start_time: '09:30', end_time: '10:30')
+        create(:room_booking, room: room1, time_slot: overlapping_slot, is_available: true)
+
+        expect {
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
+        }.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(true).to(false)
+
+        # Check if the overlapping booking is updated correctly
+        overlapping_booking = RoomBooking.find_by(room: room1, time_slot: overlapping_slot)
+        expect(overlapping_booking.is_available).to eq(false)
+
+        # Check redirect
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
+      end
+    end
+
+    context 'when booking is currently blocked' do
+      before { room_booking1.update(is_available: false) }
+
+      it 'toggles availability to true' do
+        expect {
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
+          room_booking1.reload
+        }.to change { room_booking1.is_available }.from(false).to(true)
+
+        # Check redirect
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
       end
 
-      it 'assigns @rooms' do
-        expect(assigns(:rooms)).to match_array([room1, room2])
-      end
+      it 'toggles availability for overlapping bookings' do
+        # Create another overlapping time slot
+        overlapping_slot = create(:time_slot, day: 'Monday', start_time: '09:30', end_time: '10:30')
+        create(:room_booking, room: room1, time_slot: overlapping_slot, is_available: false)
 
-      it 'assigns @time_slots' do
-        expect(assigns(:time_slots)).to match_array([time_slot1, time_slot2])
-      end
+        expect {
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
+        }.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(false).to(true)
 
-      it 'assigns @bookings_matrix with room_booking data' do
-        bookings_matrix = assigns(:bookings_matrix)
-        expect(bookings_matrix[[room1.id, time_slot1.id]]).to eq(room_booking1)
-        expect(bookings_matrix[[room2.id, time_slot2.id]]).to eq(room_booking2)
-      end
+        # Check if the overlapping booking is updated correctly
+        overlapping_booking = RoomBooking.find_by(room: room1, time_slot: overlapping_slot)
+        expect(overlapping_booking.is_available).to eq(true)
 
-      it 'renders the index template' do
-        expect(response).to render_template(:index)
+        # Check redirect
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
+      end
+    end
+  end
+
+  describe 'private methods' do
+    describe '#calculate_relevant_days' do
+      it 'returns the correct relevant days' do
+        expect(controller.send(:calculate_relevant_days, 'MWF')).to match_array(%w[MWF MW F])
+        expect(controller.send(:calculate_relevant_days, 'MW')).to match_array(%w[MWF MW])
+        expect(controller.send(:calculate_relevant_days, 'F')).to match_array(%w[MWF F])
+        expect(controller.send(:calculate_relevant_days, 'TR')).to match_array(['TR'])
       end
     end
   end
