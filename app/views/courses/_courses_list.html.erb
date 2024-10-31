@@ -13,11 +13,12 @@
                 <%= link_to(
                 'Select',
                 schedule_room_bookings_path(
-                    schedule_id: @schedule.id,
-                    room_id: params[:room_id],
-                    time_slot_id: params[:time_slot_id],
-                    section_id: section.id,
-                    instructor_id: -1
+                  schedule_id: params[:schedule_id],
+                  room_booking: {
+                      room_id: params[:room_id],
+                      time_slot_id: params[:time_slot_id],
+                      section_id: section.id
+                  }
                 ),
                 data: { turbo_method: :post },
                 class: 'btn btn-primary my-1 text-xs'
