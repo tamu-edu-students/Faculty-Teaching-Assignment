@@ -20,4 +20,21 @@ class RoomBookingsController < ApplicationController
       hash[[booking.room_id, booking.time_slot_id]] = booking
     end
   end
+
+
+  def create
+    room_booking = RoomBooking.new(room_booking_params)
+
+    if room_booking.save
+      render json: { message: 'Room booking created successfully', room_booking: room_booking }, status: :created
+    else
+      render json: { error: 'Failed to create room booking', details: room_booking.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def room_booking_params
+    params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id)
+  end
 end
