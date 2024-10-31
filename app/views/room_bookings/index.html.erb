@@ -33,29 +33,26 @@
             <tr>
             <th>Times \ Rooms</th>
             <% @rooms.each do |room| %>
-                <th scope="col" ><%= room.building_code %> <%= room.room_number %></th>
-                
+                <th scope="col"><%= room.building_code %> <%= room.room_number %></th>
             <% end %>
             </tr>
         </thead>
         <tbody>
-            <% @time_slots.each do |time_slot| %>
+        <% @time_slots.each do |time_slot| %>
             <tr>
-                <th scope="row" class="table-secondary"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
-                
-                <% @rooms.each do |room| %>
+            <th scope="row" class="table-secondary"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
+            <% @rooms.each do |room| %>
                 <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
-                
                 <td>
-                    <% if booking %>
-                    <%= booking.is_available ? 'Available' : 'Booked' %> |
-                    <%= booking.is_lab ? 'Lab' : 'Lecture' %>
-                    <% else %>
-                    <% end %>
-                </td>
+                <% if booking && !booking.is_available %>
+                    <%= button_to "U", toggle_availability_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id }, class: "btn btn-sm btn-success" %>
+                <% else %>
+                    <%= button_to "BL", toggle_availability_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id }, class: "btn btn-sm btn-danger" %>
                 <% end %>
-            </tr>
+                </td>
             <% end %>
+            </tr>
+        <% end %>
         </tbody>
     </table>
 </div>
