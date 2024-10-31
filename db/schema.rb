@@ -48,16 +48,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_023936) do
     t.index ["schedule_id"], name: "index_instructors_on_schedule_id"
   end
 
-  create_table "room_blocks", force: :cascade do |t|
-    t.integer "room_id", null: false
-    t.integer "time_slot_id", null: false
-    t.boolean "is_blocked", default: true
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["room_id"], name: "index_room_blocks_on_room_id"
-    t.index ["time_slot_id"], name: "index_room_blocks_on_time_slot_id"
-  end
-
   create_table "room_bookings", force: :cascade do |t|
     t.integer "room_id", null: false
     t.integer "time_slot_id", null: false
@@ -127,8 +117,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_023936) do
   add_foreign_key "instructor_preferences", "courses"
   add_foreign_key "instructor_preferences", "instructors"
   add_foreign_key "instructors", "schedules"
-  add_foreign_key "room_blocks", "rooms"
-  add_foreign_key "room_blocks", "time_slots"
   add_foreign_key "room_bookings", "instructors"
   add_foreign_key "room_bookings", "rooms"
   add_foreign_key "room_bookings", "time_slots"

@@ -2,3 +2,10 @@
     --bs-bg-opacity: 0.1;
     background-color: rgba(var(--bs-black-rgb), var(--bs-bg-opacity)) !important;
 }
+
+.section-item:hover {
+    background-color: #f0f9ff; /* Light blue shade to indicate hover */
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    cursor: pointer;
+}
