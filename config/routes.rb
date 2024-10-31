@@ -45,4 +45,6 @@ Rails.application.routes.draw do
 
   # Show Time Slot View
   resources :time_slots, only: [:index]
+
+  resources :room_bookings, only: [:create]
 end
