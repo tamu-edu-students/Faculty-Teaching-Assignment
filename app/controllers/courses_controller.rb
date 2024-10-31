@@ -11,6 +11,17 @@ class CoursesController < ApplicationController
     @courses = @courses.order("#{sort_column} #{direction}")
   end
 
+  def fetch_courses
+    room_id = params[:room_id]
+    time_slot_id = params[:time_slot_id]
+
+    @schedule = Schedule.find(params[:schedule_id])
+    @courses = @schedule.courses
+    @sections = Section.joins(:course)
+
+    render json: { html: render_to_string(partial: "courses_list", locals: { sections: @sections }) }
+  end
+
   private
 
   # Define the allowed sorting columns
