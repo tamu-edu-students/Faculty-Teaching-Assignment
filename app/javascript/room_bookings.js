@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("turbo:load", function () {
     const tds = document.querySelectorAll(".grid-view-matrix td");
     
     tds.forEach((td) => {

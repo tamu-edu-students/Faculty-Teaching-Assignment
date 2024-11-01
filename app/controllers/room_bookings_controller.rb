@@ -43,6 +43,32 @@ class RoomBookingsController < ApplicationController
     end
   end
 
+  def destroy
+    @room_booking = RoomBooking.find_by(id: params[:id])
+
+    if @room_booking
+      @room_booking.destroy
+      flash[:notice] = "Room booking deleted successfully."
+    else
+      flash[:alert] = "Room booking not found."
+    end
+
+    redirect_to room_bookings_path  # Redirect to the list of room bookings or another appropriate page
+  end
+
+  def toggle_lock
+    @room_booking = RoomBooking.find(params[:id])
+
+    # Toggle the `is_locked` value
+    @room_booking.update(is_locked: !@room_booking.is_locked)
+
+    # Optionally add a notice or alert to show success or failure
+    flash[:notice] = "Room booking lock status updated successfully."
+
+    # Redirect to the previous page or another relevant page
+    redirect_back(fallback_location: room_bookings_path)
+  end
+
   private
 
   def room_booking_params

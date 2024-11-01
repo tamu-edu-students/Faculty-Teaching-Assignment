@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_31_204719) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_01_020805) do
   create_table "courses", force: :cascade do |t|
     t.string "course_number"
     t.integer "max_seats"
@@ -48,6 +48,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_204719) do
     t.index ["schedule_id"], name: "index_instructors_on_schedule_id"
   end
 
+  create_table "room_blocks", force: :cascade do |t|
+    t.integer "room_id", null: false
+    t.integer "time_slot_id", null: false
+    t.boolean "is_blocked", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["room_id"], name: "index_room_blocks_on_room_id"
+    t.index ["time_slot_id"], name: "index_room_blocks_on_time_slot_id"
+  end
+
   create_table "room_bookings", force: :cascade do |t|
     t.integer "room_id", null: false
     t.integer "time_slot_id", null: false
@@ -57,6 +67,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_204719) do
     t.datetime "updated_at", null: false
     t.integer "instructor_id"
     t.integer "section_id"
+    t.boolean "is_locked"
     t.index ["instructor_id"], name: "index_room_bookings_on_instructor_id"
     t.index ["room_id"], name: "index_room_bookings_on_room_id"
     t.index ["section_id"], name: "index_room_bookings_on_section_id"
@@ -119,6 +130,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_31_204719) do
   add_foreign_key "instructor_preferences", "courses"
   add_foreign_key "instructor_preferences", "instructors"
   add_foreign_key "instructors", "schedules"
+  add_foreign_key "room_blocks", "rooms"
+  add_foreign_key "room_blocks", "time_slots"
   add_foreign_key "room_bookings", "instructors"
   add_foreign_key "room_bookings", "rooms"
   add_foreign_key "room_bookings", "sections"

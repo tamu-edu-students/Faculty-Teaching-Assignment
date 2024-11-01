@@ -42,7 +42,12 @@ Rails.application.routes.draw do
     get '/time_slots', to: 'time_slots#index'
     post '/courses/fetch_courses', to: 'courses#fetch_courses'
 
-    resources :room_bookings, only: [:index, :create]
+    resources :room_bookings, only: [:index, :create, :destroy] do
+      member do
+        patch :toggle_lock
+      end
+    end
+    
   end
 
   # Show Time Slot View
