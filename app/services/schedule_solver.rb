@@ -196,7 +196,7 @@ class ScheduleSolver
   def self.overlaps?(time1, time2)
     days1 = time1[0]
     days2 = time2[0]
-    if not day_overlaps?(days1, days2)
+    unless day_overlaps?(days1, days2)
       return false
     end
     start1 = time1[1]

@@ -51,7 +51,7 @@
                     <% if booking %>
                     Course: <%= booking.course.course_number %>
                     <br>
-                    Instructor: <%= booking.instructor.id_number %>
+                    Instructor: <%= booking.instructor.first_name %> <%= booking.instructor.last_name %>
                     <% else %>
                     <% end %>
                 </td>

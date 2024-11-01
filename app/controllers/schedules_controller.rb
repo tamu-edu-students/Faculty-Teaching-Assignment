@@ -71,6 +71,8 @@ class SchedulesController < ApplicationController
   def upload_instructors
     if params[:instructor_file].present?
       # FIXME: See concern in upload_rooms
+
+      RoomBooking.destroy_all
       @schedule.instructors.destroy_all
       csv_handler = CsvHandler.new
       csv_handler.upload(params[:instructor_file])
