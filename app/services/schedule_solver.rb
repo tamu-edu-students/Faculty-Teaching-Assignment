@@ -4,11 +4,11 @@ require 'hungarian_algorithm'
 
 class ScheduleSolver
 
-  def self.solve(classes, rooms, times, professors, enrollments, locks)
+  def self.solve(classes, rooms, times, instructors, locks)
     num_classes = classes.length
     num_rooms = rooms.length
     num_times = times.length
-    num_professors = professors.length
+    num_professors = instructors.length
 
     puts "classes: #{num_classes}"
     puts "rooms: #{num_rooms}"
@@ -27,7 +27,7 @@ class ScheduleSolver
     objective = sched.map.with_index do |mat, c|
       mat.map.with_index do |row, r|
         row.map.with_index do |val, t|
-          val * (rooms[r]['capacity'] - enrollments[c])
+          val * (rooms[r]['capacity'] - classes[c]['max_seats'])
         end.reduce(:+)
       end.reduce(:+)
     end.reduce(:+)
@@ -37,7 +37,7 @@ class ScheduleSolver
       sched.map.with_index do |mat, c|
         mat.map.with_index do |row, r|
           row.map.with_index do |val, t|
-            val * (rooms[r]['capacity'] - enrollments[c]) >= 0
+            val * (rooms[r]['capacity'] - classes[c]['max_seats']) >= 0
           end
         end
       end
@@ -110,13 +110,13 @@ class ScheduleSolver
     # Map professor name in database to (0...num_professors) so we can use them as array indices
     hash = Hash.new
     (0...num_professors).each do |i|
-      hash[professors[i]] = i
+      hash[instructors[i]] = i
     end
 
     morning_classes = []
     evening_classes = []
     (0...num_classes).each do |c|
-      class_name = classes[c]['course_number']
+      # class_name = classes[c]['course_number']
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           if sched[c][r][t].value
@@ -160,8 +160,8 @@ class ScheduleSolver
     assignment = {}
     total_unhappiness = 0
     (0...num_classes).each do |c|
-      class_name = classes[c]['course_number']
-      assigned_prof = professors[matching.index(c)]
+      # class_name = classes[c]['course_number']
+      assigned_prof = instructors[matching.index(c)]
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           if sched[c][r][t].value
@@ -177,8 +177,8 @@ class ScheduleSolver
               is_lab: false,
               created_at: Time.now,
               updated_at: Time.now,
-              course_id: classes[c].id,
-              instructor_id: assigned_prof.id
+              course_id: classes[c]['id'],
+              instructor_id: assigned_prof
 
             )
 
