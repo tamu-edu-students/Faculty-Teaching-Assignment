@@ -34,7 +34,7 @@ Feature: Instructors Page
         And I should see the value "Yes No" for "John A Doe"
         And I should see the value "No No" for "Jane B Smith"
 
-    Scenario: Upload valid instructors data
+    Scenario: User should be able to upload a valid instructor preferences file
         And I am logged in as a user with first name "Test"
         And I am on the details page for "Sched 1"
         When I attach a valid "instructor_file" with path "spec/fixtures/instructors/instructors_valid.csv"
@@ -56,7 +56,7 @@ Feature: Instructors Page
         Then I should see "120" with the value "2"
         And I should see "465D/765D" with the value "1"
         
-    Scenario: Upload invalid Data
+    Scenario: User should see an error message if they upload an invalid instructor file
         And I am logged in as a user with first name "Test"
         And I am on the details page for "Sched 1"
         When I attach a valid "instructor_file" with path "spec/fixtures/instructors/instructors_missing_headers.csv"
