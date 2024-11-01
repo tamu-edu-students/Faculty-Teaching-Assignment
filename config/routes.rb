@@ -45,6 +45,7 @@ Rails.application.routes.draw do
     resources :room_bookings, only: [:index, :create, :destroy] do
       member do
         patch :toggle_lock
+        patch :update_instructor
       end
     end
     

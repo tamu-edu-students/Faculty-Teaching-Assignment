@@ -69,6 +69,19 @@ class RoomBookingsController < ApplicationController
     redirect_back(fallback_location: room_bookings_path)
   end
 
+  def update_instructor
+    @booking = RoomBooking.find(params[:id])
+  
+    if @booking.update(instructor_id: params[:room_booking][:instructor_id])
+      flash[:notice] = "Instructor updated successfully."
+    else
+      flash[:alert] = "Failed to update instructor."
+    end
+    
+    # Redirect to the previous page or another relevant page
+    redirect_back(fallback_location: room_bookings_path)
+  end
+
   private
 
   def room_booking_params
