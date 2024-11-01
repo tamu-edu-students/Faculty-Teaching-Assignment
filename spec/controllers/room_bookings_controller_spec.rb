@@ -69,7 +69,7 @@ RSpec.describe RoomBookingsController, type: :controller do
         }
 
         expect(RoomBooking.count).to eq(3)
-        expect(flash[:notice]).to eq('Movie was successfully created.')
+        expect(flash[:notice]).to eq('Room Booking was successfully created.')
         expect(response).to redirect_to(schedule_room_bookings_path(schedule))
       end
     end

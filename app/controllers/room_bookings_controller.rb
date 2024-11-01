@@ -33,7 +33,7 @@ class RoomBookingsController < ApplicationController
 
     respond_to do |format|
       if room_booking.save
-        format.html { redirect_to schedule_room_bookings_path(@schedule), notice: 'Movie was successfully created.' }
+        format.html { redirect_to schedule_room_bookings_path(@schedule), notice: 'Room Booking was successfully created.' }
         format.json { render :index, status: :created }
       else
         flash[:alert] = 'Did not work'
