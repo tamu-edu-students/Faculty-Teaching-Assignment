@@ -98,6 +98,8 @@ class SchedulesController < ApplicationController
   end
 
   def generate_schedule
+    # destroy all room bookings
+    RoomBooking.destroy_all
     # Join room data together
     active_rooms = Room.where(is_active: true)
     building_codes = active_rooms.map{|room| room['building_code']}
@@ -105,10 +107,10 @@ class SchedulesController < ApplicationController
     rooms = building_codes.zip(room_numbers).map { |bld, num| "#{bld} #{num}" }
     capacities = active_rooms.map{|room| room['capacity']}
     
-    times = TimeSlot.pluck(:day, :start_time, :end_time)
+    times = TimeSlot.pluck(:day, :start_time, :end_time, :id)
     
-    professors = Instructor.pluck(:last_name, :first_name).map{|last, first| "#{last}, #{first}"}
-    classes = Course.pluck(:course_number)
+    professors = Instructor.select(:id, :first_name, :last_name)
+    classes = Course.select(:id, :course_number)
     enrollments = Course.pluck(:max_seats)
 
     # TODO: Get rid of this and add duplication of professors
@@ -121,7 +123,8 @@ class SchedulesController < ApplicationController
     # TODO: Garbage value for now
     locks = [[0,0,0]]
 
-    assignment = ScheduleSolver.solve(classes, rooms, times, professors, capacities, enrollments, locks)
+    assignment = ScheduleSolver.solve(classes, active_rooms, times, professors, enrollments, locks)
+    redirect_to request.path
   end
 
   # Only allow a list of trusted parameters through.
