@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Given(/I am on the courses page for "(.*)"/) do |schedule_name|
-  @schedule = Schedule.find(schedule_name: schedule_name)
+  @schedule = Schedule.find(schedule_name:)
   visit schedule_courses_path(schedule_id: @schedule.id)
 end
 
@@ -38,5 +38,5 @@ Then(/^I should see the following courses:$/) do |table|
 end
 
 When(/^I visit the courses page for id "(.*)"$/) do |schedule_id|
-  visit schedule_courses_path(schedule_id: schedule_id)
+  visit schedule_courses_path(schedule_id:)
 end

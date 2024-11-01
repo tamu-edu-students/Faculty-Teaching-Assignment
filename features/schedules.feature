@@ -21,8 +21,7 @@ Feature: Schedules page
         When I visit the schedules index page
         And I click on the card for "Test Schedule 1"
         Then I should see "Schedule Name: Test Schedule 1"
-        And I should see "Semester:Fall 2024"
-        And I should see "Some details about the schedule"
+        And I should see "Semester: Fall 2024"
         But I should not see "Another Schedule"
 
     Scenario: Search for an existing schedule
@@ -48,11 +47,20 @@ Feature: Schedules page
         And I click the "Upload Room Data" button
         Then I should see "Rooms successfully uploaded"
 
-    Scenario: User can upload instructor CSV
+    Scenario: User can upload instructor CSV only if courses are uploaded
         Given I am logged in as a user with first name "Test"
         When I visit the schedules index page
         And I click on the card for "Test Schedule 1" 
         Then I should see "Select Instructor Data (CSV)"
-        When I upload a valid instructor file
+        And I should see the "Upload Instructor Data" button is disabled
+
+        # Step to upload courses
+        When I attach a valid "course_file" with path "spec/fixtures/courses/Course_list_valid.csv"
+        And I click the "Upload Course Data" button
+        Then I should see "Courses successfully uploaded"
+
+        # Now instructor upload should be enabled
+        When I attach a valid "instructor_file" with path "spec/fixtures/instructors/instructors_valid.csv"
         And I click the "Upload Instructor Data" button
-        Then I should see "Instructors successfully uploaded"  
+        Then I should see "Instructors and Preferences successfully uploaded"
+ 

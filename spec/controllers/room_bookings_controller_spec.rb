@@ -5,8 +5,8 @@ require 'rails_helper'
 
 RSpec.describe RoomBookingsController, type: :controller do
   let!(:schedule) { create(:schedule) }
-  let!(:room1) { create(:room, schedule: schedule) }
-  let!(:room2) { create(:room, schedule: schedule) }
+  let!(:room1) { create(:room, schedule:) }
+  let!(:room2) { create(:room, schedule:) }
   let!(:time_slot1) { create(:time_slot, day: 'Monday', start_time: '09:00', end_time: '10:00') }
   let!(:time_slot2) { create(:time_slot, day: 'Monday', start_time: '10:00', end_time: '11:00') }
   let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, is_available: true) }

@@ -1,4 +1,8 @@
 Feature: Rooms Page
+    As a scheduler
+    I should be able to view and filter the rooms I have uploaded
+    So that I can review room details that are used to generate the schedule
+    
     Scenario: User should not be able to reach an invalid schedule room
         Given I am logged in as a user with first name "Test"
         And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"

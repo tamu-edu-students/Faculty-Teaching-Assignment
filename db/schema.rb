@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 20_241_027_021_034) do
+ActiveRecord::Schema[7.2].define(version: 20_241_029_040_851) do
   create_table 'courses', force: :cascade do |t|
     t.string 'course_number'
     t.integer 'max_seats'
@@ -22,6 +22,16 @@ ActiveRecord::Schema[7.2].define(version: 20_241_027_021_034) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.index ['schedule_id'], name: 'index_courses_on_schedule_id'
+  end
+
+  create_table 'instructor_preferences', force: :cascade do |t|
+    t.integer 'instructor_id', null: false
+    t.integer 'preference_level'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.integer 'course_id', null: false
+    t.index ['course_id'], name: 'index_instructor_preferences_on_course_id'
+    t.index ['instructor_id'], name: 'index_instructor_preferences_on_instructor_id'
   end
 
   create_table 'instructors', force: :cascade do |t|
@@ -36,6 +46,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_027_021_034) do
     t.integer 'schedule_id'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
+    t.integer 'max_course_load'
     t.index ['schedule_id'], name: 'index_instructors_on_schedule_id'
   end
 
@@ -103,6 +114,8 @@ ActiveRecord::Schema[7.2].define(version: 20_241_027_021_034) do
   end
 
   add_foreign_key 'courses', 'schedules'
+  add_foreign_key 'instructor_preferences', 'courses'
+  add_foreign_key 'instructor_preferences', 'instructors'
   add_foreign_key 'instructors', 'schedules'
   add_foreign_key 'room_bookings', 'rooms'
   add_foreign_key 'room_bookings', 'time_slots'

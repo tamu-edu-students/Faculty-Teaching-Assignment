@@ -1,36 +1,87 @@
-<h2>Some details about the schedule</h2>
-<h5>Schedule Name: <%= @schedule.schedule_name %> <br>
-Semester:<%= @schedule.semester_name %></h5>
-<%= link_to 'Back', schedules_path, class: 'btn btn-secondary' %>
-<%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'btn btn-primary' %>
-<%= button_to 'Generate Schedule', generate_schedule_schedule_path(@schedule), method: :post, data: { confirm: 'Are you sure you want to generate the schedule?' } %>
+<div class="container my-5">
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">Schedule Details</h2>
+    <h5>
+      Schedule Name: <%= @schedule.schedule_name %> <br>
+      Semester: <%= @schedule.semester_name %>
+    </h5>
+  </div>
 
-<%= form_with url: upload_rooms_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
-  <div class='col-4'>
-    <%= f.label :room_file, "Select Room Data (CSV)", class: "form-label fw-bold" %>
-    <%= f.file_field :room_file, class: "form-control" %>
+  <div class="d-flex justify-content-center gap-2 mb-4">
+    <%= link_to 'Back', schedules_path, class: 'btn btn-secondary' %>
+    <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'btn btn-primary' %>
   </div>
-  <div>
-    <%= f.submit "Upload Room Data" %>
-  </div>
-<% end %>
 
-  <%= form_with url: upload_instructors_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
-  <div class='col-4'>
-    <%= f.label :instructor_file, "Select Instructor Data (CSV)", class: "form-label fw-bold" %>
-    <%= f.file_field :instructor_file, class: "form-control" %>
-  </div>
-  <div>
-    <%= f.submit "Upload Instructor Data" %>
-  </div>
-<% end %>
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    <!-- Upload Room Data Form -->
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center fw-bold">Upload Room Data</h5>
+          <% if @rooms_count.positive? %>
+            <p class="text-success text-center">
+              <%= @rooms_count %> rooms uploaded on <%= @rooms_last_uploaded.strftime("%B %d, %Y at %I:%M %p") %>
+            </p>
+          <% end %>
+          <%= form_with url: upload_rooms_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.label :room_file, "Select Room Data (CSV)", class: "form-label fw-bold" %>
+              <%= f.file_field :room_file, class: "form-control" %>
+            </div>
+            <div class="d-grid">
+              <%= f.submit "Upload Room Data", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
 
-  <%= form_with url: upload_courses_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
-  <div class='col-4'>
-    <%= f.label :instructor_file, "Select Course Data (CSV)", class: "form-label fw-bold" %>
-    <%= f.file_field :course_file, class: "form-control" %>
+    <!-- Upload Course Data Form -->
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center fw-bold">Upload Course Data</h5>
+          <% if @courses_count.positive? %>
+            <p class="text-success text-center">
+              <%= @courses_count %> courses uploaded on <%= @courses_last_uploaded.strftime("%B %d, %Y at %I:%M %p") %>
+            </p>
+          <% end %>
+          <%= form_with url: upload_courses_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.label :course_file, "Select Course Data (CSV)", class: "form-label fw-bold" %>
+              <%= f.file_field :course_file, class: "form-control" %>
+            </div>
+            <div class="d-grid">
+              <%= f.submit "Upload Course Data", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Instructor Data Form -->
+    <div class="col">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center fw-bold">Upload Instructor Data</h5>
+          <% if @instructors_count.positive? %>
+            <p class="text-success text-center">
+              <%= @instructors_count %> instructors uploaded on <%= @instructors_last_uploaded.strftime("%B %d, %Y at %I:%M %p") %>
+            </p>
+          <% end %>
+          <%= form_with url: upload_instructors_schedule_path(@schedule), multipart: true, method: :post, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.label :instructor_file, "Select Instructor Data (CSV)", class: "form-label fw-bold" %>
+              <%= f.file_field :instructor_file, class: "form-control" %>
+            </div>
+            <div class="d-grid">
+              <%= f.submit "Upload Instructor Data", 
+                disabled: @schedule.courses.empty?, 
+                class: @schedule.courses.empty? ? "btn btn-secondary disabled" : "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
-  <div>
-    <%= f.submit "Upload Course Data" %>
-  </div>
-<% end %>
+</div>
