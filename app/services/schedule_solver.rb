@@ -4,11 +4,11 @@ require 'hungarian_algorithm'
 
 class ScheduleSolver
 
-  def self.solve(classes, rooms, times, professors, locks)    
-    num_classes = classes.length 
-    num_rooms = rooms.length 
-    num_times = times.length 
-    num_professors = professors.length 
+  def self.solve(classes, rooms, times, instructors, locks)
+    num_classes = classes.length
+    num_rooms = rooms.length
+    num_times = times.length
+    num_professors = instructors.length
 
     puts "classes: #{num_classes}"
     puts "rooms: #{num_rooms}"
@@ -36,7 +36,7 @@ class ScheduleSolver
     objective = sched.map.with_index do |mat, c|
       mat.map.with_index do |row, r|
         row.map.with_index do |val, t|
-            val * (capacities[r] - enrollments[c])
+          val * (rooms[r]['capacity'] - classes[c]['max_seats'])
         end.reduce(:+)
       end.reduce(:+)
     end.reduce(:+)
@@ -46,10 +46,9 @@ class ScheduleSolver
     (0...num_classes).map do |c|
       (0...num_rooms).map do |r|
         (0...num_times).map do |t|
-          sched[c][r][t] * (capacities[r] - enrollments[c]) >= 0
+          sched[c][r][t] * (rooms[r]['capacity'] - classes[c]['max_seats']) >= 0
         end
       end
-    end
 
     # Constraint #2: No two classes can share one room at the same time
     # For some reason, the constraints can't be generated using map
@@ -57,7 +56,7 @@ class ScheduleSolver
     share_constraints = []
     (0...num_rooms).each do |r|
       (0...num_times).each do |t|
-        share_constraints.append((0...num_classes).map{|c| sched[c][r][t]}.reduce(:+) <= 1)
+        share_constraints.append((0...num_classes).map { |c| sched[c][r][t] }.reduce(:+) <= 1)
       end
     end
 
@@ -69,14 +68,14 @@ class ScheduleSolver
 
     # Constraint #4: Respect locked courses
     # locks[i] = (class, room, time) triplet
-    lock_constraints = 
-    locks.each do |trio|
-      # For unknown reasons, I can't write sched[c][r][t] == 1
-      # Ruby will evaluate this as a boolean expression, instead of the constraint
-      # Introduce a dummy variable to prevent this from happening
-      # If their sum is two => sched[c][r][t] must be 1
-      sched[trio[0]][trio[1]][trio[2]] + Dummy_b == 2
-    end
+    lock_constraints =
+      locks.each do |trio|
+        # For unknown reasons, I can't write sched[c][r][t] == 1
+        # Ruby will evaluate this as a boolean expression, instead of the constraint
+        # Introduce a dummy variable to prevent this from happening
+        # If their sum is two => sched[c][r][t] must be 1
+        sched[trio[0]][trio[1]][trio[2]] + Dummy_b == 2
+      end
 
     # Constraint #5: Courses that require special designations get rooms that meet them
     # TODO
@@ -121,13 +120,12 @@ class ScheduleSolver
     # Map professor name in database to (0...num_professors) so we can use them as array indices
     hash = Hash.new
     (0...num_professors).each do |i|
-      hash[professors[i]] = i
+      hash[instructors[i]] = i
     end
 
     morning_classes = []
     evening_classes = []
     (0...num_classes).each do |c|
-      class_name = classes[c]
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           if sched[c][r][t].value
@@ -158,14 +156,42 @@ class ScheduleSolver
     # Solve the min weight perfect matching via the Hungarian algorithm
     # While extensions to nonperfect matchings exist for HA, this particular library doesn't support them
     # The library modifies the matrix, so create a deep copy first
-    copy = unhappiness_matrix.map{ |row| row.dup}
+    copy = unhappiness_matrix.map { |row| row.dup }
     matching = HungarianAlgorithm.new(unhappiness_matrix).process.sort
 
     # matching is a 2D array, where each element [i,j] represents the assignment of professsor i to class j
     # Flatten this to a simpler map of profs to classes
     # i.e have matching[i] = j instead of matching[i] = [i,j]
-    matching = matching.map{ |u,v| v}
-    matching
+    matching = matching.map { |u, v| v }
+
+    total_unhappiness = 0
+    (0...num_classes).each do |c|
+      assigned_prof = instructors[matching.index(c)]
+      (0...num_rooms).each do |r|
+        (0...num_times).each do |t|
+          if sched[c][r][t].value
+            unhappiness = copy[hash[assigned_prof]][c]
+            total_unhappiness += unhappiness
+
+            RoomBooking.create(
+              room_id: rooms[r]['id'],
+              time_slot_id: times[t][3],
+              is_available: true,
+              is_lab: false,
+              created_at: Time.now,
+              updated_at: Time.now,
+              course_id: classes[c]['id'],
+              instructor_id: assigned_prof
+
+            )
+
+            next
+          end
+        end
+      end
+    end
+    
+    return total_unhappiness
   end
 
   # Find if two timeslots overlap
@@ -173,7 +199,7 @@ class ScheduleSolver
   def self.overlaps?(time1, time2)
     days1 = time1[0]
     days2 = time2[0]
-    if not day_overlaps?(days1, days2)
+    unless day_overlaps?(days1, days2)
       return false
     end
     start1 = time1[1]
@@ -193,11 +219,11 @@ class ScheduleSolver
   def self.before_9?(time)
     start_time = time[1]
     Time.parse(start_time) <= Time.parse("9:00")
-  end 
+  end
 
   def self.after_3?(time)
     start_time = time[1]
     Time.parse(start_time) >= Time.parse("15:00")
-  end  
+  end
 
 end

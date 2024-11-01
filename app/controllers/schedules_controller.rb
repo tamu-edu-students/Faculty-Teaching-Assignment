@@ -12,7 +12,17 @@ class SchedulesController < ApplicationController
                                   "%#{params[:search_by_name]}%")
   end
 
-  def show; end
+  def show
+    Time.zone = 'America/Chicago'
+    @rooms_count = @schedule.rooms.count
+    @rooms_last_uploaded = @schedule.rooms.order(created_at: :desc).first&.created_at&.in_time_zone
+
+    @courses_count = @schedule.courses.count
+    @courses_last_uploaded = @schedule.courses.order(created_at: :desc).first&.created_at&.in_time_zone
+
+    @instructors_count = @schedule.instructors.count
+    @instructors_last_uploaded = @schedule.instructors.order(created_at: :desc).first&.created_at&.in_time_zone
+  end
 
   # GET /schedules/new
   def new
@@ -61,6 +71,8 @@ class SchedulesController < ApplicationController
   def upload_instructors
     if params[:instructor_file].present?
       # FIXME: See concern in upload_rooms
+
+      RoomBooking.destroy_all
       @schedule.instructors.destroy_all
       csv_handler = CsvHandler.new
       csv_handler.upload(params[:instructor_file])
@@ -88,30 +100,43 @@ class SchedulesController < ApplicationController
   end
 
   def generate_schedule
+    # destroy all room bookings
+    RoomBooking.destroy_all
     # Join room data together
-    active_rooms = Room.where(is_active: true)
-    building_codes = active_rooms.map{|room| room['building_code']}
-    room_numbers = active_rooms.map{|room| room['room_number']}
-    rooms = building_codes.zip(room_numbers).map { |bld, num| "#{bld} #{num}" }
-    capacities = active_rooms.map{|room| room['capacity']}
+    active_rooms = Room.where(is_active: true).map do |room|
+      {
+        'id' => room.id,
+        'capacity' => room.capacity
+      }
+    end
+    # building_codes = active_rooms.map{|room| room['building_code']}
+    # room_numbers = active_rooms.map{|room| room['room_number']}
+    # rooms = building_codes.zip(room_numbers).map { |bld, num| "#{bld} #{num}" }
+    # capacities = active_rooms.map{|room| room['capacity']}
     
-    times = TimeSlot.pluck(:day, :start_time, :end_time)
+    times = TimeSlot.pluck(:day, :start_time, :end_time, :id)
     
-    professors = Instructor.pluck(:last_name, :first_name).map{|last, first| "#{last}, #{first}"}
-    classes = Course.pluck(:course_number)
-    enrollments = Course.pluck(:max_seats)
+    instructors = Instructor.pluck(:id)
+    classes = Course.select(:id, :max_seats).map do |course|
+      {
+        'id' => course.id,
+        'max_seats' => course.max_seats
+      }
+    end
+    # enrollments = Course.pluck(:max_seats)
 
     # TODO: Get rid of this and add duplication of professors
     # Blocked by course load branch
-    if classes.length > professors.length 
-      classes = classes.first(professors.length)
-      enrollments = enrollments.first(professors.length)
+    if classes.length > instructors.length
+      classes = classes.first(instructors.length)
+      # enrollments = enrollments.first(instructors.length)
     end
 
     # TODO: Garbage value for now
     locks = [[0,0,0]]
 
-    assignment = ScheduleSolver.solve(classes, rooms, times, professors, capacities, enrollments, locks)
+    assignment = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
+    redirect_to request.path
   end
 
   # Only allow a list of trusted parameters through.

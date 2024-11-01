@@ -8,9 +8,10 @@
         <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
             <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col-5 btn btn-secondary px-4 mx-1' %>
             <% if !@rooms.empty? %>
-                <button class="col-5 btn btn-dark px-4">
-                    Generate Remaining
-                </button>
+<!--                <button class="col-5 btn btn-dark px-4">-->
+<!--                    Generate Remaining-->
+<!--                </button>-->
+            <%= button_to 'Generate Remaining', generate_schedule_schedule_path(@schedule), method: :post, class: 'col-5 btn btn-dark px-4  ' %>
             <% end %>
         </div>
     </div>
@@ -48,8 +49,9 @@
                 
                 <td>
                     <% if booking %>
-                    <%= booking.is_available ? 'Available' : 'Booked' %> |
-                    <%= booking.is_lab ? 'Lab' : 'Lecture' %>
+                    Course: <%= booking.course.course_number %>
+                    <br>
+                    Instructor: <%= booking.instructor.first_name %> <%= booking.instructor.last_name %>
                     <% else %>
                     <% end %>
                 </td>

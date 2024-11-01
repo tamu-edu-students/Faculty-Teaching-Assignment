@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 Given(/I am on the room bookings page for "(.*)"/) do |schedule_name|
-  @schedule = Schedule.find(schedule_name: schedule_name)
+  @schedule = Schedule.find(schedule_name:)
   visit schedule_room_bookings_path(@schedule)
 end
 
 When(/^I visit the room bookings page for "(.*)"$/) do |schedule_name|
-  @schedule = Schedule.where(schedule_name: schedule_name)[0]
+  @schedule = Schedule.where(schedule_name:)[0]
   visit schedule_room_bookings_path(schedule_id: @schedule.id)
 end
 
