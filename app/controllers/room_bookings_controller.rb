@@ -38,13 +38,14 @@ class RoomBookingsController < ApplicationController
         format.html { redirect_to schedule_room_bookings_path(@schedule), notice: "Movie was successfully created." }
         format.json { render :index, status: :created }
       else
-        render json: { error: 'Failed to create room booking', details: room_booking.errors.full_messages }, status: :unprocessable_entity
         flash[:alert] = "Did not work"
+        render json: { error: 'Failed to create room booking', details: room_booking.errors.full_messages }, status: :unprocessable_entity
       end
     end
   end
 
   def destroy
+    @schedule = Schedule.find(params[:schedule_id]);
     @room_booking = RoomBooking.find_by(id: params[:id])
 
     if @room_booking
@@ -54,7 +55,7 @@ class RoomBookingsController < ApplicationController
       flash[:alert] = "Room booking not found."
     end
 
-    redirect_to room_bookings_path  # Redirect to the list of room bookings or another appropriate page
+    redirect_to schedule_room_bookings_path(@schedule)  # Redirect to the list of room bookings or another appropriate page
   end
 
   def toggle_lock
