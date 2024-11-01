@@ -1,24 +1,22 @@
 # frozen_string_literal: true
+
 require 'rulp'
 require 'hungarian_algorithm'
 
 class ScheduleSolver
-
   def self.solve(classes, rooms, times, instructors, locks)
     num_classes = classes.length
     num_rooms = rooms.length
     num_times = times.length
-    num_professors = instructors.length
+    num_instructors = instructors.length
 
     puts "classes: #{num_classes}"
     puts "rooms: #{num_rooms}"
     puts "times: #{num_times}"
-    puts "profs: #{num_professors}"
+    puts "profs: #{num_instructors}"
 
     # Sanity check: contracted teaching classes >= offered classes
-    if num_professors < num_classes
-      raise StandardError.new("Not enough teaching hours for given class offerings!")
-    end
+    raise StandardError, 'Not enough teaching hours for given class offerings!' if num_instructors < num_classes
 
     # Allocate ijk binary decision variables
     sched_flat = Array.new(num_classes * num_rooms * num_times, &X_b)
@@ -27,26 +25,23 @@ class ScheduleSolver
     # i.e. sched[i][j][k] = 1 is class i is located at room j for time k
     sched = sched_flat.each_slice(num_times).each_slice(num_rooms).to_a
 
-    capacities = rooms.map{ |r| r.capacity}
-    enrollments = classes.map{ |c| c.max_seats}
-    times = times.map{ |t| [t.day, t.start_time, t.end_time]}
-
     # Create objective function
     # Minimize the number of empty seats in a full section
     objective = sched.map.with_index do |mat, c|
       mat.map.with_index do |row, r|
-        row.map.with_index do |val, t|
+        row.map.with_index do |val, _t|
           val * (rooms[r]['capacity'] - classes[c]['max_seats'])
         end.reduce(:+)
       end.reduce(:+)
     end.reduce(:+)
 
     # Constraint #1: Room capacity >= class enrollment
-    cap_constraints = 
-    (0...num_classes).map do |c|
-      (0...num_rooms).map do |r|
-        (0...num_times).map do |t|
-          sched[c][r][t] * (rooms[r]['capacity'] - classes[c]['max_seats']) >= 0
+    cap_constraints =
+      (0...num_classes).map do |c|
+        (0...num_rooms).map do |r|
+          (0...num_times).map do |t|
+            sched[c][r][t] * (rooms[r]['capacity'] - classes[c]['max_seats']) >= 0
+          end
         end
       end
 
@@ -61,10 +56,10 @@ class ScheduleSolver
     end
 
     # Constraint #3: Every class has exactly one assigned room and time
-    place_constraints = 
-    (0...num_classes).map do |c|
-      sched[c].flatten.reduce(:+) + GuaranteedZero_b == 1
-    end
+    place_constraints =
+      (0...num_classes).map do |c|
+        sched[c].flatten.reduce(:+) + GuaranteedZero_b == 1
+      end
 
     # Constraint #4: Respect locked courses
     # locks[i] = (class, room, time) triplet
@@ -84,42 +79,40 @@ class ScheduleSolver
     # Go through all pairs of time slots and find those that overlap
     overlapping_pairs = []
     (0...num_times).each do |t1|
-      (t1...num_times).each do |t2|
-        if overlaps?(times[t1], times[t2])
-          overlapping_pairs.append([t1, t2])
-        end
+      (t1 + 1...num_times).each do |t2|
+        overlapping_pairs.append([t1, t2]) if overlaps?(times[t1], times[t2])
       end
     end
 
     # For each pair of overlapping times, ensure that at most one is used
     overlap_constraints = []
     (0...num_rooms).each do |r|
-      overlapping_pairs.each do |t1,t2|
-        overlap_constraints.append((0...num_classes).map{|c| sched[c][r][t1] + sched[c][r][t2]}.reduce(:+) <= 1)
+      overlapping_pairs.each do |t1, t2|
+        overlap_constraints.append((0...num_classes).map { |c| sched[c][r][t1] + sched[c][r][t2] }.reduce(:+) <= 1)
       end
     end
 
     # Consolidate constraints
-    constraints = cap_constraints + share_constraints + place_constraints + lock_constraints + overlap_constraints + [GuaranteedZero_b == 0]
+    constraints = cap_constraints + share_constraints + place_constraints + lock_constraints + overlap_constraints + [GuaranteedZero_b.zero?]
 
     # Form ILP and solve
     problem = Rulp::Min(objective)
     problem[constraints]
-    begin 
+    begin
       Rulp::Glpk(problem)
-    rescue StandardError => e
-      raise StandardError.new("Solution infeasible!")
+    rescue StandardError
+      raise StandardError, 'Solution infeasible!'
     end
 
-    # Now that the courses have been assigned rooms and times, we now add professors
+    # Now that the courses have been assigned rooms and times, we now add instructors
     # This can be viewed as a bipartite matching (see ILP doc)
-    unhappiness_matrix = Array.new(num_professors) {Array.new(num_classes) {0}}
-    morning_haters = professors.select{|p| !p.before_9}
-    evening_haters = professors.select{|p| !p.after_3}
+    unhappiness_matrix = Array.new(num_instructors) { Array.new(num_classes) { 0 } }
+    morning_haters = instructors.reject { |i| i['before_9'] }
+    evening_haters = instructors.reject { |i| i['after_3'] }
 
-    # Map professor name in database to (0...num_professors) so we can use them as array indices
-    hash = Hash.new
-    (0...num_professors).each do |i|
+    # Map professor name in database to (0...num_instructors) so we can use them as array indices
+    hash = {}
+    (0...num_instructors).each do |i|
       hash[instructors[i]] = i
     end
 
@@ -128,14 +121,14 @@ class ScheduleSolver
     (0...num_classes).each do |c|
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
-          if sched[c][r][t].value
-            if before_9?(times[t])
-              morning_classes.append(c)
-            elsif after_3?(times[t])
-              evening_classes.append(c)
-            end
-            next
+          next unless sched[c][r][t].value
+
+          if before_9?(times[t])
+            morning_classes.append(c)
+          elsif after_3?(times[t])
+            evening_classes.append(c)
           end
+          next
         end
       end
     end
@@ -156,42 +149,41 @@ class ScheduleSolver
     # Solve the min weight perfect matching via the Hungarian algorithm
     # While extensions to nonperfect matchings exist for HA, this particular library doesn't support them
     # The library modifies the matrix, so create a deep copy first
-    copy = unhappiness_matrix.map { |row| row.dup }
+    copy = unhappiness_matrix.map(&:dup)
     matching = HungarianAlgorithm.new(unhappiness_matrix).process.sort
 
     # matching is a 2D array, where each element [i,j] represents the assignment of professsor i to class j
     # Flatten this to a simpler map of profs to classes
     # i.e have matching[i] = j instead of matching[i] = [i,j]
-    matching = matching.map { |u, v| v }
+    matching = matching.map { |_u, v| v }
 
     total_unhappiness = 0
     (0...num_classes).each do |c|
       assigned_prof = instructors[matching.index(c)]
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
-          if sched[c][r][t].value
-            unhappiness = copy[hash[assigned_prof]][c]
-            total_unhappiness += unhappiness
+          next unless sched[c][r][t].value
 
-            RoomBooking.create(
-              room_id: rooms[r]['id'],
-              time_slot_id: times[t][3],
-              is_available: true,
-              is_lab: false,
-              created_at: Time.now,
-              updated_at: Time.now,
-              course_id: classes[c]['id'],
-              instructor_id: assigned_prof
+          unhappiness = copy[hash[assigned_prof]][c]
+          total_unhappiness += unhappiness
 
-            )
+          RoomBooking.create(
+            room_id: rooms[r]['id'],
+            time_slot_id: times[t][3],
+            is_available: true,
+            is_lab: false,
+            created_at: Time.now,
+            updated_at: Time.now,
+            course_id: classes[c]['id'],
+            instructor_id: assigned_prof['id']
+          )
 
-            next
-          end
+          next
         end
       end
     end
-    
-    return total_unhappiness
+
+    total_unhappiness
   end
 
   # Find if two timeslots overlap
@@ -199,31 +191,29 @@ class ScheduleSolver
   def self.overlaps?(time1, time2)
     days1 = time1[0]
     days2 = time2[0]
-    unless day_overlaps?(days1, days2)
-      return false
-    end
-    start1 = time1[1]
-    start2 = time2[1]
-    end1 = time1[2]
-    end2 = time2[2]
-    return (start1 < start2 && start2 < end1) || (start2 < start1 && start1 < end2)
+    return false unless day_overlaps?(days1, days2)
+
+    start1 = Time.parse(time1[1])
+    start2 = Time.parse(time2[1])
+    end1 = Time.parse(time1[2])
+    end2 = Time.parse(time2[2])
+    (start1 <= start2 && start2 <= end1) || (start2 <= start1 && start1 <= end2)
   end
 
   # Check if two times overlap on at least one day
   def self.day_overlaps?(days1, days2)
-    d1 = days1.scan(/|M|T|W|R|F/)
-    d2 = days2.scan(/|M|T|W|R|F/)
-    !(d1 & d2).empty?
+    d1 = days1.scan(/M|T|W|R|F/)
+    d2 = days2.scan(/M|T|W|R|F/)
+    !!d1.intersect?(d2)
   end
 
   def self.before_9?(time)
     start_time = time[1]
-    Time.parse(start_time) <= Time.parse("9:00")
+    Time.parse(start_time) <= Time.parse('9:00')
   end
 
   def self.after_3?(time)
     start_time = time[1]
-    Time.parse(start_time) >= Time.parse("15:00")
+    Time.parse(start_time) >= Time.parse('15:00')
   end
-
 end

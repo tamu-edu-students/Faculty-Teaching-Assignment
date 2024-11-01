@@ -20,7 +20,7 @@ module AggieAssign
     config.autoload_lib(ignore: %w[assets tasks])
 
     # Ensure that application can find glpsol for scheduling
-    ENV['PATH'] = "#{Rails.root}/bin:#{ENV['PATH']}"
+    ENV['PATH'] = "#{Rails.root}/bin:#{ENV.fetch('PATH', nil)}"
 
     # Configuration for the application, engines, and railties goes here.
     #

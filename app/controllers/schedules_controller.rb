@@ -109,33 +109,28 @@ class SchedulesController < ApplicationController
         'capacity' => room.capacity
       }
     end
-    # building_codes = active_rooms.map{|room| room['building_code']}
-    # room_numbers = active_rooms.map{|room| room['room_number']}
-    # rooms = building_codes.zip(room_numbers).map { |bld, num| "#{bld} #{num}" }
-    # capacities = active_rooms.map{|room| room['capacity']}
-    
     times = TimeSlot.pluck(:day, :start_time, :end_time, :id)
-    
-    instructors = Instructor.pluck(:id)
+
+    instructors =  Instructor.pluck(:id, :before_9, :after_3).map do |i, b, a|
+      { 'id' => i, 'before_9' => b,
+        'after_3' => a }
+    end
+
     classes = Course.select(:id, :max_seats).map do |course|
       {
         'id' => course.id,
         'max_seats' => course.max_seats
       }
     end
-    # enrollments = Course.pluck(:max_seats)
 
     # TODO: Get rid of this and add duplication of professors
     # Blocked by course load branch
-    if classes.length > instructors.length
-      classes = classes.first(instructors.length)
-      # enrollments = enrollments.first(instructors.length)
-    end
+    classes = classes.first(instructors.length) if classes.length > instructors.length
 
     # TODO: Garbage value for now
-    locks = [[0,0,0]]
+    locks = []
 
-    assignment = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
+    ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
     redirect_to request.path
   end
 

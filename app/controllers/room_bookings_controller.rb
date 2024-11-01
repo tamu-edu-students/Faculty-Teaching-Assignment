@@ -13,7 +13,7 @@ class RoomBookingsController < ApplicationController
 
     # Fetch room bookings only for the specified schedule
     @room_bookings = RoomBooking.joins(:room, :time_slot)
-                                .where(rooms: { schedule_id: }, time_slots: { day: @active_tab })\
+                                .where(rooms: { schedule_id: }, time_slots: { day: @active_tab }) \
 
 
     # Organize room bookings in a hash with room_id and time_slot_id as keys

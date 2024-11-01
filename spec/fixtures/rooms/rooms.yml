@@ -1,0 +1,20 @@
+small_room:
+  capacity: 20
+  is_active: true
+  schedule: default_schedule
+
+medium_room:
+  capacity: 50
+  is_active: true
+  schedule: default_schedule
+
+large_room:
+  capacity: 100
+  is_active: true
+  schedule: default_schedule
+
+lab_room:
+  capacity: 100
+  is_lab: true
+  is_active: true
+  schedule: default_schedule
