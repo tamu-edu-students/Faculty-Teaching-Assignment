@@ -40,9 +40,17 @@ Rails.application.routes.draw do
     post 'time_slots', to: 'time_slots#filter', as: 'filter_time_slots'
 
     get '/time_slots', to: 'time_slots#index'
-    resources :room_bookings, only: [:index]
+
+    resources :room_bookings, only: %i[index create destroy] do
+      member do
+        patch :toggle_lock
+        patch :update_instructor
+      end
+    end
   end
 
   # Show Time Slot View
   resources :time_slots, only: [:index]
+
+  resources :room_bookings, only: [:create]
 end

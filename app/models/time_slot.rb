@@ -13,7 +13,7 @@ class TimeSlot < ApplicationRecord
   private
 
   def end_time_after_start_time
-    return unless end_time.present? && start_time.present? && end_time <= start_time
+    return unless end_time.present? && start_time.present? && Time.parse(end_time) <= Time.parse(start_time)
 
     errors.add(:end_time, 'must be after the start time')
   end
