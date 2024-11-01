@@ -19,7 +19,7 @@ class CoursesController < ApplicationController
     @courses = @schedule.courses
     @sections = Section.joins(:course)
 
-    render json: { html: render_to_string(partial: "courses_list", locals: { sections: @sections }) }
+    render json: { html: render_to_string(partial: "/shared/courses_list", locals: { sections: @sections }) }
   end
 
   private

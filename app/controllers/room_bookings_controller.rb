@@ -7,7 +7,8 @@ class RoomBookingsController < ApplicationController
     @schedule = Schedule.find(params[:schedule_id])
     @rooms = @schedule.rooms.where(is_active: true).where.not(building_code: 'ONLINE')
     @tabs = TimeSlot.distinct.pluck(:day)
-    @active_tab = params[:active_tab] || @tabs[0]
+    @active_tab = params[:active_tab] || session[:active_rb_tab] || @tabs[0]
+    session[:active_rb_tab] = @active_tab
     @time_slots = TimeSlot.where(time_slots: { day: @active_tab }).to_a
     @time_slots.sort_by! { |ts| Time.parse(ts.start_time) }
     @instructors = @schedule.instructors

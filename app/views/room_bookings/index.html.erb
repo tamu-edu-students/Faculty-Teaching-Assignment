@@ -94,6 +94,7 @@
         </div>
     </div>
     <div id="courses-list" class="col-2 bg-secondary-subtle vh-100 overflow-auto p-3">
+        <%= available_sections(@schedule) %>
     </div>
 </div>
 <% else %>
@@ -105,35 +106,25 @@
     function attachEventListeners() {
       document.querySelectorAll(".table-cell").forEach(cell => {
         cell.addEventListener("click", function() {
-          const roomId = this.dataset.roomId;
-          const timeSlotId = this.dataset.timeSlotId;
+            
+            const roomId = this.dataset.roomId;
+            const timeSlotId = this.dataset.timeSlotId;
 
-          fetch("courses/fetch_courses", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-Token": "<%= form_authenticity_token %>"
-            },
-            body: JSON.stringify({ room_id: roomId, time_slot_id: timeSlotId })
-          })
-          .then(response => response.json())
-          .then(data => {
-            document.getElementById("courses-list").innerHTML = data.html;
-
-            // Re-attach event listeners after content update
-            attachEventListeners();
-
-            // Update cell classes
+             // Update cell classes
             document.querySelectorAll('td.table-cell').forEach(cell => {
-              cell.classList.remove('bg-warning-subtle');
-              cell.classList.remove('bg-warning');
-              if (cell.dataset.roomId === roomId && cell.dataset.timeSlotId === timeSlotId) {
-                cell.classList.add('bg-warning');
-              } else if (cell.dataset.roomId === roomId || cell.dataset.timeSlotId === timeSlotId) {
-                cell.classList.add('bg-warning-subtle');
-              }
+                cell.classList.remove('bg-warning-subtle');
+                cell.classList.remove('bg-warning');
+                if (cell.dataset.roomId === roomId && cell.dataset.timeSlotId === timeSlotId) {
+                    cell.classList.add('bg-warning');
+                } else if (cell.dataset.roomId === roomId || cell.dataset.timeSlotId === timeSlotId) {
+                    cell.classList.add('bg-warning-subtle');
+                }
             });
-          });
+
+            document.querySelectorAll('a.course-select-btn').forEach(button => {
+                const sectionId = button.dataset.section
+                button.href = `/schedules/1/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bsection_id%5D=${sectionId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`
+            })
         });
       });
     }
