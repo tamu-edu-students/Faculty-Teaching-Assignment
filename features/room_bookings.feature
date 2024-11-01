@@ -1,5 +1,6 @@
 Feature: Rooms Page 
-    Scenario: Checking a room booking
+
+    Scenario: User should be able to see their room bookings
         Given I am logged in as a user with first name "Test"
         And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         And the following rooms exist for that schedule:
@@ -16,7 +17,7 @@ Feature: Rooms Page
         And I should see "09:00 - 10:00"
         And I should see "BLDG1 101"
     
-    Scenario: Checking a room booking and changing tab
+    Scenario: User should be able to switch tabs between timeslots
         Given I am logged in as a user with first name "Test"
         And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         And the following rooms exist for that schedule:
@@ -35,10 +36,18 @@ Feature: Rooms Page
         And I should not see "09:00 - 10:00"
         And I should see "BLDG1 101"
     
-    Scenario: Checking empty room bookings
+    Scenario: User should see an appropriate message if no rooms exist
         Given I am logged in as a user with first name "Test"
         And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         When I visit the room bookings page for "Sched 1"
         Then I should see "View Data"
         And I should not see "Generate Remaining"
         And I should see "No rooms added to this schedule, click on View Data to Add Rooms!"
+
+    Scenario: User should be able to go back to the schedules page
+        Given I am logged in as a user with first name "Test"
+        And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
+        When I visit the room bookings page for "Sched 1"
+        Then I should see "Back to Schedules"
+        When I click "Back to Schedules"
+        Then I should be on the schedules page

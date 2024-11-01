@@ -13,14 +13,14 @@ Feature: Time Slots Page
       | TR   | 11:00      | 12:00    | LEC       |
       | F    | 13:00      | 14:00    | LEC       |
 
-  Scenario: Viewing all time slots
+  Scenario: User should be able to view all time slots
     When I visit the time slots page for "Sched 1"
     Then I should see a time slot for "MWF" from "09:00" to "10:00" of type "LEC"
     And I should see a time slot for "MW" from "10:00" to "11:00" of type "LAB"
     And I should see a time slot for "TR" from "11:00" to "12:00" of type "LEC"
     And I should see a time slot for "F" from "13:00" to "14:00" of type "LEC"
 
-  Scenario: Filtering time slots by day
+  Scenario: User should be able to filter time slots by day
     When I visit the time slots page for "Sched 1"
     And I select "MWF" from the "Filter by Day" dropdown
     And I click the "Filter" button
@@ -28,7 +28,7 @@ Feature: Time Slots Page
     And I should not see a time slot for "MW" from "10:00" to "11:00" of type "LAB"
     And I should not see a time slot for "TR" from "11:00" to "12:00" of type "LEC"
 
-  Scenario: Filtering time slots by type
+  Scenario: User should be able to filter time slots by type
     When I visit the time slots page for "Sched 1"
     And I select "LAB" from the "Filter by Type" dropdown
     And I click the "Filter" button
