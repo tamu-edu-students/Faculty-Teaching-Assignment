@@ -5,10 +5,11 @@
                 <%= @schedule.schedule_name %>
             </div>
         </a>
-        <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
-            <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col-5 btn btn-secondary px-4 mx-1' %>
+        <div class="col row justify-content-end align-items-center" style="height: 2.5em;">
+            <%= link_to 'Back to Schedules', schedules_path, class: 'col btn btn-dark px-4' %> 
+            <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col btn btn-secondary px-4 mx-1' %>
             <% if !@rooms.empty? %>
-                <button class="col-5 btn btn-dark px-4">
+                <button class="col btn btn-dark px-4">
                     Generate Remaining
                 </button>
             <% end %>

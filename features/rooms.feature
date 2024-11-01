@@ -38,10 +38,17 @@ Feature: Rooms Page
         | BLDG2         | 102         | 50       | 
         And I should not see "BLDG3"
 
-       Scenario: Upload rooms data
+    Scenario: User should be able to upload a valid rooms file
         Given a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         And I am logged in as a user with first name "Test"
         And I am on the details page for "Sched 1"
         When I attach a valid "room_file" with path "spec/fixtures/rooms/rooms_valid.csv"
         And I click the "Upload Room Data" button
         Then I should see "Rooms successfully uploaded."
+
+    Scenario: User can go back to the schedules page by clicking on Back to schedules
+        Given I am logged in as a user with first name "Test"
+        And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024" 
+        When I visit the rooms page for "Sched 1"
+        And I click "Back to Schedules"
+        Then I should be on the schedules page

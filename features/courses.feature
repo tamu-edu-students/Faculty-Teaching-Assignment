@@ -1,19 +1,21 @@
 Feature: Courses Page
-    
+    As a scheduler
+    I should be able to upload couses and view them
+    So that I can review the courses and sections used to generate the schedule
 
-    Scenario: User should not be able to reach an invalid schedule course
+    Scenario: User should not be able to reach an invalid schedule's courses page
         Given I am logged in as a user with first name "Test"
         And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         When I visit the courses page for id "9a9a9a9"
         Then I should see "Schedule not found."
     
-    Scenario: User should be able to see course view even if there is now data
+    Scenario: User should be able to see course view with an appropriate message even if there is no data
         Given I am logged in as a user with first name "Test"
         And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         When I visit the courses page for "Sched 1" 
         Then I should see "No courses added to this schedule!"
     
-    Scenario: User should be able to see course view
+    Scenario: User should be able to see uploaded courses and details
         Given I am logged in as a user with first name "Test"
         And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         And the following courses exist for that schedule:
@@ -39,18 +41,15 @@ Feature: Courses Page
         When I click "Course Number"
         Then I should see "435/735/735D" first
 
-
-
-    
-    Scenario: Upload courses data success
+    Scenario: User should be able to upload a valid course file
         Given a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         And I am logged in as a user with first name "Test"
         And I am on the details page for "Sched 1"
         When I attach a valid "course_file" with path "spec/fixtures/courses/Course_list_valid.csv"
         And I click the "Upload Course Data" button
         Then I should see "Courses successfully uploaded."
-    Scenario: Upload courses data empty
-
+    
+    Scenario: User should see an appropriate message if click on upload without attaching a file
         Given a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
         And I am logged in as a user with first name "Test"
         And I am on the details page for "Sched 1"
