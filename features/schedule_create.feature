@@ -3,7 +3,7 @@ Feature: Create a new schedule
   I want to create a new schedule
   So that I can assign teachers to courses efficiently
 
-  Scenario: Creating a schedule successfully
+  Scenario: User should be able to create a schedule 
     Given I am logged in as a user with first name "Test"
     And I am on the new schedule page
     When I fill in "Schedule name" with "Fall 2024 Schedule"

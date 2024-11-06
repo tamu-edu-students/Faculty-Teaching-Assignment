@@ -19,3 +19,7 @@ end
 When('I fill in {string} with {string}') do |field_name, value|
   fill_in field_name, with: value
 end
+
+Then('I should be on the schedules page') do
+  expect(page).to have_current_path(schedules_path)
+end

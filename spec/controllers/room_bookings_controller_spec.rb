@@ -4,15 +4,17 @@
 require 'rails_helper'
 
 RSpec.describe RoomBookingsController, type: :controller do
+  render_views
   let!(:schedule) { create(:schedule) }
   let!(:room1) { create(:room, schedule:) }
   let!(:room2) { create(:room, schedule:) }
   let!(:time_slot1) { create(:time_slot, day: 'Monday', start_time: '09:00', end_time: '10:00') }
   let!(:time_slot2) { create(:time_slot, day: 'Monday', start_time: '10:00', end_time: '11:00') }
-  let!(:course) { create(:course, schedule: schedule) }
-  let!(:instructor) { create(:instructor, schedule: schedule) }
-  let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, is_available: true, course:course, instructor:instructor ) }
-  let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, is_available: false, course:course, instructor:instructor ) }
+  let(:course) { create(:course, schedule:) }
+  let(:section) { create(:section, course:) }
+  let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, section:, is_available: true, course:course) }
+  let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, section:, is_available: false, course:course) }
+  let(:instructor) { create(:instructor) }
 
   before do
     @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
@@ -48,6 +50,83 @@ RSpec.describe RoomBookingsController, type: :controller do
       it 'renders the index template' do
         expect(response).to render_template(:index)
       end
+    end
+  end
+
+  describe 'POST #create' do
+    context 'with valid attributes' do
+      it 'creates a new room booking and redirects' do
+        post :create, params: {
+          schedule_id: schedule.id,
+          room_booking: {
+            room_id: room1.id,
+            time_slot_id: time_slot1.id,
+            section_id: section.id,
+            instructor_id: instructor.id,
+            course_id: course.id,
+            is_available: true,
+            is_lab: false
+          }
+        }
+
+        expect(RoomBooking.count).to eq(3)
+        expect(flash[:notice]).to eq('Room Booking was successfully created.')
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+      end
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    it 'deletes the room booking and redirects with a success message' do
+      delete :destroy, params: { schedule_id: schedule.id, id: room_booking1.id }
+
+      expect(RoomBooking.exists?(room_booking1.id)).to be_falsey
+      expect(flash[:notice]).to eq('Room booking deleted successfully.')
+      expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+    end
+
+    it 'renders an error when room booking does not exist' do
+      delete :destroy, params: { schedule_id: schedule.id, id: 999 } # Non-existent room_booking ID
+
+      expect(flash[:alert]).to eq('Room booking not found.')
+      expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+    end
+  end
+
+  describe 'PATCH #toggle_lock' do
+    it 'toggles the lock status of the room booking' do
+      room_booking1.update(is_locked: false)
+      patch :toggle_lock, params: { schedule_id: schedule.id, id: room_booking1.id }
+
+      room_booking1.reload
+      expect(room_booking1.is_locked).to be_truthy
+      expect(flash[:notice]).to eq('Room booking lock status updated successfully.')
+    end
+  end
+
+  describe 'PATCH #update_instructor' do
+    it 'updates the instructor for the room booking' do
+      another_instructor = create(:instructor)
+      patch :update_instructor, params: {
+        schedule_id: schedule.id,
+        id: room_booking1.id,
+        room_booking: { instructor_id: another_instructor.id }
+      }
+
+      room_booking1.reload
+      expect(room_booking1.instructor).to eq(another_instructor)
+      expect(flash[:notice]).to eq('Instructor updated successfully.')
+    end
+
+    it 'renders an error message when update fails' do
+      allow_any_instance_of(RoomBooking).to receive(:update).and_return(false) # Force failure
+      patch :update_instructor, params: {
+        schedule_id: schedule.id,
+        id: room_booking1.id,
+        room_booking: { instructor_id: nil }
+      }
+
+      expect(flash[:alert]).to eq('Failed to update instructor.')
     end
   end
 end
