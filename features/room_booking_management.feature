@@ -11,10 +11,17 @@ Feature: Room Booking Management
         | day       | start_time    | end_time      | slot_type     |
         | MWF       | 09:00         | 10:00         | "LEC"         |
         | MW        | 09:00         | 10:00         | "LEC"         |
+        | F         | 09:00         | 10:00         | "LEC"         |
         
         And a room booking exists for "Sched 1" with room "BLDG1" "101" at "09:00" that is available
         When I visit the room bookings page for "Sched 1"
         
         And I toggle availability for the room booking in "BLDG1" "101" at "09:00"
-        Then the booking in "BLDG1" "101" at "09:00" should be unavailable
-        And overlapping bookings should also be unavailable
+        Then the booking in "BLDG1" "101" at "09:00" "MWF" should be unavailable
+
+        When I click "MW" 
+        And I toggle unavailability for the room booking in "BLDG1" "101" at "09:00"
+
+        Then the booking in "BLDG1" "101" at "09:00" "F" should be unavailable
+        And the booking in "BLDG1" "101" at "09:00" "MW" should be available
+        And the booking in "BLDG1" "101" at "09:00" "MWF" should be available
