@@ -14,9 +14,10 @@ When('I toggle availability for the room booking in {string} {string} at {string
     row = find('tr', text: "#{timeslot.start_time} - #{timeslot.end_time}") 
     room_headers = all('th')
     room_header_index = room_headers.find_index { |header| header.text == "#{building} #{room}" }
-    room_cell = row.all('td')[room_header_index] 
-    room_cell.click_button("BL")
-   
+    room_cell = row.all('td')[room_header_index-1] 
+    room_cell.find_button('BL').click
+    
+    
 end
 
 

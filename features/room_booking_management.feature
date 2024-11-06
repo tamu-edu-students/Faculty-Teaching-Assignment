@@ -10,7 +10,8 @@ Feature: Room Booking Management
         And the following time slots exist:
         | day       | start_time    | end_time      | slot_type     |
         | MWF       | 09:00         | 10:00         | "LEC"         |
-        | MW        | 08:00         | 10:00         | "LEC"         |
+        | MW        | 09:00         | 10:00         | "LEC"         |
+        
         And a room booking exists for "Sched 1" with room "BLDG1" "101" at "09:00" that is available
         When I visit the room bookings page for "Sched 1"
         
