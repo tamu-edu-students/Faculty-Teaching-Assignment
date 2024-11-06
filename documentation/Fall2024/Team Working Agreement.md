@@ -26,6 +26,8 @@
 - Give scrum updates daily on slack
 - Add coverage% of tests and rubocop offenses in the description of PR
 - Delete stale branches after merging to main
+- Finish work by Wednesday of the sprint deadline to allow for testing and merge conflict resolution
+- Ask for help!!
 
 ### Disagreement Handling
 - Talk about it
