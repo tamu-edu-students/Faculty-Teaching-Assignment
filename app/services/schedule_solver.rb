@@ -9,11 +9,11 @@ class ScheduleSolver
     num_rooms = rooms.length
     num_times = times.length
     num_instructors = instructors.length
-
-    puts "classes: #{num_classes}"
-    puts "rooms: #{num_rooms}"
-    puts "times: #{num_times}"
-    puts "profs: #{num_instructors}"
+    # print times
+    # puts "classes: #{num_classes}"
+    # puts "rooms: #{num_rooms}"
+    # puts "times: #{num_times}"
+    # puts "profs: #{num_instructors}"
 
     # Sanity check: contracted teaching classes >= offered classes
     raise StandardError, 'Not enough teaching hours for given class offerings!' if num_instructors < num_classes
@@ -24,7 +24,7 @@ class ScheduleSolver
     # Reshape into a 3D tensor
     # i.e. sched[i][j][k] = 1 is class i is located at room j for time k
     sched = sched_flat.each_slice(num_times).each_slice(num_rooms).to_a
-
+    print sched
     # Create objective function
     # Minimize the number of empty seats in a full section
     objective = sched.map.with_index do |mat, c|
@@ -69,11 +69,19 @@ class ScheduleSolver
         # Ruby will evaluate this as a boolean expression, instead of the constraint
         # Introduce a dummy variable to prevent this from happening
         # If their sum is two => sched[c][r][t] must be 1
-        sched[trio[0]][trio[1]][trio[2]] + Dummy_b == 2
+        sched[trio[0]][trio[1]][trio[2]].must_be.equal_to(1)
       end
 
     # Constraint #5: Courses that require special designations get rooms that meet them
-    # TODO
+    designation_constraints = []
+    (0...num_classes).each do |c|
+      (0...num_rooms).each do |r|
+        next if classes[c]['is_lab'] == rooms[r]['is_lab']
+        (0...num_times).each do |t|
+          designation_constraints.append(sched[c][r][t] == 0)
+        end
+      end
+    end
 
     # Constraint #6: Ensure rooms are not scheduled at overlapping times
     # Go through all pairs of time slots and find those that overlap
@@ -93,17 +101,21 @@ class ScheduleSolver
     end
 
     # Consolidate constraints
-    constraints = cap_constraints + share_constraints + place_constraints + lock_constraints + overlap_constraints + [GuaranteedZero_b.zero?]
+    constraints = cap_constraints + share_constraints + place_constraints + lock_constraints + overlap_constraints + designation_constraints + [GuaranteedZero_b == 0?0:1]
 
     # Form ILP and solve
     problem = Rulp::Min(objective)
     problem[constraints]
+    puts objective
+    puts constraints
     begin
-      Rulp::Glpk(problem)
+      status = Rulp::Glpk(problem)
     rescue StandardError
       raise StandardError, 'Solution infeasible!'
     end
-
+    if status != 0
+      raise StandardError, 'Solution infeasible!'
+    end
     # Now that the courses have been assigned rooms and times, we now add instructors
     # This can be viewed as a bipartite matching (see ILP doc)
     unhappiness_matrix = Array.new(num_instructors) { Array.new(num_classes) { 0 } }
@@ -189,14 +201,14 @@ class ScheduleSolver
   # Find if two timeslots overlap
   # time1 = [days, start_time, end_time]
   def self.overlaps?(time1, time2)
-    days1 = time1[0]
-    days2 = time2[0]
+    days1 = time1.day
+    days2 = time2.day
     return false unless day_overlaps?(days1, days2)
 
-    start1 = Time.parse(time1[1])
-    start2 = Time.parse(time2[1])
-    end1 = Time.parse(time1[2])
-    end2 = Time.parse(time2[2])
+    start1 = Time.parse(time1.start_time)
+    start2 = Time.parse(time2.start_time)
+    end1 = Time.parse(time1.end_time)
+    end2 = Time.parse(time2.end_time)
     (start1 <= start2 && start2 <= end1) || (start2 <= start1 && start1 <= end2)
   end
 
@@ -204,16 +216,14 @@ class ScheduleSolver
   def self.day_overlaps?(days1, days2)
     d1 = days1.scan(/M|T|W|R|F/)
     d2 = days2.scan(/M|T|W|R|F/)
-    !!d1.intersect?(d2)
+    !(d1 & d2).empty?
   end
 
   def self.before_9?(time)
-    start_time = time[1]
-    Time.parse(start_time) <= Time.parse('9:00')
+    Time.parse(time['start_time']) <= Time.parse('9:00')
   end
 
   def self.after_3?(time)
-    start_time = time[1]
-    Time.parse(start_time) >= Time.parse('15:00')
+    Time.parse(time.start_time) >= Time.parse('15:00')
   end
 end

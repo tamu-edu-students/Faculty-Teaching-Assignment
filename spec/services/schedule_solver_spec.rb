@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe ScheduleSolver, type: :model do
-  fixtures 'schedules', 'rooms', 'courses', 'time_slots', 'instructors'
+  fixtures :schedules, :rooms, :courses, :time_slots, :instructors
 
   describe 'test error conditions' do
     context 'when there are not enough professors' do
