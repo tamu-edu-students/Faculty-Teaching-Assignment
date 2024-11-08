@@ -49,7 +49,7 @@ Rails.application.routes.draw do
         patch :toggle_lock
         patch :update_instructor
       end
-    end    
+    end
   end
 
   # Show Time Slot View

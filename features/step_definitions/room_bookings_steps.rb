@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Given(/I am on the room bookings page for "(.*)"/) do |schedule_name|
-  @schedule = Schedule.find_by(schedule_name: schedule_name)
+  @schedule = Schedule.find_by(schedule_name:)
   visit schedule_room_bookings_path(@schedule)
 end
 
@@ -19,7 +19,7 @@ Given(/^the following courses and their sections exist:$/) do |table|
     # Create sections associated with the course
     row['sections'].split(',').each do |section_name|
       Section.create!(
-        course: course,
+        course:,
         section_number: section_name,
         seats_alloted: 24
       )
@@ -28,7 +28,7 @@ Given(/^the following courses and their sections exist:$/) do |table|
 end
 
 When(/^I visit the room bookings page for "(.*)"$/) do |schedule_name|
-  @schedule = Schedule.find_by(schedule_name: schedule_name)
+  @schedule = Schedule.find_by(schedule_name:)
   visit schedule_room_bookings_path(@schedule)
 end
 
@@ -50,7 +50,7 @@ When(/^I click on the booking table in "(.*)" for "(.*)" in "(.*)" "(.*)"$/) do 
 
   # Find the time slot based on day and time
   start_time, end_time = time.split(' - ')
-  time_slot = TimeSlot.find_by(day: day, start_time: start_time, end_time: end_time)
+  time_slot = TimeSlot.find_by(day:, start_time:, end_time:)
   expect(time_slot).not_to be_nil, "Could not find time slot for '#{day} #{time}'"
 
   # Locate and click on the cell
@@ -63,8 +63,8 @@ end
 
 When(/^I click the select "(.*)" for "(.*)"$/) do |section_number, course_number|
   # Find the button using the section number
-  course = @schedule.courses.find_by(course_number: course_number)
-  section = Section.find_by(course: course, section_number: section_number)
+  course = @schedule.courses.find_by(course_number:)
+  section = Section.find_by(course:, section_number:)
   button = find("a.btn.btn-primary.course-select-btn[data-section='#{section.id}']", match: :first)
   button.click
 end
@@ -76,11 +76,11 @@ When(/^I book room "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) 
 
   # Find the time slot based on day and time
   start_time, end_time = time.split(' - ')
-  time_slot = TimeSlot.find_by(day: day, start_time: start_time, end_time: end_time)
+  time_slot = TimeSlot.find_by(day:, start_time:, end_time:)
   expect(time_slot).not_to be_nil, "Could not find time slot for '#{day} #{time}'"
 
-  course = @schedule.courses.find_by(course_number: course_number)
-  section = Section.find_by(course: course, section_number: section_number)
+  course = @schedule.courses.find_by(course_number:)
+  section = Section.find_by(course:, section_number:)
 
   page.driver.post room_bookings_path(schedule_id: @schedule.id), {
     room_booking: {
@@ -93,66 +93,65 @@ When(/^I book room "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) 
   visit schedule_room_bookings_path(@schedule)
 end
 
-Given("the following room bookings exist:") do |table|
+Given('the following room bookings exist:') do |table|
   table.hashes.each do |attributes|
     # Find or create the schedule first if it's not already set
-    schedule = @schedule || Schedule.find_by(schedule_name: "Sched 1")
+    schedule = @schedule || Schedule.find_by(schedule_name: 'Sched 1')
 
     # Ensure the room is created and associated with the schedule
     room = Room.find_or_create_by!(
-      building_code: attributes["building_code"],
-      room_number: attributes["room_number"],
-      schedule: schedule
+      building_code: attributes['building_code'],
+      room_number: attributes['room_number'],
+      schedule:
     )
 
     # Ensure the time slot is created
     time_slot = TimeSlot.find_or_create_by!(
-      day: attributes["day"],
-      start_time: attributes["start_time"],
-      end_time: attributes["end_time"]
+      day: attributes['day'],
+      start_time: attributes['start_time'],
+      end_time: attributes['end_time']
     )
 
     # Ensure the course and section are created and associated with the schedule
     course = Course.find_or_create_by!(
-      course_number: attributes["course_number"],
-      schedule: schedule
+      course_number: attributes['course_number'],
+      schedule:
     )
 
     section = Section.find_or_create_by!(
-      course: course,
-      section_number: attributes["section_number"]
+      course:,
+      section_number: attributes['section_number']
     )
 
     # Ensure the instructor is created
     instructor = Instructor.find_or_create_by!(
-      first_name: attributes["first_name"],
-      last_name: attributes["last_name"],
-      schedule: schedule
+      first_name: attributes['first_name'],
+      last_name: attributes['last_name'],
+      schedule:
     )
 
     # Create the RoomBooking with all necessary associations
     RoomBooking.create!(
-      room: room,
-      time_slot: time_slot,
-      section: section,
-      instructor: instructor
+      room:,
+      time_slot:,
+      section:,
+      instructor:
     )
   end
 end
 
-
-Then("I should receive a CSV file with the filename {string}") do |filename|
+Then('I should receive a CSV file with the filename {string}') do |filename|
   expect(page.response_headers['Content-Disposition']).to include("attachment; filename=\"#{filename}\"")
   expect(page.response_headers['Content-Type']).to include('text/csv')
 end
 
-Then("the CSV file should contain the following headers:") do |table|
+Then('the CSV file should contain the following headers:') do |table|
   csv = CSV.parse(page.body, headers: true)
   expected_headers = table.raw.flatten
   expect(csv.headers).to include(*expected_headers)
 end
 
-Then("the CSV file should contain the following rows:") do |table|
+Then('the CSV file should contain the following rows:') do |table|
   csv = CSV.parse(page.body, headers: true)
   expected_rows = table.hashes
 

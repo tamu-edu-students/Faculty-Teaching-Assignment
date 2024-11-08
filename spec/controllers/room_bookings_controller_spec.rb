@@ -7,15 +7,15 @@ require 'csv'
 RSpec.describe RoomBookingsController, type: :controller do
   render_views
   let!(:schedule) { create(:schedule) }
-  let!(:room1) { create(:room, schedule: schedule, building_code: 'EABB', room_number: '106', capacity: 118, is_active: true) }
-  let!(:room2) { create(:room, schedule: schedule, building_code: 'HRBB', room_number: '113', capacity: 65, is_active: true) }
+  let!(:room1) { create(:room, schedule:, building_code: 'EABB', room_number: '106', capacity: 118, is_active: true) }
+  let!(:room2) { create(:room, schedule:, building_code: 'HRBB', room_number: '113', capacity: 65, is_active: true) }
   let!(:time_slot1) { create(:time_slot, day: 'Monday', start_time: '09:00', end_time: '10:00') }
   let!(:time_slot2) { create(:time_slot, day: 'Monday', start_time: '10:00', end_time: '11:00') }
-  let(:course) { create(:course, schedule: schedule, course_number: 'CS101') }
-  let(:section) { create(:section, course: course, section_number: '001') }
+  let(:course) { create(:course, schedule:, course_number: 'CS101') }
+  let(:section) { create(:section, course:, section_number: '001') }
   let!(:instructor) { create(:instructor, first_name: 'John', last_name: 'Doe') }
-  let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, section: section, instructor: instructor, is_available: true) }
-  let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, section: section, instructor: instructor, is_available: false) }
+  let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, section:, instructor:, is_available: true) }
+  let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, section:, instructor:, is_available: false) }
 
   before do
     @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
@@ -141,16 +141,16 @@ RSpec.describe RoomBookingsController, type: :controller do
       csv_data = CSV.parse(response.body, headers: true)
 
       # Check CSV headers
-      expect(csv_data.headers).to include("Monday", "EABB 106 (Seats: 118)", "HRBB 113 (Seats: 65)")
+      expect(csv_data.headers).to include('Monday', 'EABB 106 (Seats: 118)', 'HRBB 113 (Seats: 65)')
 
       # Check CSV content for each time slot and room
-      row1 = csv_data.find { |row| row["Monday"] == "09:00 - 10:00" }
-      row2 = csv_data.find { |row| row["Monday"] == "10:00 - 11:00" }
+      row1 = csv_data.find { |row| row['Monday'] == '09:00 - 10:00' }
+      row2 = csv_data.find { |row| row['Monday'] == '10:00 - 11:00' }
 
-      expect(row1["EABB 106 (Seats: 118)"]).to eq("CS101 - 001 - John Doe")
-      expect(row1["HRBB 113 (Seats: 65)"]).to eq("")
-      expect(row2["EABB 106 (Seats: 118)"]).to eq("") 
-      expect(row2["HRBB 113 (Seats: 65)"]).to eq("CS101 - 001 - John Doe")
+      expect(row1['EABB 106 (Seats: 118)']).to eq('CS101 - 001 - John Doe')
+      expect(row1['HRBB 113 (Seats: 65)']).to eq('')
+      expect(row2['EABB 106 (Seats: 118)']).to eq('')
+      expect(row2['HRBB 113 (Seats: 65)']).to eq('CS101 - 001 - John Doe')
     end
   end
 end
