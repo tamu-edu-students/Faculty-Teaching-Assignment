@@ -49,7 +49,7 @@
                         <% @rooms.each do |room| %>
                         <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
                         
-                        <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>">
+                        <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>" data-schedule-id="<%= @schedule.id %>">
                             <% if booking && booking.is_available? && booking.section %>
                                 <strong>
                                     <%= booking.section.course.course_number %>
@@ -115,6 +115,7 @@
             }
             const roomId = this.dataset.roomId;
             const timeSlotId = this.dataset.timeSlotId;
+            const scheduleId = this.dataset.scheduleId;
 
              // Update cell classes
             document.querySelectorAll('td.table-cell').forEach(cell => {
@@ -130,7 +131,7 @@
             // Fix schedule id now.
             document.querySelectorAll('a.course-select-btn').forEach(button => {
                 const sectionId = button.dataset.section
-                button.href = `/schedules/1/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bsection_id%5D=${sectionId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`
+                button.href = `/schedules/${scheduleId}/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bsection_id%5D=${sectionId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`
             })
 
             //Fix the message in the bar
