@@ -87,7 +87,7 @@ class RoomBookingsController < ApplicationController
     schedule_id = params[:schedule_id]
 
     # Fetch rooms based on the schedule and active status, excluding online rooms
-    rooms = Room.where(schedule_id: schedule_id, is_active: true).where.not(building_code: 'ONLINE').order(:room_number)
+    rooms = Room.where(schedule_id:, is_active: true).where.not(building_code: 'ONLINE').order(:room_number)
 
     # Get all unique days from the time slots table
     unique_days = TimeSlot.distinct.pluck(:day)
@@ -100,10 +100,10 @@ class RoomBookingsController < ApplicationController
         # csv << ["Day: #{day}"] # Day section title
 
         # Header row with the day and room names + capacities
-        csv << [day] + rooms.map { |room| "#{room.building_code} #{room.room_number} (Seats: #{room.capacity})" }
+        csv << ([day] + rooms.map { |room| "#{room.building_code} #{room.room_number} (Seats: #{room.capacity})" })
 
         # Fetch time slots for the current day
-        time_slots = TimeSlot.where(day: day).sort_by { |ts| Time.parse(ts.start_time) }
+        time_slots = TimeSlot.where(day:).sort_by { |ts| Time.parse(ts.start_time) }
 
         # Iterate through each time slot
         time_slots.each do |time_slot|
@@ -111,7 +111,7 @@ class RoomBookingsController < ApplicationController
           row = [format_time_slot(time_slot)]
 
           # Fetch bookings for each room in the current time slot
-          room_bookings = RoomBooking.where(time_slot: time_slot, room: rooms)
+          room_bookings = RoomBooking.where(time_slot:, room: rooms)
                                      .includes(room: {}, section: :course, instructor: {})
                                      .index_by { |booking| booking.room.id }
 
@@ -119,12 +119,12 @@ class RoomBookingsController < ApplicationController
           rooms.each do |room|
             booking = room_bookings[room.id]
             if booking
-              course_number = booking.section&.course&.course_number || "N/A"
-              section_number = booking.section&.section_number || "N/A"
-              instructor_name = booking.instructor ? "#{booking.instructor.first_name} #{booking.instructor.last_name}" : "N/A"
+              course_number = booking.section&.course&.course_number || 'N/A'
+              section_number = booking.section&.section_number || 'N/A'
+              instructor_name = booking.instructor ? "#{booking.instructor.first_name} #{booking.instructor.last_name}" : 'N/A'
               row << "#{course_number} - #{section_number} - #{instructor_name}".strip
             else
-              row << "" # No booking for this room at this time slot
+              row << '' # No booking for this room at this time slot
             end
           end
 
@@ -138,18 +138,16 @@ class RoomBookingsController < ApplicationController
 
     # Send the CSV file as a response
     respond_to do |format|
-      format.csv { send_data csv_data, filename: "room_bookings.csv", type: 'text/csv' }
-      format.any { send_data csv_data, filename: "room_bookings.csv", type: 'text/csv' }
+      format.csv { send_data csv_data, filename: 'room_bookings.csv', type: 'text/csv' }
+      format.any { send_data csv_data, filename: 'room_bookings.csv', type: 'text/csv' }
     end
   end
-  
+
   private
 
   def format_time_slot(time_slot)
     "#{time_slot.start_time} - #{time_slot.end_time}"
   end
-
-  private
 
   def room_booking_params
     params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id, :section_id)
