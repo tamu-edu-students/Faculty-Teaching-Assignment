@@ -83,58 +83,8 @@ class RoomBookingsController < ApplicationController
   end
 
   def export_csv
-    # Get the schedule ID from the parameters
-    schedule_id = params[:schedule_id]
-
-    # Fetch rooms based on the schedule and active status, excluding online rooms
-    rooms = Room.where(schedule_id:, is_active: true).where.not(building_code: 'ONLINE').order(:room_number)
-
-    # Get all unique days from the time slots table
-    unique_days = TimeSlot.distinct.pluck(:day)
-
     # Generate CSV data
-    csv_data = CSV.generate(headers: true) do |csv|
-      # Iterate over each unique day
-      unique_days.each do |day|
-        # Add a section header for each day
-        # csv << ["Day: #{day}"] # Day section title
-
-        # Header row with the day and room names + capacities
-        csv << ([day] + rooms.map { |room| "#{room.building_code} #{room.room_number} (Seats: #{room.capacity})" })
-
-        # Fetch time slots for the current day
-        time_slots = TimeSlot.where(day:).sort_by { |ts| Time.parse(ts.start_time) }
-
-        # Iterate through each time slot
-        time_slots.each do |time_slot|
-          # Start the row with the formatted time slot
-          row = [format_time_slot(time_slot)]
-
-          # Fetch bookings for each room in the current time slot
-          room_bookings = RoomBooking.where(time_slot:, room: rooms)
-                                     .includes(room: {}, section: :course, instructor: {})
-                                     .index_by { |booking| booking.room.id }
-
-          # Populate row with course number, section, and instructor data for each room
-          rooms.each do |room|
-            booking = room_bookings[room.id]
-            if booking
-              course_number = booking.section&.course&.course_number || 'N/A'
-              section_number = booking.section&.section_number || 'N/A'
-              instructor_name = booking.instructor ? "#{booking.instructor.first_name} #{booking.instructor.last_name}" : 'N/A'
-              row << "#{course_number} - #{section_number} - #{instructor_name}".strip
-            else
-              row << '' # No booking for this room at this time slot
-            end
-          end
-
-          csv << row # Add row to CSV
-        end
-
-        # Add an empty row to separate each day's section in the CSV
-        csv << []
-      end
-    end
+    csv_data = generate_csv_data
 
     # Send the CSV file as a response
     respond_to do |format|
@@ -144,6 +94,87 @@ class RoomBookingsController < ApplicationController
   end
 
   private
+
+  def fetch_rooms(schedule_id)
+    Room.where(schedule_id:, is_active: true)
+        .where.not(building_code: 'ONLINE')
+        .order(:room_number)
+  end
+
+  def fetch_unique_days
+    TimeSlot.distinct.pluck(:day)
+  end
+
+  def generate_csv_data
+    schedule_id = params[:schedule_id]
+    rooms = fetch_rooms(schedule_id)
+    unique_days = fetch_unique_days
+
+    CSV.generate(headers: true) do |csv|
+      unique_days.each do |day|
+        add_day_section_to_csv(csv, day, rooms)
+      end
+    end
+  end
+
+  def add_day_section_to_csv(csv, day, rooms)
+    csv << day_header_row(day, rooms)
+    fetch_time_slots(day).each do |time_slot|
+      csv << time_slot_row(time_slot, rooms)
+    end
+    csv << [] # Add an empty row to separate each day's section
+  end
+
+  def day_header_row(day, rooms)
+    [day] + rooms.map { |room| "#{room.building_code} #{room.room_number} (Seats: #{room.capacity})" }
+  end
+
+  def fetch_time_slots(day)
+    TimeSlot.where(day:).order(:start_time)
+  end
+
+  def time_slot_row(time_slot, rooms)
+    row = [format_time_slot(time_slot)]
+    room_bookings = fetch_room_bookings(time_slot, rooms)
+
+    rooms.each do |room|
+      row << booking_info(room_bookings[room.id])
+    end
+
+    row
+  end
+
+  def fetch_room_bookings(time_slot, rooms)
+    RoomBooking.where(time_slot:, room: rooms)
+               .includes(room: {}, section: :course, instructor: {})
+               .index_by { |booking| booking.room.id }
+  end
+
+  def booking_info(booking)
+    return '' unless booking
+
+    course_number = fetch_course_number(booking)
+    section_number = fetch_section_number(booking)
+    instructor_name = fetch_instructor_name(booking)
+
+    "#{course_number} - #{section_number} - #{instructor_name}".strip
+  end
+
+  def fetch_course_number(booking)
+    booking.section&.course&.course_number || 'N/A'
+  end
+
+  def fetch_section_number(booking)
+    booking.section&.section_number || 'N/A'
+  end
+
+  def fetch_instructor_name(booking)
+    if booking.instructor
+      "#{booking.instructor.first_name} #{booking.instructor.last_name}"
+    else
+      'N/A'
+    end
+  end
 
   def format_time_slot(time_slot)
     "#{time_slot.start_time} - #{time_slot.end_time}"
