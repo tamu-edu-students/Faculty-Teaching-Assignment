@@ -4,6 +4,7 @@ class RoomBookingsController < ApplicationController
   before_action :set_schedule
 
   def index
+    # @schedule = Schedule.find(params[:schedule_id])
     @rooms = @schedule.rooms.where(is_active: true).where.not(building_code: 'ONLINE')
     @tabs = TimeSlot.distinct.pluck(:day)
     @active_tab = params[:active_tab] || session[:active_rb_tab] || @tabs[0]
@@ -18,15 +19,13 @@ class RoomBookingsController < ApplicationController
       section: [:course],
       time_slot: {},
       instructor: {}
-    ).where(rooms: { schedule_id: }, time_slots: { day: @active_tab })
+    ).where(rooms: { schedule_id: @schedule.id }, time_slots: { day: @active_tab })
 
     # Organize room bookings in a hash with room_id and time_slot_id as keys
     @bookings_matrix = @room_bookings.each_with_object({}) do |booking, hash|
       hash[[booking.room_id, booking.time_slot_id]] = booking
     end
   end
-
-  before_action :set_schedule
 
   def toggle_availability
     room_booking = RoomBooking.find_or_initialize_by(room_id: params[:room_id], time_slot_id: params[:time_slot_id])

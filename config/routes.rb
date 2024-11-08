@@ -47,6 +47,8 @@ Rails.application.routes.draw do
         patch :update_instructor
       end
     end
+
+    post 'room_bookings/toggle_availability', to: 'room_bookings#toggle_availability'
   end
 
   # Show Time Slot View
