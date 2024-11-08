@@ -24,7 +24,7 @@ Feature: Schedules page
         And I should see "Semester: Fall 2024"
         But I should not see "Another Schedule"
 
-    Scenario: Search for an existing schedule
+    Scenario: User should be able to search for existing schedules
         Given I am logged in as a user with first name "Test"
         When I visit the schedules index page
         When I search for "Test Schedule"

@@ -5,10 +5,11 @@
                 <%= @schedule.schedule_name %>
             </div>
         </a>
-        <div class="col-6 row justify-content-end align-items-center" style="height: 2.5em;">
-            <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col-5 btn btn-secondary px-4 mx-1' %>
+        <div class="col row justify-content-end align-items-center" style="height: 2.5em;">
+            <%= link_to 'Back to Schedules', schedules_path, class: 'col btn btn-dark px-4' %> 
+            <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col btn btn-secondary px-4 mx-1' %>
             <% if !@rooms.empty? %>
-                <button class="col-5 btn btn-dark px-4">
+                <button class="col btn btn-dark px-4">
                     Generate Remaining
                 </button>
             <% end %>
@@ -16,46 +17,121 @@
     </div>
 </div>
 <% if !@rooms.empty? %>
-<nav class="navbar navbar-expand-sm navbar-light border-bottom border-2 border-dark px-4 pb-0 fw-bold">
-  <div class="collapse navbar-collapse" id="scheduleNavbar">
-    <ul class="navbar-nav">
-        <% @tabs.each do |tab| %>
-            <li id="<%= tab %>" class="nav-item">
-                <a class="nav-link <%= "active" if @active_tab == tab %>" href="<%= (@active_tab == tab && "#") || schedule_room_bookings_path(@schedule, active_tab: tab) %>"><%= tab %></a>
-            </li>
-        <% end %>
-    </ul>
-  </div>
-</nav>
-<div class="w-12">
-    <table class="table table-bordered table-hover grid-view-matrix">
-        <thead class="table-secondary">
-            <tr>
-            <th>Times \ Rooms</th>
-            <% @rooms.each do |room| %>
-                <th scope="col"><%= room.building_code %> <%= room.room_number %></th>
-            <% end %>
-            </tr>
-        </thead>
-        <tbody>
-        <% @time_slots.each do |time_slot| %>
-            <tr>
-            <th scope="row" class="table-secondary"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
-            <% @rooms.each do |room| %>
-                <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
-                <td>
-                <% if booking && !booking.is_available %>
-                    <%= button_to "U", toggle_availability_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id }, class: "btn btn-sm btn-success" %>
-                <% else %>
-                    <%= button_to "BL", toggle_availability_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id }, class: "btn btn-sm btn-danger" %>
-                <% end %>
-                </td>
-            <% end %>
-            </tr>
-        <% end %>
-        </tbody>
-    </table>
+<div class="row">
+    <div class="col-10">
+        <nav class="navbar navbar-expand-sm navbar-light border-bottom border-2 border-dark px-4 pb-0 fw-bold">
+            <div class="collapse navbar-collapse" id="scheduleNavbar">
+                <ul class="navbar-nav">
+                    <% @tabs.each do |tab| %>
+                        <li id="<%= tab %>" class="nav-item">
+                            <a class="nav-link <%= "active" if @active_tab == tab %>" href="<%= (@active_tab == tab && "#") || schedule_room_bookings_path(@schedule, active_tab: tab) %>"><%= tab %></a>
+                        </li>
+                    <% end %>
+                </ul>
+            </div>
+        </nav>
+        <div class="w-12">
+            <table class="table table-bordered table-hover grid-view-matrix border-black">
+                <thead class="table-secondary">
+                    <tr>
+                    <th>24 hr</th>
+                    <% @rooms.each do |room| %>
+                        <th scope="col" ><%= room.building_code %> <%= room.room_number %></th>
+                        
+                    <% end %>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @time_slots.each do |time_slot| %>
+                    <tr>
+                        <th scope="row" class="table-secondary"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
+                        
+                        <% @rooms.each do |room| %>
+                        <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
+                        
+                        <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>">
+                            <% if booking %>
+                                <strong>
+                                    <%= booking.section.course.course_number %>
+                                    (<%= booking.section.section_number %>)
+                                </strong> |
+                                <%= booking.section.seats_alloted %>
+                                <%= link_to "Delete", 
+                                    schedule_room_booking_path(@schedule,booking), 
+                                    method: :delete, 
+                                    data: { 
+                                        confirm: "Are you sure you want to delete this booking?",
+                                        turbo_method: :delete
+                                    }, 
+                                    class: "btn btn-danger" %>
+                                <%= link_to (booking.is_locked ? "Locked" : "Unlocked"), 
+                                    toggle_lock_schedule_room_booking_path(@schedule, booking), 
+                                    method: :patch, 
+                                    class: "btn btn-warning", 
+                                    data: { 
+                                        confirm: "Are you sure you want to toggle the lock status?", 
+                                        turbo_method: :patch 
+                                    } %>
+                                <%= form_with model: booking, 
+                                    url: update_instructor_schedule_room_booking_path(@schedule, booking), 
+                                    method: :patch,
+                                    data: { 
+                                        turbo_method: :patch
+                                    }, 
+                                    remote: true do |form| %>
+                                    <div class="field">
+                                        <%= form.select :instructor_id, options_from_collection_for_select(@instructors, :id, :first_name, booking.instructor_id), { prompt: "Select Instructor" }, onchange: "this.form.submit()" %>
+                                    </div>
+                                <% end %>
+
+                            <% else %>
+                            <% end %>
+                        </td>
+                        <% end %>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="courses-list" class="col-2 bg-secondary-subtle vh-100 overflow-auto p-3">
+        <%= available_sections(@schedule) %>
+    </div>
 </div>
 <% else %>
     <p class="container h1 text-secondary">No rooms added to this schedule, click on View Data to Add Rooms!</p>
 <% end %>
+<script>
+  document.addEventListener("turbo:load", () => {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    function attachEventListeners() {
+      document.querySelectorAll(".table-cell").forEach(cell => {
+        cell.addEventListener("click", function() {
+            
+            const roomId = this.dataset.roomId;
+            const timeSlotId = this.dataset.timeSlotId;
+
+             // Update cell classes
+            document.querySelectorAll('td.table-cell').forEach(cell => {
+                cell.classList.remove('bg-warning-subtle');
+                cell.classList.remove('bg-warning');
+                if (cell.dataset.roomId === roomId && cell.dataset.timeSlotId === timeSlotId) {
+                    cell.classList.add('bg-warning');
+                } else if (cell.dataset.roomId === roomId || cell.dataset.timeSlotId === timeSlotId) {
+                    cell.classList.add('bg-warning-subtle');
+                }
+            });
+
+            // Fix schedule id now.
+            document.querySelectorAll('a.course-select-btn').forEach(button => {
+                const sectionId = button.dataset.section
+                button.href = `/schedules/1/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bsection_id%5D=${sectionId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`
+            })
+        });
+      });
+    }
+
+    // Initial attachment of event listeners
+    attachEventListeners();
+  });
+</script>

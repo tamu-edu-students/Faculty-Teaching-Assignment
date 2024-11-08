@@ -35,6 +35,10 @@ FactoryBot.define do
     association :room
     association :time_slot
     is_available { true }
+    is_lab { [true, false].sample }
+    is_locked { false }
+    association :instructor
+    association :section
   end
 
   factory :time_slot do

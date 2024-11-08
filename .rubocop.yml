@@ -8,6 +8,8 @@ Metrics/CyclomaticComplexity:
   Max: 15
 Metrics/ClassLength:
   Max: 250
+Metrics/ParameterLists:
+  Max: 10
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.3.x
