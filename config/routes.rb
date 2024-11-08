@@ -42,13 +42,12 @@ Rails.application.routes.draw do
     get '/time_slots', to: 'time_slots#index'
 
     resources :room_bookings, only: %i[index create destroy] do
+      post :toggle_availability, on: :collection
       member do
         patch :toggle_lock
         patch :update_instructor
       end
     end
-
-    post 'room_bookings/toggle_availability', to: 'room_bookings#toggle_availability'
   end
 
   # Show Time Slot View
