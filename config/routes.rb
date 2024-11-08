@@ -42,11 +42,14 @@ Rails.application.routes.draw do
     get '/time_slots', to: 'time_slots#index'
 
     resources :room_bookings, only: %i[index create destroy] do
+      collection do
+        get :export_csv
+      end
       member do
         patch :toggle_lock
         patch :update_instructor
       end
-    end
+    end    
   end
 
   # Show Time Slot View
