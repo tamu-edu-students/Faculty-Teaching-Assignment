@@ -29,7 +29,7 @@ class RoomBookingsController < ApplicationController
 
   def toggle_availability
     room_booking = RoomBooking.find_or_initialize_by(room_id: params[:room_id], time_slot_id: params[:time_slot_id])
-    new_status = !room_booking.is_available
+    room_booking.is_available
     room_booking.update(is_available: params[:is_available])
 
     overlapping_time_slots = find_overlapping_time_slots(room_booking.time_slot)
@@ -40,7 +40,7 @@ class RoomBookingsController < ApplicationController
 
     redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
   end
-  
+
   def create
     room_booking = RoomBooking.new(room_booking_params)
     @schedule = Schedule.find(params[:schedule_id])
@@ -103,14 +103,14 @@ class RoomBookingsController < ApplicationController
   end
 
   def find_overlapping_time_slots(time_slot)
-    start_time = Time.strptime(time_slot.start_time, "%H:%M")
-    end_time = Time.strptime(time_slot.end_time, "%H:%M")
+    start_time = Time.strptime(time_slot.start_time, '%H:%M')
+    end_time = Time.strptime(time_slot.end_time, '%H:%M')
 
     relevant_days = calculate_relevant_days(time_slot.day)
 
     TimeSlot.where(day: relevant_days).select do |slot|
-      slot_start_time = Time.strptime(slot.start_time, "%H:%M")
-      slot_end_time = Time.strptime(slot.end_time, "%H:%M")
+      slot_start_time = Time.strptime(slot.start_time, '%H:%M')
+      slot_end_time = Time.strptime(slot.end_time, '%H:%M')
       slot_start_time < end_time && slot_end_time > start_time
     end
   end
@@ -127,7 +127,7 @@ class RoomBookingsController < ApplicationController
       [current_day]
     end
   end
-  
+
   def room_booking_params
     params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id, :section_id)
   end
