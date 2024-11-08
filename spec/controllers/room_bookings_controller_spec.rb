@@ -54,7 +54,7 @@ RSpec.describe RoomBookingsController, type: :controller do
     context 'when booking is currently available' do
       it 'toggles availability to false' do
         expect do
-          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id, is_available: false }
           room_booking1.reload
         end.to change { room_booking1.is_available }.from(true).to(false)
 
@@ -66,7 +66,7 @@ RSpec.describe RoomBookingsController, type: :controller do
         create(:room_booking, room: room1, time_slot: overlapping_slot, is_available: true)
 
         expect do
-          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id, is_available: false }
         end.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(true).to(false)
 
         overlapping_booking = RoomBooking.find_by(room: room1, time_slot: overlapping_slot)
@@ -81,7 +81,7 @@ RSpec.describe RoomBookingsController, type: :controller do
 
       it 'toggles availability to true' do
         expect do
-          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id, is_available: true }
           room_booking1.reload
         end.to change { room_booking1.is_available }.from(false).to(true)
 
@@ -93,7 +93,7 @@ RSpec.describe RoomBookingsController, type: :controller do
         create(:room_booking, room: room1, time_slot: overlapping_slot, is_available: false)
 
         expect do
-          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id }
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id, is_available: true }
         end.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(false).to(true)
 
         overlapping_booking = RoomBooking.find_by(room: room1, time_slot: overlapping_slot)

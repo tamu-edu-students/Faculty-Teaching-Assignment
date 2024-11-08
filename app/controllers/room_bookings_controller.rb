@@ -38,8 +38,6 @@ class RoomBookingsController < ApplicationController
       overlapping_booking.update(is_available: params[:is_available])
     end
 
-    flash[:notice] = overlapping_time_slots
-
     redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
   end
   
