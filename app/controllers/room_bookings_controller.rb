@@ -41,8 +41,16 @@ class RoomBookingsController < ApplicationController
   end
 
   def create
-    room_booking = RoomBooking.new(room_booking_params)
     @schedule = Schedule.find(params[:schedule_id])
+    room_booking = RoomBooking.find_or_initialize_by(room_id: room_booking_params[:room_id], time_slot_id: room_booking_params[:time_slot_id])
+
+    if (room_booking.is_locked)
+      flash[:alert] = 'Locked Room Bookings Cannot be changed'
+      redirect_to schedule_room_bookings_path(@schedule) # Redirect to the list of room bookings or another appropriate page
+      return
+    end
+
+    room_booking.update(section_id: room_booking_params[:section_id])
 
     respond_to do |format|
       if room_booking.save
@@ -60,6 +68,11 @@ class RoomBookingsController < ApplicationController
     @room_booking = RoomBooking.find_by(id: params[:id])
 
     if @room_booking
+      if (@room_booking.is_locked)
+        flash[:alert] = 'Locked Room Bookings Cannot be deleted'
+        redirect_to schedule_room_bookings_path(@schedule) # Redirect to the list of room bookings or another appropriate page
+        return
+      end
       @room_booking.destroy
       flash[:notice] = 'Room booking deleted successfully.'
     else
