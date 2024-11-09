@@ -186,7 +186,7 @@ RSpec.describe RoomBookingsController, type: :controller do
     end
 
     it 'does not delete a locked room booking' do
-      room_booking1.update(is_locked: true);
+      room_booking1.update(is_locked: true)
       delete :destroy, params: { schedule_id: schedule.id, id: room_booking1.id }
 
       expect(RoomBooking.exists?(room_booking1.id)).to be_truthy

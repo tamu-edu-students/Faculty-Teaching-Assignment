@@ -106,9 +106,9 @@ When(/^I assign "(.*)" to "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.
   course = @schedule.courses.find_by(course_number:)
   section = Section.find_by(course:, section_number:)
 
-  booking = RoomBooking.find_by(room: room, time_slot: time_slot)
+  booking = RoomBooking.find_by(room:, time_slot:)
 
-  instructor = @schedule.instructors.find_by(first_name: first_name)
+  instructor = @schedule.instructors.find_by(first_name:)
 
   page.driver.submit :patch, update_instructor_schedule_room_booking_path(@schedule, booking), {
     room_booking: {

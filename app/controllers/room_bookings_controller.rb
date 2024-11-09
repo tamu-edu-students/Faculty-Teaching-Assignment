@@ -27,10 +27,13 @@ class RoomBookingsController < ApplicationController
       overlapping_time_slots.each do |overlapping_slot|
         overlapping_booking = RoomBooking.find_or_initialize_by(room_id: booking.room_id, time_slot_id: overlapping_slot.id)
 
-        if section_alloted?(overlapping_booking)
-          @block_due_to_parallel_booking[[booking.room_id, booking.time_slot_id]] = overlapping_booking.time_slot.day unless booking.id == overlapping_booking.id
-          break
+        next unless section_alloted?(overlapping_booking)
+
+        unless booking.id == overlapping_booking.id
+          @block_due_to_parallel_booking[[booking.room_id, booking.time_slot_id]] =
+            overlapping_booking.time_slot.day
         end
+        break
       end
     end
   end
@@ -53,29 +56,31 @@ class RoomBookingsController < ApplicationController
     @schedule = Schedule.find(params[:schedule_id])
     room_booking = RoomBooking.find_or_initialize_by(room_id: room_booking_params[:room_id], time_slot_id: room_booking_params[:time_slot_id])
 
-    if (room_booking.is_locked)
+    if room_booking.is_locked
       flash[:alert] = 'Locked Room Bookings Cannot be updated.'
-      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]) # Redirect to the list of room bookings or another appropriate page
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
       return
     end
 
-    if (!room_booking.is_available)
+    unless room_booking.is_available
       flash[:alert] = 'Cannot assign to a blocked room.'
-      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]) # Redirect to the list of room bookings or another appropriate page
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
       return
     end
 
     respond_to do |format|
       if room_booking.save
         room_booking.update(section_id: room_booking_params[:section_id])
-    
+
         overlapping_time_slots = find_overlapping_time_slots(room_booking.time_slot)
-        
+
         overlapping_time_slots.each do |overlapping_slot|
           overlapping_booking = RoomBooking.find_or_initialize_by(room_id: room_booking_params[:room_id], time_slot_id: overlapping_slot.id)
           overlapping_booking.update(is_available: false) unless overlapping_booking.id == room_booking.id
         end
-        format.html { redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), notice: 'Room Booking was successfully created.' }
+        format.html do
+          redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), notice: 'Room Booking was successfully created.'
+        end
         format.json { render :index, status: :created }
       else
         flash[:alert] = 'Failed to create room booking'
@@ -89,14 +94,14 @@ class RoomBookingsController < ApplicationController
     @room_booking = RoomBooking.find_by(id: params[:id])
 
     if @room_booking
-      if (@room_booking.is_locked)
+      if @room_booking.is_locked
         flash[:alert] = 'Locked Room Bookings Cannot be deleted'
         redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
         return
       end
       overlapping_time_slots = find_overlapping_time_slots(@room_booking.time_slot)
       @room_booking.destroy
-        
+
       overlapping_time_slots.each do |overlapping_slot|
         overlapping_booking = RoomBooking.find_or_initialize_by(room_id: @room_booking.room_id, time_slot_id: overlapping_slot.id)
         overlapping_booking.update(is_available: true) unless overlapping_booking.id == @room_booking.id
