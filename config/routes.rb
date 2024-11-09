@@ -44,6 +44,7 @@ Rails.application.routes.draw do
     resources :room_bookings, only: %i[index create destroy] do
       collection do
         get :export_csv
+        post :toggle_availability
       end
       member do
         patch :toggle_lock
