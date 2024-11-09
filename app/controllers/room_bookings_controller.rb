@@ -45,19 +45,31 @@ class RoomBookingsController < ApplicationController
     room_booking = RoomBooking.find_or_initialize_by(room_id: room_booking_params[:room_id], time_slot_id: room_booking_params[:time_slot_id])
 
     if (room_booking.is_locked)
-      flash[:alert] = 'Locked Room Bookings Cannot be changed'
-      redirect_to schedule_room_bookings_path(@schedule) # Redirect to the list of room bookings or another appropriate page
+      flash[:alert] = 'Locked Room Bookings Cannot be updated.'
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]) # Redirect to the list of room bookings or another appropriate page
       return
     end
 
-    room_booking.update(section_id: room_booking_params[:section_id])
+    if (!room_booking.is_available)
+      flash[:alert] = 'Cannot assign to a blocked room.'
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]) # Redirect to the list of room bookings or another appropriate page
+      return
+    end
 
     respond_to do |format|
       if room_booking.save
-        format.html { redirect_to schedule_room_bookings_path(@schedule), notice: 'Room Booking was successfully created.' }
+        room_booking.update(section_id: room_booking_params[:section_id])
+    
+        overlapping_time_slots = find_overlapping_time_slots(room_booking.time_slot)
+        puts overlapping_time_slots
+        overlapping_time_slots.each do |overlapping_slot|
+          overlapping_booking = RoomBooking.find_or_initialize_by(room_id: room_booking_params[:room_id], time_slot_id: overlapping_slot.id)
+          overlapping_booking.update(is_available: false) unless overlapping_booking.id == room_booking.id
+        end
+        format.html { redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), notice: 'Room Booking was successfully created.' }
         format.json { render :index, status: :created }
       else
-        flash[:alert] = 'Did not work'
+        flash[:alert] = 'Failed to create room booking'
         render json: { error: 'Failed to create room booking', details: room_booking.errors.full_messages }, status: :unprocessable_entity
       end
     end
@@ -70,7 +82,7 @@ class RoomBookingsController < ApplicationController
     if @room_booking
       if (@room_booking.is_locked)
         flash[:alert] = 'Locked Room Bookings Cannot be deleted'
-        redirect_to schedule_room_bookings_path(@schedule) # Redirect to the list of room bookings or another appropriate page
+        redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]) # Redirect to the list of room bookings or another appropriate page
         return
       end
       @room_booking.destroy
@@ -79,7 +91,7 @@ class RoomBookingsController < ApplicationController
       flash[:alert] = 'Room booking not found.'
     end
 
-    redirect_to schedule_room_bookings_path(@schedule) # Redirect to the list of room bookings or another appropriate page
+    redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]) # Redirect to the list of room bookings or another appropriate page
   end
 
   def toggle_lock
