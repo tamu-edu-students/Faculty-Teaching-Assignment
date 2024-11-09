@@ -19,10 +19,19 @@ class RoomBookingsController < ApplicationController
       time_slot: {},
       instructor: {}
     ).where(rooms: { schedule_id: @schedule.id }, time_slots: { day: @active_tab })
-
-    # Organize room bookings in a hash with room_id and time_slot_id as keys
+    @block_due_to_parallel_booking = {}
     @bookings_matrix = @room_bookings.each_with_object({}) do |booking, hash|
       hash[[booking.room_id, booking.time_slot_id]] = booking
+      @block_due_to_parallel_booking[[booking.room_id, booking.time_slot_id]] = false
+      overlapping_time_slots = find_overlapping_time_slots(booking.time_slot)
+      overlapping_time_slots.each do |overlapping_slot|
+        overlapping_booking = RoomBooking.find_or_initialize_by(room_id: booking.room_id, time_slot_id: overlapping_slot.id)
+
+        if section_alloted?(overlapping_booking)
+          @block_due_to_parallel_booking[[booking.room_id, booking.time_slot_id]] = overlapping_booking.time_slot.day unless booking.id == overlapping_booking.id
+          break
+        end
+      end
     end
   end
 
@@ -246,6 +255,10 @@ class RoomBookingsController < ApplicationController
 
   def format_time_slot(time_slot)
     "#{time_slot.start_time} - #{time_slot.end_time}"
+  end
+
+  def section_alloted?(overlapping_booking)
+    overlapping_booking.section_id.present?
   end
 
   def room_booking_params

@@ -86,6 +86,8 @@
                                     </div>
                                 <% end %>
 
+                            <% elsif @block_due_to_parallel_booking[[room.id, time_slot.id]] %>
+                                Booked in <%= @block_due_to_parallel_booking[[room.id, time_slot.id]] %>
                             <% elsif booking && !booking.is_available %>
                                 <%= button_to "U", toggle_availability_schedule_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id, is_available: true }, class: "btn btn-sm btn-success" %>
                             <% else %>
