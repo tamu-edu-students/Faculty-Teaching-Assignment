@@ -128,7 +128,6 @@
                 }
             });
 
-            // Fix schedule id now.
             document.querySelectorAll('a.course-select-btn').forEach(button => {
                 const sectionId = button.dataset.section
                 button.href = `/schedules/${scheduleId}/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bsection_id%5D=${sectionId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`

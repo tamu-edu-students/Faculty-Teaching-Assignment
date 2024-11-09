@@ -4,7 +4,6 @@ class RoomBookingsController < ApplicationController
   before_action :set_schedule
 
   def index
-    # @schedule = Schedule.find(params[:schedule_id])
     @rooms = @schedule.rooms.where(is_active: true).where.not(building_code: 'ONLINE')
     @tabs = TimeSlot.distinct.pluck(:day)
     @active_tab = params[:active_tab] || session[:active_rb_tab] || @tabs[0]
