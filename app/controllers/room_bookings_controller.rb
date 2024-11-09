@@ -70,7 +70,7 @@ class RoomBookingsController < ApplicationController
         room_booking.update(section_id: room_booking_params[:section_id])
     
         overlapping_time_slots = find_overlapping_time_slots(room_booking.time_slot)
-        puts overlapping_time_slots
+        
         overlapping_time_slots.each do |overlapping_slot|
           overlapping_booking = RoomBooking.find_or_initialize_by(room_id: room_booking_params[:room_id], time_slot_id: overlapping_slot.id)
           overlapping_booking.update(is_available: false) unless overlapping_booking.id == room_booking.id
@@ -91,16 +91,22 @@ class RoomBookingsController < ApplicationController
     if @room_booking
       if (@room_booking.is_locked)
         flash[:alert] = 'Locked Room Bookings Cannot be deleted'
-        redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]) # Redirect to the list of room bookings or another appropriate page
+        redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
         return
       end
+      overlapping_time_slots = find_overlapping_time_slots(@room_booking.time_slot)
       @room_booking.destroy
+        
+      overlapping_time_slots.each do |overlapping_slot|
+        overlapping_booking = RoomBooking.find_or_initialize_by(room_id: @room_booking.room_id, time_slot_id: overlapping_slot.id)
+        overlapping_booking.update(is_available: true) unless overlapping_booking.id == @room_booking.id
+      end
       flash[:notice] = 'Room booking deleted successfully.'
     else
       flash[:alert] = 'Room booking not found.'
     end
 
-    redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]) # Redirect to the list of room bookings or another appropriate page
+    redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
   end
 
   def toggle_lock
