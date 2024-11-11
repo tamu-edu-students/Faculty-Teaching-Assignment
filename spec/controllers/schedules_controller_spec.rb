@@ -5,9 +5,11 @@ require 'rails_helper'
 RSpec.describe SchedulesController, type: :controller do
   before do
     allow(controller).to receive(:require_login).and_return(true)
+    session[:user_id] = user.id
   end
 
-  let!(:schedule1) { create(:schedule) }
+  let(:user) { create(:user) }
+  let!(:schedule1) { create(:schedule, user:) }  
 
   describe 'GET #index' do
     it 'populates an array of schedules' do
@@ -16,7 +18,7 @@ RSpec.describe SchedulesController, type: :controller do
     end
 
     it 'filters schedules by search term' do
-      other_schedule = create(:schedule, schedule_name: 'Another Schedule')
+      other_schedule = create(:schedule, schedule_name: 'Another Schedule', user:)
       get :index, params: { search_by_name: 'Another' }
       expect(assigns(:schedules)).to include(other_schedule)
       expect(assigns(:schedules)).not_to include(schedule1)
@@ -101,7 +103,7 @@ RSpec.describe SchedulesController, type: :controller do
   describe 'POST #upload_rooms' do
     let(:file_valid) { fixture_file_upload(Rails.root.join('spec/fixtures/rooms/rooms_valid.csv'), 'text/csv') }
     let(:file_invalid) { fixture_file_upload(Rails.root.join('spec/fixtures/rooms/rooms_invalid.csv'), 'text/csv') }
-    let!(:schedule1) { create(:schedule) }
+    let!(:schedule1) { create(:schedule, user:) }
 
     context 'with a valid CSV file' do
       it "processes the CSV file, sets a success flash, and redirects to the user's page" do
@@ -134,7 +136,7 @@ RSpec.describe SchedulesController, type: :controller do
   describe 'POST #upload_instructors' do
     let(:file_valid) { fixture_file_upload(Rails.root.join('spec/fixtures/instructors/instructors_valid.csv'), 'text/csv') }
     let(:file_invalid) { fixture_file_upload(Rails.root.join('spec/fixtures/rooms/rooms_invalid.csv'), 'text/csv') }
-    let!(:schedule1) { create(:schedule) }
+    let!(:schedule1) { create(:schedule, user:) }
     let!(:course1) { create(:course, schedule: schedule1, course_number: '465D/765') }
     let!(:course2) { create(:course, schedule: schedule1, course_number: '120') }
 
@@ -169,7 +171,7 @@ RSpec.describe SchedulesController, type: :controller do
   describe 'POST #upload_courses' do
     let(:file_valid) { fixture_file_upload(Rails.root.join('spec/fixtures/courses/Course_list_valid.csv'), 'text/csv') }
     let(:file_invalid) { fixture_file_upload(Rails.root.join('spec/fixtures/courses/Course_list_invalid.csv'), 'text/csv') }
-    let!(:schedule1) { create(:schedule) }
+    let!(:schedule1) { create(:schedule, user:) }
 
     context 'with a valid CSV file' do
       it "processes the CSV file, sets a success flash, and redirects to the user's page" do
