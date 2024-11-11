@@ -34,12 +34,7 @@ module RoomBookingsHelper
       # You can customize this sorting logic based on the structure of your `InstructorPreference` model.
       # For example, if `instructor.instructor_preferences` has a `preference_level` attribute,
       # you could sort by this value:
-      preference = instructor.instructor_preferences.find_by(course_id: course_id)
-      unless preference.nil?
-        preference_level = preference.preference_level || 0
-      else
-        preference_level = 0
-      end
+      preference_level = get_preference(instructor, course_id)
       bandwidth = instructor.max_course_load - get_teach_count(instructor) #how many more courses a instructor can pick up
       # Return preference_level for sorting, instructors with lower preference level will come first
       [preference_level, bandwidth]
@@ -53,10 +48,18 @@ module RoomBookingsHelper
     end
     bookings_for_instructor.length
   end
+  def get_preference(instructor, course_id)
+    preference = instructor.instructor_preferences.find_by(course_id: course_id)
+    unless preference.nil?
+      preference_level = preference.preference_level || 0
+    else
+      preference_level = 0
+    end
+    preference_level
+  end
 end
 # no overlaping  time slots
 # show first and last
 # show score color code
 
 #error multiple bookings can be plot at the same time
-#shouldn't it be annomys
