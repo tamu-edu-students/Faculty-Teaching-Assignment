@@ -95,15 +95,20 @@ class CsvHandler
           next unless match
 
           course_number = match[1]
-          match[2]
-          course = Course.find_by(course_number:)
+          course = schedule.courses.find_by(course_number:)
           if course.nil?
-            missing_courses << course_number
-          else
+            first_part, last_part = course_number.split('/')
+            
+            # Attempt to find by first or last part, and update course_number accordingly
+            course = schedule.courses.find_by(course_number: first_part) || schedule.courses.find_by(course_number: last_part)
+            course_number = course&.course_number if course
+          end
+          
+          if course
             # Store valid preferences temporarily
             preferences_to_upload << {
               instructor_id: instructor.id,
-              course:,
+              course: course,
               preference_level: row[col_index]
             }
             courses_with_preferences << course_number
