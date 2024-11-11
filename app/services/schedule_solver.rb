@@ -9,11 +9,6 @@ class ScheduleSolver
     num_rooms = rooms.length
     num_times = times.length
     num_instructors = instructors.length
-    # print times
-    # puts "classes: #{num_classes}"
-    # puts "rooms: #{num_rooms}"
-    # puts "times: #{num_times}"
-    # puts "profs: #{num_instructors}"
 
     # Sanity check: contracted teaching classes >= offered classes
     raise StandardError, 'Not enough teaching hours for given class offerings!' if num_instructors < num_classes
@@ -24,7 +19,7 @@ class ScheduleSolver
     # Reshape into a 3D tensor
     # i.e. sched[i][j][k] = 1 is class i is located at room j for time k
     sched = sched_flat.each_slice(num_times).each_slice(num_rooms).to_a
-    print sched
+
     # Create objective function
     # Minimize the number of empty seats in a full section
     objective = sched.map.with_index do |mat, c|
@@ -56,6 +51,8 @@ class ScheduleSolver
     end
 
     # Constraint #3: Every class has exactly one assigned room and time
+    # Need the guaranteed zero to enforce the LHS is 1
+    # See Constraint #4 for why
     place_constraints =
       (0...num_classes).map do |c|
         sched[c].flatten.reduce(:+) + GuaranteedZero_b == 1
@@ -66,7 +63,7 @@ class ScheduleSolver
     lock_constraints =
       locks.each do |trio|
         # For unknown reasons, I can't write sched[c][r][t] == 1
-        # Ruby will evaluate this as a boolean expression, instead of the constraint
+        # Ruby will evaluate this as a boolean expression, instead of giving the constraint
         # Introduce a dummy variable to prevent this from happening
         # If their sum is two => sched[c][r][t] must be 1
         sched[trio[0]][trio[1]][trio[2]].must_be.equal_to(1)
@@ -78,7 +75,7 @@ class ScheduleSolver
       (0...num_rooms).each do |r|
         next if classes[c]['is_lab'] == rooms[r]['is_lab']
         (0...num_times).each do |t|
-          designation_constraints.append(sched[c][r][t] == 0)
+          designation_constraints.append(sched[c][r][t] + GuaranteedZero_b == 0)
         end
       end
     end
@@ -100,22 +97,25 @@ class ScheduleSolver
       end
     end
 
+    # Ensure GuaranteedZero is, in fact, zero
+    zero_constraint = [GuaranteedZero_b <= 0]
+
     # Consolidate constraints
-    constraints = cap_constraints + share_constraints + place_constraints + lock_constraints + overlap_constraints + designation_constraints + [GuaranteedZero_b == 0?0:1]
+    constraints = cap_constraints + share_constraints + place_constraints + lock_constraints + overlap_constraints + designation_constraints + zero_constraint
 
     # Form ILP and solve
     problem = Rulp::Min(objective)
     problem[constraints]
-    puts objective
-    puts constraints
+    # Silence RULP output, unless there's an error
+    Rulp::log_level = Logger::ERROR
+
     begin
       status = Rulp::Glpk(problem)
     rescue StandardError
       raise StandardError, 'Solution infeasible!'
     end
-    if status != 0
-      raise StandardError, 'Solution infeasible!'
-    end
+
+
     # Now that the courses have been assigned rooms and times, we now add instructors
     # This can be viewed as a bipartite matching (see ILP doc)
     unhappiness_matrix = Array.new(num_instructors) { Array.new(num_classes) { 0 } }

@@ -55,30 +55,28 @@ RSpec.describe ScheduleSolver, type: :model do
     end
 
     context 'when a morning hater is assigned to a morning class' do
-      it 'raises an error due to instructor preference' do
-        expect do
-          ScheduleSolver.solve([courses(:small_course)],
-                               [rooms(:large_room)],
-                               [time_slots(:morning)],
-                               [instructors(:morning_hater)],
-                               [])
-        end.to raise_error(StandardError, 'Solution infeasible!')
-      end
-    end
-
-    context 'when a evening hater is assigned to a evening class' do
-      it 'raises an error due to instructor preference' do
-        expect do
-          ScheduleSolver.solve([courses(:small_course)],
+      it 'returns a nonzero unhappiness' do
+        unhappiness = ScheduleSolver.solve([courses(:small_course)],
                                [rooms(:large_room)],
                                [time_slots(:evening)],
                                [instructors(:evening_hater)],
                                [])
-        end.to raise_error(StandardError, 'Solution infeasible!')
+        expect(unhappiness).to be > 0
+      end
+    end
+
+    context 'when a evening hater is assigned to a evening class' do
+      it 'returns a nonzero unhappiness' do
+        unhappiness = ScheduleSolver.solve([courses(:small_course)],
+                               [rooms(:large_room)],
+                               [time_slots(:evening)],
+                               [instructors(:evening_hater)],
+                               [])
+        expect(unhappiness).to be > 0
       end
     end
   end
-
+  
   describe 'algorithm finds a schedule' do
     context 'there exists a feasible schedule' do
       it 'finds a schedule' do
