@@ -9,7 +9,10 @@ module RoomBookingsHelper
                        .where(room_booking: { id: nil })
     render partial: '/shared/courses_list', locals: { sections: @sections }
   end
-  def eligible_instructors(schedule, time_slot,course_id)
+  def eligible_instructors(schedule, booking)
+    time_slot = TimeSlot.find_by(id: booking.time_slot_id)
+    current_instructor_id = booking.instructor_id 
+    course_id = booking.section.course.id
     before_9 = Time.parse("09:00 AM")
     after_3 = Time.parse("03:00 PM")
     
@@ -24,6 +27,7 @@ module RoomBookingsHelper
         next if end_time > after_3 #instructor unavalible check the next
       end
       next if get_teach_count(instructor) == instructor.max_course_load
+      next if current_instructor_id == instructor.id
       true #teacher is avalable
     end
     ans.sort_by do |instructor|

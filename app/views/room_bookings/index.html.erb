@@ -56,6 +56,12 @@
                                     (<%= booking.section.section_number %>)
                                 </strong> |
                                 <%= booking.section.seats_alloted %>
+                                <p>Current Instructor: <%= curr = Instructor.find_by(id: booking.instructor_id )
+                                                            unless curr.nil?
+                                                                curr.first_name
+                                                            else 
+                                                                "N/A"
+                                                            end %></p>
                                 <%= link_to "Delete", 
                                     schedule_room_booking_path(@schedule,booking), 
                                     method: :delete, 
@@ -80,8 +86,8 @@
                                         data: { turbo_method: :patch } do |form| %>
                                         <div class="field">
                                             <%= form.select :instructor_id, 
-                                                options_from_collection_for_select(eligible_instructors(@schedule, TimeSlot.find_by(id: booking.time_slot_id), booking.section.course.id)  , :id, :first_name, booking.instructor_id), 
-                                                { prompt: "Select Instructor" }, 
+                                                options_from_collection_for_select(eligible_instructors(@schedule,  booking)  , :id, :first_name, booking.instructor_id), 
+                                                { prompt: "Select Instructor", selected: nil }, 
                                                 id: "instructor_select_#{booking.id}",
                                                 onchange: "this.form.submit()" %>
                                         </div>
