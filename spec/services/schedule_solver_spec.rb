@@ -58,8 +58,8 @@ RSpec.describe ScheduleSolver, type: :model do
       it 'returns a nonzero unhappiness' do
         unhappiness = ScheduleSolver.solve([courses(:small_course)],
                                [rooms(:large_room)],
-                               [time_slots(:evening)],
-                               [instructors(:evening_hater)],
+                               [time_slots(:morning)],
+                               [instructors(:morning_hater)],
                                [])
         expect(unhappiness).to be > 0
       end
@@ -76,7 +76,7 @@ RSpec.describe ScheduleSolver, type: :model do
       end
     end
   end
-  
+
   describe 'algorithm finds a schedule' do
     context 'there exists a feasible schedule' do
       it 'finds a schedule' do
