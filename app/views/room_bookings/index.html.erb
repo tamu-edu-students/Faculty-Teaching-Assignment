@@ -49,8 +49,8 @@
                         <% @rooms.each do |room| %>
                         <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
                         
-                        <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>">
-                            <% if booking %>
+                        <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>" data-schedule-id="<%= @schedule.id %>">
+                            <% if booking && booking.is_available? && booking.section %>
                                 <strong>
                                     <%= booking.section.course.course_number %>
                                     (<%= booking.section.section_number %>)
@@ -62,14 +62,16 @@
                                                             else 
                                                                 "N/A"
                                                             end %></p>
-                                <%= link_to "Delete", 
-                                    schedule_room_booking_path(@schedule,booking), 
-                                    method: :delete, 
-                                    data: { 
-                                        confirm: "Are you sure you want to delete this booking?",
-                                        turbo_method: :delete
-                                    }, 
-                                    class: "btn btn-danger" %>
+                                <% if !booking.is_locked? %>
+                                    <%= link_to "Delete", 
+                                        schedule_room_booking_path(@schedule,booking), 
+                                        method: :delete, 
+                                        data: { 
+                                            confirm: "Are you sure you want to delete this booking?",
+                                            turbo_method: :delete
+                                        }, 
+                                        class: "btn btn-danger" %>
+                                <% end %>
                                 <%= link_to (booking.is_locked ? "Locked" : "Unlocked"), 
                                     toggle_lock_schedule_room_booking_path(@schedule, booking), 
                                     method: :patch, 
@@ -96,7 +98,12 @@
                                         </div>
                                     <% end %>
                                 
+                            <% elsif @block_due_to_parallel_booking[[room.id, time_slot.id]] %>
+                                Booked in <%= @block_due_to_parallel_booking[[room.id, time_slot.id]] %>
+                            <% elsif booking && !booking.is_available %>
+                                <%= button_to "U", toggle_availability_schedule_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id, is_available: true }, class: "btn btn-sm btn-success" %>
                             <% else %>
+                                <%= button_to "BL", toggle_availability_schedule_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id, is_available: false }, class: "btn btn-sm btn-danger" %>
                             <% end %>
                         </td>
                         <% end %>
@@ -118,10 +125,13 @@
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
     function attachEventListeners() {
       document.querySelectorAll(".table-cell").forEach(cell => {
-        cell.addEventListener("click", function() {
-            
+        cell.addEventListener("click", function(e) {
+            if (e.target.tagName == "button" || event.target.classList.contains("btn")) {
+                return;
+            }
             const roomId = this.dataset.roomId;
             const timeSlotId = this.dataset.timeSlotId;
+            const scheduleId = this.dataset.scheduleId;
 
              // Update cell classes
             document.querySelectorAll('td.table-cell').forEach(cell => {
@@ -136,8 +146,11 @@
 
             document.querySelectorAll('a.course-select-btn').forEach(button => {
                 const sectionId = button.dataset.section
-                button.href = `/schedules/1/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bsection_id%5D=${sectionId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`
+                button.href = `/schedules/${scheduleId}/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bsection_id%5D=${sectionId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`
             })
+
+            //Fix the message in the bar
+            document.querySelector('#courses-msg').innerText = `Selected ${roomId} at ${timeSlotId}`
         });
       });
     }

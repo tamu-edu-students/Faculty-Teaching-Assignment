@@ -38,7 +38,6 @@ FactoryBot.define do
     is_lab { [true, false].sample }
     is_locked { false }
     association :instructor
-    association :section
   end
 
   factory :time_slot do
