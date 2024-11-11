@@ -2,6 +2,7 @@
 
 # Room Bookings Controller
 class RoomBookingsController < ApplicationController
+  
   def index
     schedule_id = params[:schedule_id]
     @schedule = Schedule.find(params[:schedule_id])
@@ -12,7 +13,7 @@ class RoomBookingsController < ApplicationController
     @time_slots = TimeSlot.where(time_slots: { day: @active_tab }).to_a
     @time_slots.sort_by! { |ts| Time.parse(ts.start_time) }
     @instructors = @schedule.instructors
-
+    @allowed_instructors = []
     # Fetch room bookings only for the specified schedule
     @room_bookings = RoomBooking.includes(
       room: {},
@@ -70,8 +71,22 @@ class RoomBookingsController < ApplicationController
   end
 
   def update_instructor
+    @schedule = Schedule.find(params[:schedule_id])
     @booking = RoomBooking.find(params[:id])
-
+    @section = Section.find_by(id: @booking.section_id)
+    @course =  Course.find_by(id: @section.course_id)
+    time_slot = TimeSlot.find_by(id: @booking.time_slot_id)
+    # @allowed_instructors = eligible_instructors(@schedule, time_slot).sort_by do |instructor|
+    #   # You can customize this sorting logic based on the structure of your `InstructorPreference` model.
+    #   # For example, if `instructor.instructor_preferences` has a `preference_level` attribute,
+    #   # you could sort by this value:
+    #   preference = instructor.instructor_preferences.find_by(course_id: @course.id)
+    #   preference_level = preference.preference_level || 0
+  
+    #   # Return preference_level for sorting, instructors with lower preference level will come first
+    #   preference_level
+    # end.reverse
+    
     if @booking.update(instructor_id: params[:room_booking][:instructor_id])
       flash[:notice] = 'Instructor updated successfully.'
     else
@@ -79,7 +94,11 @@ class RoomBookingsController < ApplicationController
     end
 
     # Redirect to the previous page or another relevant page
-    redirect_back(fallback_location: room_bookings_path)
+    # redirect_back(fallback_location: room_bookings_path)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back(fallback_location: room_bookings_path) }
+    end
   end
 
   def export_csv
@@ -183,4 +202,33 @@ class RoomBookingsController < ApplicationController
   def room_booking_params
     params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id, :section_id)
   end
+
+  # def eligible_instructors(schedule, time_slot)
+  #   before_9 = Time.parse("09:00 AM")
+  #   after_3 = Time.parse("03:00 PM")
+    
+  #   schedule.instructors&.select do |instructor| #which instructors have time
+  #     # unless instructor.before_9
+  #     #   start_time = Time.parse(time_slot.start_time)
+  #     #   next if start_time < before_9 #instructor unavalible check the next
+  #     # end
+
+  #     # unless instructor.after_3
+  #     #   end_time = Time.parse(time_slot.end_time)
+  #     #   next if end_time > after_3 #instructor unavalible check the next
+  #     # end
+  #     # next if get_teach_count(instructor) == instructor.max_course_load
+  #     true #teacher is avalable
+  #   end
+    
+    
+  # end
+
+  # def get_teach_count(instructor)
+  #   bookings_for_instructor = RoomBooking.all.select do |booking|
+  #     booking.instructor_id == instructor.id
+  #   end
+  #   bookings_for_instructor.length
+  # end
+
 end
