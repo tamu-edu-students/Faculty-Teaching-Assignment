@@ -40,9 +40,9 @@ module RoomBookingsHelper
       else
         preference_level = 0
       end
-  
+      bandwidth = instructor.max_course_load - get_teach_count(instructor) #how many more courses a instructor can pick up
       # Return preference_level for sorting, instructors with lower preference level will come first
-      preference_level
+      [preference_level, bandwidth]
     end.reverse
     
   end
@@ -54,3 +54,9 @@ module RoomBookingsHelper
     bookings_for_instructor.length
   end
 end
+# no overlaping  time slots
+# show first and last
+# show score color code
+
+#error multiple bookings can be plot at the same time
+#shouldn't it be annomys
