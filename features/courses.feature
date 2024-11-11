@@ -73,9 +73,27 @@ Feature: Courses Page
         | 435/735/735D        | 135       | F2F          | 2              |
 
         When I visit the courses page for "Sched 1"
-        And I hide course "110" from generator
+        And I hide course "111/708 (86/10)" from generator
         Then I should see "Course updated successfully."
-        And I should see "Keep"
+        And I should not see "111/708 (86/10)"
+
+    Scenario: User should be able to filter courses based visibility from the generator
+        Given I am logged in as a user with first name "Test"
+        And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
+        And the following courses exist for that schedule:
+        | course_number       | max_seats | lecture_type | num_labs |
+        | 110                 | 96        | F2F          | 4              |
+        | 111                 | 96        | F2F          | 4              |
+        | 111/708 (86/10)     | 96        | F2F          | 5              |
+        | 120                 | 96        | F2F          | 4              |
+        | 435/735/735D        | 135       | F2F          | 2              |
+
+        When I visit the courses page for "Sched 1"
+        And I hide course "111/708 (86/10)" from generator
+        Then I should see "Course updated successfully."
+        And I should not see "111/708 (86/10)"
+        When I click "Show Hidden Courses"
+        Then I should see "111/708 (86/10)"
     
     Scenario: User should not be able to hide course visibility from the generator for assigned courses
         Given I am logged in as a user with first name "Test"

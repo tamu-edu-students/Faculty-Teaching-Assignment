@@ -4,7 +4,9 @@
     <p class="container h1 text-secondary">No courses added to this schedule!</p>
 <% else %>
 <div class="container border-2 border-dark">
-  
+    <%= link_to (@show_hidden ? "Show Active Courses" : "Show Hidden Courses" ),
+        schedule_courses_path(@schedule, show_hidden:  @show_hidden ? false : true),
+        class: "btn btn-dark m-4"  %>
     <table id= "courses" class="table col-8 border-2 border-dark table-hover table-bordered">
         <thead class="table-dark">
             <tr>

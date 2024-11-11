@@ -62,60 +62,65 @@ RSpec.describe CoursesController, type: :controller do
         create(:section, section_number: '501', seats_alloted: 60, course_id: course2.id)
       end
       let!(:course3) do
-        create(:course, course_number: '400', max_seats: 150, lecture_type: 'F2F', num_labs: 1, schedule_id: schedule.id)
+        create(:course, course_number: '400', max_seats: 150, lecture_type: 'F2F', num_labs: 1, schedule_id: schedule.id, hide: true)
       end
       let!(:section31) do
         create(:section, section_number: '500', seats_alloted: 150, course_id: course3.id)
       end
 
       context 'without any sorting' do
-        it 'assigns all courses to @courses' do
+        it 'assigns all active courses to @courses' do
           get :index, params: { schedule_id: schedule.id }
-          expect(assigns(:courses)).to match_array([course1, course2, course3])
+          expect(assigns(:courses)).to match_array([course1, course2])
+        end
+
+        it 'assigns all hidden courses to @courses' do
+          get :index, params: { schedule_id: schedule.id, show_hidden: 'true' }
+          expect(assigns(:courses)).to match_array([course3])
         end
       end
 
       context 'with sorting by course_number' do
         it 'assigns courses sorted by course_number ascending  to @courses' do
           get :index, params: { schedule_id: schedule.id, sort: 'course_number', direction: 'asc' }
-          expect(assigns(:courses)).to eq([course1, course2, course3])
+          expect(assigns(:courses)).to eq([course1, course2])
         end
         it 'assigns courses sorted by course_number descending  to @courses' do
           get :index, params: { schedule_id: schedule.id, sort: 'course_number', direction: 'desc' }
-          expect(assigns(:courses)).to eq([course3, course2, course1])
+          expect(assigns(:courses)).to eq([course2, course1])
         end
       end
 
       context 'with sorting by max_seats' do
         it 'assigns courses sorted by max_seats ascending  to @courses' do
           get :index, params: { schedule_id: schedule.id, sort: 'max_seats', direction: 'asc' }
-          expect(assigns(:courses)).to eq([course1, course2, course3])
+          expect(assigns(:courses)).to eq([course1, course2])
         end
         it 'assigns courses sorted by max_seats descending  to @courses' do
           get :index, params: { schedule_id: schedule.id, sort: 'max_seats', direction: 'desc' }
-          expect(assigns(:courses)).to eq([course3, course2, course1])
+          expect(assigns(:courses)).to eq([course2, course1])
         end
       end
 
       context 'with sorting by lecture_type' do
         it 'assigns courses sorted by lecture_type ascending  to @courses' do
           get :index, params: { schedule_id: schedule.id, sort: 'lecture_type', direction: 'asc' }
-          expect(assigns(:courses)).to eq([course3, course1, course2])
+          expect(assigns(:courses)).to eq([course1, course2])
         end
         it 'assigns courses sorted by lecture_type descending  to @courses' do
           get :index, params: { schedule_id: schedule.id, sort: 'lecture_type', direction: 'desc' }
-          expect(assigns(:courses)).to eq([course2, course1, course3])
+          expect(assigns(:courses)).to eq([course2, course1])
         end
       end
 
       context 'with sorting by num_labs' do
         it 'assigns courses sorted by num_labs ascending  to @courses' do
           get :index, params: { schedule_id: schedule.id, sort: 'num_labs', direction: 'asc' }
-          expect(assigns(:courses)).to eq([course3, course2, course1])
+          expect(assigns(:courses)).to eq([course2, course1])
         end
         it 'assigns courses sorted by num_labs descending  to @courses' do
           get :index, params: { schedule_id: schedule.id, sort: 'num_labs', direction: 'desc' }
-          expect(assigns(:courses)).to eq([course1, course2, course3])
+          expect(assigns(:courses)).to eq([course1, course2])
         end
       end
     end
