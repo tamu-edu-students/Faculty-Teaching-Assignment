@@ -5,6 +5,13 @@ require 'rails_helper'
 RSpec.describe CoursesController, type: :controller do
   render_views
   let(:schedule) { Schedule.create!(schedule_name: 'Fall Semester', semester_name: '2024') }
+  let(:course) { create(:course, schedule:, hide: false) }
+
+  before do
+    @user = User.find_or_initialize_by(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John', last_name: 'Doe')
+    allow(controller).to receive(:logged_in?).and_return(true)
+    controller.instance_variable_set(:@current_user, @user)
+  end
 
   describe 'GET #index' do
     before do
@@ -110,6 +117,46 @@ RSpec.describe CoursesController, type: :controller do
           get :index, params: { schedule_id: schedule.id, sort: 'num_labs', direction: 'desc' }
           expect(assigns(:courses)).to eq([course1, course2, course3])
         end
+      end
+    end
+  end
+
+  describe 'PATCH #toggle_hide' do
+    context 'when course has no associated room bookings' do
+      it 'toggles the hide attribute and redirects with a success notice' do
+        patch :toggle_hide, params: { schedule_id: schedule.id, id: course.id }
+
+        course.reload
+        expect(flash[:notice]).to eq('Course updated successfully.')
+        expect(course.hide).to eq(true)
+        expect(response).to redirect_to("/schedules/#{schedule.id}/courses")
+      end
+    end
+
+    context 'when course has associated room bookings' do
+      let(:section) { create(:section, course:) }
+      let!(:room_booking) { create(:room_booking, section:) }
+
+      it 'does not toggle the hide attribute and redirects with an alert' do
+        patch :toggle_hide, params: { schedule_id: schedule.id, id: course.id }
+
+        course.reload
+        expect(course.hide).to eq(false)
+        expect(response).to redirect_to("/schedules/#{schedule.id}/courses")
+        expect(flash[:alert]).to eq('Cannot hide course because it has associated room bookings.')
+      end
+    end
+
+    context 'when course update fails' do
+      before do
+        allow_any_instance_of(Course).to receive(:update).and_return(false)
+      end
+
+      it 'renders an error message with status unprocessable_entity' do
+        patch :toggle_hide, params: { schedule_id: schedule.id, id: course.id }
+
+        expect(response.status).to eq(422)
+        expect(JSON.parse(response.body)['error']).to eq('Failed to update course hide status')
       end
     end
   end
