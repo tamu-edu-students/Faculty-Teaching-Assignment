@@ -131,8 +131,46 @@ RSpec.describe RoomBookingsController, type: :controller do
           }
         }
 
-        expect(RoomBooking.count).to eq(3)
+        expect(RoomBooking.count).to eq(2)
         expect(flash[:notice]).to eq('Room Booking was successfully created.')
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+      end
+
+      it 'does not creates a new room booking on blocked slots' do
+        room_booking1.update(is_available: false)
+        post :create, params: {
+          schedule_id: schedule.id,
+          room_booking: {
+            room_id: room1.id,
+            time_slot_id: time_slot1.id,
+            section_id: section.id,
+            instructor_id: instructor.id,
+            is_available: true,
+            is_lab: false
+          }
+        }
+
+        expect(RoomBooking.count).to eq(2)
+        expect(flash[:alert]).to eq('Cannot assign to a blocked room.')
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+      end
+
+      it 'does not overwrite locked room bookings' do
+        room_booking1.update(is_locked: true)
+        post :create, params: {
+          schedule_id: schedule.id,
+          room_booking: {
+            room_id: room1.id,
+            time_slot_id: time_slot1.id,
+            section_id: section.id,
+            instructor_id: instructor.id,
+            is_available: true,
+            is_lab: false
+          }
+        }
+
+        expect(RoomBooking.count).to eq(2)
+        expect(flash[:alert]).to eq('Locked Room Bookings Cannot be updated.')
         expect(response).to redirect_to(schedule_room_bookings_path(schedule))
       end
     end
@@ -144,6 +182,15 @@ RSpec.describe RoomBookingsController, type: :controller do
 
       expect(RoomBooking.exists?(room_booking1.id)).to be_falsey
       expect(flash[:notice]).to eq('Room booking deleted successfully.')
+      expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+    end
+
+    it 'does not delete a locked room booking' do
+      room_booking1.update(is_locked: true)
+      delete :destroy, params: { schedule_id: schedule.id, id: room_booking1.id }
+
+      expect(RoomBooking.exists?(room_booking1.id)).to be_truthy
+      expect(flash[:alert]).to eq('Locked Room Bookings Cannot be deleted')
       expect(response).to redirect_to(schedule_room_bookings_path(schedule))
     end
 

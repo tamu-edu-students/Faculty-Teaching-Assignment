@@ -4,7 +4,9 @@
     <p class="container h1 text-secondary">No courses added to this schedule!</p>
 <% else %>
 <div class="container border-2 border-dark">
-  
+    <%= link_to (@show_hidden ? "Show Active Courses" : "Show Hidden Courses" ),
+        schedule_courses_path(@schedule, show_hidden:  @show_hidden ? false : true),
+        class: "btn btn-dark m-4"  %>
     <table id= "courses" class="table col-8 border-2 border-dark table-hover table-bordered">
         <thead class="table-dark">
             <tr>
@@ -13,11 +15,12 @@
             <th scope="col"><%= sortable "lecture_type", "Lecture Type" %></th>
             <th scope="col"><%= sortable "num_labs", "Number of Labs" %></th>
             <th scope="col">Sections</th>
+            <th scope="col">Generator Visibility</th>
             </tr>
         </thead>
         <tbody>
             <% @courses.each do |course| %>
-            <tr>
+            <tr id="course-<%= course.id %>" class="<%= course.hide? ? 'table-secondary' : 'table-default' %>">
                 
                 
                 <td><%= course.course_number %></td>
@@ -31,7 +34,16 @@
                         No Sections
                     <% end %>
                 </td>
-                
+                <td>
+                    <%= link_to (course.hide ? "Keep" : "Hide"), 
+                        toggle_hide_schedule_course_path(@schedule, course), 
+                        method: :patch, 
+                        data: { 
+                            confirm: "Are you sure you want to toggle the lock status?", 
+                            turbo_method: :patch 
+                        }, 
+                        class: (course.hide ? "btn btn-danger":"btn btn-warning") %>
+                </td>
                 
             </tr>
             <% end %>

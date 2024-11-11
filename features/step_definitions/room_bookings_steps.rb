@@ -93,6 +93,35 @@ When(/^I book room "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) 
   visit schedule_room_bookings_path(@schedule)
 end
 
+When(/^I assign "(.*)" to "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) do |first_name, bldg, room, day, time, section_number, course_number|
+  # Find the room based on schedule and building code
+  room = @schedule.rooms.find_by(building_code: bldg, room_number: room)
+  expect(room).not_to be_nil, 'Could not find room'
+
+  # Find the time slot based on day and time
+  start_time, end_time = time.split(' - ')
+  time_slot = TimeSlot.find_by(day:, start_time:, end_time:)
+  expect(time_slot).not_to be_nil, "Could not find time slot for '#{day} #{time}'"
+
+  course = @schedule.courses.find_by(course_number:)
+  section = Section.find_by(course:, section_number:)
+
+  booking = RoomBooking.find_by(room:, time_slot:)
+
+  instructor = @schedule.instructors.find_by(first_name:)
+
+  page.driver.submit :patch, update_instructor_schedule_room_booking_path(@schedule, booking), {
+    room_booking: {
+      room_id: room.id,
+      time_slot_id: time_slot.id,
+      section_id: section.id,
+      instructor_id: instructor.id
+    }
+  }
+
+  visit schedule_room_bookings_path(@schedule)
+end
+
 Given('the following room bookings exist:') do |table|
   table.hashes.each do |attributes|
     # Find or create the schedule first if it's not already set
