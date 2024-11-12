@@ -63,17 +63,21 @@ RSpec.describe CsvHandler do
       end
 
       it 'creates instructor prefrences with correct values' do
-        expect(InstructorPreference.count).to eq(3 * 5) # 3 instructors with 4 preferences each and 1 extra course in the courses table
+        expect(InstructorPreference.count).to eq(3 * 6) # 3 instructors with 2 valid preferences each and 4 extra course in the courses table
         instructor = Instructor.find_by(id_number: 2_755_728)
         expect(instructor).not_to be_nil
         preferences = InstructorPreference.where(instructor_id: instructor.id)
-        expect(preferences.count).to eq(5)
+        expect(preferences.count).to eq(6)
         course = Course.find_by(course_number: '120')
         preference1 = preferences.find_by(course:)
         expect(preference1.preference_level).to eq(2)
         course = Course.find_by(course_number: '435/735/735D')
         preference1 = preferences.find_by(course:)
         expect(preference1.preference_level).to eq(3)
+        # Check split courses set
+        course = Course.find_by(course_number: '410')
+        preference1 = preferences.find_by(course:)
+        expect(preference1.preference_level).to eq(1)
       end
 
       it 'returns a success message' do
@@ -97,7 +101,7 @@ RSpec.describe CsvHandler do
         handler = CsvHandler.new
         handler.upload(StringIO.new(valid_course_csv))
         handler.parse_course_csv(schedule.id)
-        expect(Course.count).to eq(10)
+        expect(Course.count).to eq(11)
       end
 
       it 'returns a success message' do

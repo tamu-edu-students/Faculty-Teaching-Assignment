@@ -34,7 +34,12 @@ Rails.application.routes.draw do
     resources :instructors, only: [:index]
     post :upload_instructors, on: :member
 
-    resources :courses, only: [:index]
+    resources :courses, only: [:index] do
+      member do
+        patch :toggle_hide
+      end
+    end
+
     post :upload_courses, on: :member
 
     post 'time_slots', to: 'time_slots#filter', as: 'filter_time_slots'
@@ -42,6 +47,10 @@ Rails.application.routes.draw do
     get '/time_slots', to: 'time_slots#index'
 
     resources :room_bookings, only: %i[index create destroy] do
+      collection do
+        get :export_csv
+        post :toggle_availability
+      end
       member do
         patch :toggle_lock
         patch :update_instructor

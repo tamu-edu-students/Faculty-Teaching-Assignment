@@ -40,3 +40,13 @@ end
 When(/^I visit the courses page for id "(.*)"$/) do |schedule_id|
   visit schedule_courses_path(schedule_id:)
 end
+
+When('I hide course {string} from generator') do |course_number|
+  course = @schedule.courses.find_by(course_number:)
+
+  row = find('tr', id: "course-#{course.id}")
+  room_headers = all('th')
+  room_header_index = room_headers.find_index { |header| header.text == 'Generator Visibility' }
+  row.all('td')[room_header_index - 1]
+  row.find_link('Hide').click
+end

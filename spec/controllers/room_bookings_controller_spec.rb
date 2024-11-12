@@ -2,53 +2,117 @@
 
 # spec/controllers/room_bookings_controller_spec.rb
 require 'rails_helper'
+require 'csv'
 
 RSpec.describe RoomBookingsController, type: :controller do
   render_views
   let!(:schedule) { create(:schedule) }
-  let!(:room1) { create(:room, schedule:) }
-  let!(:room2) { create(:room, schedule:) }
+  let!(:room1) { create(:room, schedule:, building_code: 'EABB', room_number: '106', capacity: 118, is_active: true) }
+  let!(:room2) { create(:room, schedule:, building_code: 'HRBB', room_number: '113', capacity: 65, is_active: true) }
   let!(:time_slot1) { create(:time_slot, day: 'Monday', start_time: '09:00', end_time: '10:00') }
   let!(:time_slot2) { create(:time_slot, day: 'Monday', start_time: '10:00', end_time: '11:00') }
-  let(:course) { create(:course, schedule:) }
-  let(:section) { create(:section, course:) }
-  let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, section:, is_available: true, course:course) }
-  let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, section:, is_available: false, course:course) }
-  let(:instructor) { create(:instructor) }
+
+  let(:course) { create(:course, schedule:, course_number: 'CS101') }
+  let(:section) { create(:section, course:, section_number: '001') }
+  let!(:instructor) { create(:instructor, first_name: 'John', last_name: 'Doe') }
+  let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, section:, instructor:, is_available: true) }
+  let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, section:, instructor:, is_available: false) }
 
   before do
-    @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
-                         last_name: 'Doe')
+    @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John', last_name: 'Doe')
     allow(controller).to receive(:logged_in?).and_return(true)
     controller.instance_variable_set(:@current_user, @user)
   end
 
   describe 'GET #index' do
-    context 'when room_booking already exists' do
-      before do
-        get :index, params: { schedule_id: schedule.id }
+    before do
+      get :index, params: { schedule_id: schedule.id }
+    end
+
+    it 'returns a successful response' do
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'assigns @rooms' do
+      expect(assigns(:rooms)).to match_array([room1, room2])
+    end
+
+    it 'assigns @time_slots' do
+      expect(assigns(:time_slots)).to match_array([time_slot1, time_slot2])
+    end
+
+    it 'assigns @bookings_matrix with room_booking data' do
+      bookings_matrix = assigns(:bookings_matrix)
+      expect(bookings_matrix[[room1.id, time_slot1.id]]).to eq(room_booking1)
+      expect(bookings_matrix[[room2.id, time_slot2.id]]).to eq(room_booking2)
+    end
+
+    it 'renders the index template' do
+      expect(response).to render_template(:index)
+    end
+  end
+
+  describe 'POST #toggle_availability' do
+    context 'when booking is currently available' do
+      it 'toggles availability to false' do
+        expect do
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id, is_available: false }
+          room_booking1.reload
+        end.to change { room_booking1.is_available }.from(true).to(false)
+
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
       end
 
-      it 'returns a successful response' do
-        expect(response).to have_http_status(:success)
+      it 'toggles availability for overlapping bookings' do
+        overlapping_slot = create(:time_slot, day: 'Monday', start_time: '09:30', end_time: '10:30')
+        create(:room_booking, room: room1, time_slot: overlapping_slot, is_available: true)
+
+        expect do
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id, is_available: false }
+        end.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(true).to(false)
+
+        overlapping_booking = RoomBooking.find_by(room: room1, time_slot: overlapping_slot)
+        expect(overlapping_booking.is_available).to eq(false)
+
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
+      end
+    end
+
+    context 'when booking is currently blocked' do
+      before { room_booking1.update(is_available: false) }
+
+      it 'toggles availability to true' do
+        expect do
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id, is_available: true }
+          room_booking1.reload
+        end.to change { room_booking1.is_available }.from(false).to(true)
+
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
       end
 
-      it 'assigns @rooms' do
-        expect(assigns(:rooms)).to match_array([room1, room2])
-      end
+      it 'toggles availability for overlapping bookings' do
+        overlapping_slot = create(:time_slot, day: 'Monday', start_time: '09:30', end_time: '10:30')
+        create(:room_booking, room: room1, time_slot: overlapping_slot, is_available: false)
 
-      it 'assigns @time_slots' do
-        expect(assigns(:time_slots)).to match_array([time_slot1, time_slot2])
-      end
+        expect do
+          post :toggle_availability, params: { room_id: room1.id, time_slot_id: time_slot1.id, schedule_id: schedule.id, is_available: true }
+        end.to change { RoomBooking.find_by(room: room1, time_slot: overlapping_slot).is_available }.from(false).to(true)
 
-      it 'assigns @bookings_matrix with room_booking data' do
-        bookings_matrix = assigns(:bookings_matrix)
-        expect(bookings_matrix[[room1.id, time_slot1.id]]).to eq(room_booking1)
-        expect(bookings_matrix[[room2.id, time_slot2.id]]).to eq(room_booking2)
-      end
+        overlapping_booking = RoomBooking.find_by(room: room1, time_slot: overlapping_slot)
+        expect(overlapping_booking.is_available).to eq(true)
 
-      it 'renders the index template' do
-        expect(response).to render_template(:index)
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule, active_tab: nil))
+      end
+    end
+  end
+
+  describe 'private methods' do
+    describe '#calculate_relevant_days' do
+      it 'returns the correct relevant days' do
+        expect(controller.send(:calculate_relevant_days, 'MWF')).to match_array(%w[MWF MW F])
+        expect(controller.send(:calculate_relevant_days, 'MW')).to match_array(%w[MWF MW])
+        expect(controller.send(:calculate_relevant_days, 'F')).to match_array(%w[MWF F])
+        expect(controller.send(:calculate_relevant_days, 'TR')).to match_array(['TR'])
       end
     end
   end
@@ -69,8 +133,46 @@ RSpec.describe RoomBookingsController, type: :controller do
           }
         }
 
-        expect(RoomBooking.count).to eq(3)
+        expect(RoomBooking.count).to eq(2)
         expect(flash[:notice]).to eq('Room Booking was successfully created.')
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+      end
+
+      it 'does not creates a new room booking on blocked slots' do
+        room_booking1.update(is_available: false)
+        post :create, params: {
+          schedule_id: schedule.id,
+          room_booking: {
+            room_id: room1.id,
+            time_slot_id: time_slot1.id,
+            section_id: section.id,
+            instructor_id: instructor.id,
+            is_available: true,
+            is_lab: false
+          }
+        }
+
+        expect(RoomBooking.count).to eq(2)
+        expect(flash[:alert]).to eq('Cannot assign to a blocked room.')
+        expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+      end
+
+      it 'does not overwrite locked room bookings' do
+        room_booking1.update(is_locked: true)
+        post :create, params: {
+          schedule_id: schedule.id,
+          room_booking: {
+            room_id: room1.id,
+            time_slot_id: time_slot1.id,
+            section_id: section.id,
+            instructor_id: instructor.id,
+            is_available: true,
+            is_lab: false
+          }
+        }
+
+        expect(RoomBooking.count).to eq(2)
+        expect(flash[:alert]).to eq('Locked Room Bookings Cannot be updated.')
         expect(response).to redirect_to(schedule_room_bookings_path(schedule))
       end
     end
@@ -82,6 +184,15 @@ RSpec.describe RoomBookingsController, type: :controller do
 
       expect(RoomBooking.exists?(room_booking1.id)).to be_falsey
       expect(flash[:notice]).to eq('Room booking deleted successfully.')
+      expect(response).to redirect_to(schedule_room_bookings_path(schedule))
+    end
+
+    it 'does not delete a locked room booking' do
+      room_booking1.update(is_locked: true)
+      delete :destroy, params: { schedule_id: schedule.id, id: room_booking1.id }
+
+      expect(RoomBooking.exists?(room_booking1.id)).to be_truthy
+      expect(flash[:alert]).to eq('Locked Room Bookings Cannot be deleted')
       expect(response).to redirect_to(schedule_room_bookings_path(schedule))
     end
 
@@ -127,6 +238,30 @@ RSpec.describe RoomBookingsController, type: :controller do
       }
 
       expect(flash[:alert]).to eq('Failed to update instructor.')
+    end
+  end
+
+  describe 'GET #export_csv' do
+    it 'returns a successful CSV response with the correct headers and data' do
+      get :export_csv, params: { schedule_id: schedule.id, format: :csv }
+
+      expect(response).to have_http_status(:success)
+      expect(response.header['Content-Type']).to include 'text/csv'
+      expect(response.header['Content-Disposition']).to include 'filename="room_bookings.csv"'
+
+      csv_data = CSV.parse(response.body, headers: true)
+
+      # Check CSV headers
+      expect(csv_data.headers).to include('Monday', 'EABB 106 (Seats: 118)', 'HRBB 113 (Seats: 65)')
+
+      # Check CSV content for each time slot and room
+      row1 = csv_data.find { |row| row['Monday'] == '09:00 - 10:00' }
+      row2 = csv_data.find { |row| row['Monday'] == '10:00 - 11:00' }
+
+      expect(row1['EABB 106 (Seats: 118)']).to eq('CS101 - 001 - John Doe')
+      expect(row1['HRBB 113 (Seats: 65)']).to eq('')
+      expect(row2['EABB 106 (Seats: 118)']).to eq('')
+      expect(row2['HRBB 113 (Seats: 65)']).to eq('CS101 - 001 - John Doe')
     end
   end
 end
