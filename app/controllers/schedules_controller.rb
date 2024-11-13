@@ -3,6 +3,7 @@
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
   before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors upload_courses]
+  before_action :require_login
   def index
     @schedules = current_user.schedules
 

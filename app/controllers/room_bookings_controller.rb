@@ -53,7 +53,7 @@ class RoomBookingsController < ApplicationController
   end
 
   def create
-    @schedule = Schedule.find(params[:schedule_id])
+    @schedule = current_user.schedules.find(params[:schedule_id])
     room_booking = RoomBooking.find_or_initialize_by(room_id: room_booking_params[:room_id], time_slot_id: room_booking_params[:time_slot_id])
 
     if room_booking.is_locked
@@ -90,7 +90,7 @@ class RoomBookingsController < ApplicationController
   end
 
   def destroy
-    @schedule = Schedule.find(params[:schedule_id])
+    @schedule = current_user.schedules.find(params[:schedule_id])
     @room_booking = RoomBooking.find_by(id: params[:id])
 
     if @room_booking
@@ -154,7 +154,7 @@ class RoomBookingsController < ApplicationController
   private
 
   def set_schedule
-    @schedule = Schedule.find(params[:schedule_id])
+    @schedule = current_user.schedules.find(params[:schedule_id])
   end
 
   def find_overlapping_time_slots(time_slot)

@@ -4,16 +4,16 @@ require 'rails_helper'
 
 RSpec.describe InstructorsController, type: :controller do
   render_views
-  let!(:schedule) { create(:schedule) } # Assuming you have a Schedule factory
+  let!(:schedule) { create(:schedule, user:) }
+  let(:user) { create(:user) }
+
+  before do
+    allow(controller).to receive(:logged_in?).and_return(true)
+    controller.instance_variable_set(:@current_user, user)
+    session[:user_id] = user.id
+  end
 
   describe 'GET #index' do
-    before do
-      @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
-                           last_name: 'Doe')
-      allow(controller).to receive(:logged_in?).and_return(true)
-      controller.instance_variable_set(:@current_user, @user)
-    end
-
     it 'incorrect schedule id' do
       get :index, params: { schedule_id: (schedule.id + 1) }
       expect(flash[:alert]).to eq('Schedule not found.')
