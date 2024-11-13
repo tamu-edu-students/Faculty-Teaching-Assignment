@@ -4,14 +4,14 @@ require 'rails_helper'
 
 RSpec.describe RoomsController, type: :controller do
   render_views
-  let(:schedule) { Schedule.create!(schedule_name: 'Fall Semester', semester_name: '2024') }
+  let(:user) { create(:user) }
+  let(:schedule) { create(:schedule, user:) }  
 
   describe 'GET #index' do
     before do
-      @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
-                           last_name: 'Doe')
       allow(controller).to receive(:logged_in?).and_return(true)
-      controller.instance_variable_set(:@current_user, @user)
+      controller.instance_variable_set(:@current_user, user)
+      session[:user_id] = user.id
     end
 
     it 'incorrect schedule id' do
