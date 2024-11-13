@@ -10,17 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
-  create_table 'courses', force: :cascade do |t|
-    t.string 'course_number'
-    t.integer 'max_seats'
-    t.string 'lecture_type'
-    t.integer 'num_labs'
-    t.integer 'schedule_id', null: false
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
-    t.boolean 'hide', default: false, null: false
-    t.index ['schedule_id'], name: 'index_courses_on_schedule_id'
+ActiveRecord::Schema[7.2].define(version: 2024_11_11_015305) do
+  create_table "courses", force: :cascade do |t|
+    t.string "course_number"
+    t.integer "max_seats"
+    t.string "lecture_type"
+    t.integer "num_labs"
+    t.integer "schedule_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "hide", default: false, null: false
+    t.index ["schedule_id"], name: "index_courses_on_schedule_id"
   end
 
   create_table "instructor_preferences", force: :cascade do |t|
@@ -49,20 +49,20 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
     t.index ["schedule_id"], name: "index_instructors_on_schedule_id"
   end
 
-  create_table 'room_bookings', force: :cascade do |t|
-    t.integer 'room_id', null: false
-    t.integer 'time_slot_id', null: false
-    t.boolean 'is_available', default: true
-    t.boolean 'is_lab'
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
-    t.integer 'instructor_id'
-    t.integer 'section_id'
-    t.boolean 'is_locked'
-    t.index ['instructor_id'], name: 'index_room_bookings_on_instructor_id'
-    t.index ['room_id'], name: 'index_room_bookings_on_room_id'
-    t.index ['section_id'], name: 'index_room_bookings_on_section_id'
-    t.index ['time_slot_id'], name: 'index_room_bookings_on_time_slot_id'
+  create_table "room_bookings", force: :cascade do |t|
+    t.integer "room_id", null: false
+    t.integer "time_slot_id", null: false
+    t.boolean "is_available", default: true
+    t.boolean "is_lab"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "instructor_id"
+    t.integer "section_id"
+    t.boolean "is_locked"
+    t.index ["instructor_id"], name: "index_room_bookings_on_instructor_id"
+    t.index ["room_id"], name: "index_room_bookings_on_room_id"
+    t.index ["section_id"], name: "index_room_bookings_on_section_id"
+    t.index ["time_slot_id"], name: "index_room_bookings_on_time_slot_id"
   end
 
   create_table "rooms", force: :cascade do |t|
