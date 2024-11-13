@@ -112,7 +112,7 @@ class RoomBookingsController < ApplicationController
       flash[:alert] = 'Room booking not found.'
     end
 
-    redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
+   redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
   end
 
   def toggle_lock
@@ -139,6 +139,51 @@ class RoomBookingsController < ApplicationController
 
     # Redirect to the previous page or another relevant page
     redirect_back(fallback_location: room_bookings_path)
+  end
+
+  # Get data from DB to pass to scheduling algorithm
+  def generate_schedule
+    active_rooms = Room.where(is_active: true, schedule_id: params['schedule_id']).map do |room|
+      {
+        'id' => room.id,
+        'capacity' => room.capacity
+      }
+    end
+    times = TimeSlot.pluck(:day, :start_time, :end_time, :id)
+    instructors =  Instructor.where(schedule_id: params['schedule_id']).pluck(:id, :before_9, :after_3).map do |i, b, a|
+      { 'id' => i, 'before_9' => b,
+        'after_3' => a }
+    end
+    
+    classes = Course.where(hide: false, schedule_id: params['schedule_id']).pluck(:id, :max_seats).map do |id, seats|
+      {
+        'id' => id,
+        'max_seats' => seats
+      }
+    end
+
+    # TODO: Get rid of this and add duplication of professors
+    # Blocked by course load branch
+    classes = classes.first(instructors.length) if classes.length > instructors.length
+
+    # With the exception of locked courses, all of the room bookings will be stale
+    RoomBooking.where(is_locked: true).delete_all
+
+    # Get remaining locked courses
+    # We need both the course id (for the constraints) and the section id (for the RoomBooking)
+    # For stacked sections, we will arbitrarily pick one section_id as a representative to display
+    # Doing something like CSCE 120:500-505 will require a change to the database schema that isn't high priority
+    locks = RoomBooking.joins(:section).pluck('sections.course_id, room_bookings.room_id, room_bookings.time_slot_id')
+
+    # Offload solve to service
+    begin
+      total_unhappiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
+    rescue StandardError => e 
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), alert: e.message()
+    end
+
+    redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), notice: "Schedule generated with #{instructors.length-total_unhappiness}/#{instructors.length} professors satisfied"
+
   end
 
   def export_csv

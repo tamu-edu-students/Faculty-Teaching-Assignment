@@ -22,6 +22,7 @@ class ScheduleSolver
 
     # Create objective function
     # Minimize the number of empty seats in a full section
+    puts 'Creating objective function'
     objective = sched.map.with_index do |mat, c|
       mat.map.with_index do |row, r|
         row.map.with_index do |val, _t|
@@ -31,6 +32,7 @@ class ScheduleSolver
     end.reduce(:+)
 
     # Constraint #1: Room capacity >= class enrollment
+    puts 'Generating capacity constraints'
     cap_constraints =
       (0...num_classes).map do |c|
         (0...num_rooms).map do |r|
@@ -43,6 +45,7 @@ class ScheduleSolver
     # Constraint #2: No two classes can share one room at the same time
     # For some reason, the constraints can't be generated using map
     # Create the array at the beginning, and append individually
+    puts 'Generating share constraints'
     share_constraints = []
     (0...num_rooms).each do |r|
       (0...num_times).each do |t|
@@ -53,23 +56,32 @@ class ScheduleSolver
     # Constraint #3: Every class has exactly one assigned room and time
     # Need the guaranteed zero to enforce the LHS is 1
     # See Constraint #4 for why
+    puts 'Generating place constraints'
     place_constraints =
       (0...num_classes).map do |c|
         sched[c].flatten.reduce(:+) + GuaranteedZero_b == 1
       end
 
+    # Hash room_id to (0...num_rooms)
+    # Allows us to map rooms => array indices
+    room_id_hash = (0...num_rooms).map{|r| [rooms[r]['id'], r]}.to_h
+    class_id_hash = (0...num_classes).map{|c| [classes[c]['id'], c]}.to_h
+    time_id_hash = (0...num_times).map{|t| [times[t][3], t]}.to_h
+    
     # Constraint #4: Respect locked courses
     # locks[i] = (class, room, time) triplet
-    lock_constraints =
-      locks.each do |trio|
-        # For unknown reasons, I can't write sched[c][r][t] == 1
-        # Ruby will evaluate this as a boolean expression, instead of giving the constraint
-        # Introduce a dummy variable to prevent this from happening
-        # If their sum is two => sched[c][r][t] must be 1
-        sched[trio[0]][trio[1]][trio[2]].must_be.equal_to(1)
-      end
+    puts 'Generating lock constraints'
+    lock_constraints = []
+    locks.each do |class_id, room_id, time_id|
+      # For unknown reasons, I can't write sched[c][r][t] == 1
+      # Ruby will evaluate this as a boolean expression, instead of giving the constraint
+      # Introduce a dummy variable that is guaranteed to be zero
+      # If their sum is one  => sched[c][r][t] must be 1
+      lock_constraints.append(sched[class_id_hash[class_id]][room_id_hash[room_id]][time_id_hash[time_id]] + GuaranteedZero_b == 1)
+    end
 
     # Constraint #5: Courses that require special designations get rooms that meet them
+    puts 'Generating designation constraints'
     designation_constraints = []
     (0...num_classes).each do |c|
       (0...num_rooms).each do |r|
@@ -82,6 +94,7 @@ class ScheduleSolver
 
     # Constraint #6: Ensure rooms are not scheduled at overlapping times
     # Go through all pairs of time slots and find those that overlap
+    puts 'Generating overlapping constraints'
     overlapping_pairs = []
     (0...num_times).each do |t1|
       (t1 + 1...num_times).each do |t2|
@@ -115,7 +128,6 @@ class ScheduleSolver
       raise StandardError, 'Solution infeasible!'
     end
 
-
     # Now that the courses have been assigned rooms and times, we now add instructors
     # This can be viewed as a bipartite matching (see ILP doc)
     unhappiness_matrix = Array.new(num_instructors) { Array.new(num_classes) { 0 } }
@@ -140,7 +152,6 @@ class ScheduleSolver
           elsif after_3?(times[t])
             evening_classes.append(c)
           end
-          next
         end
       end
     end
@@ -186,11 +197,10 @@ class ScheduleSolver
             is_lab: false,
             created_at: Time.now,
             updated_at: Time.now,
-            course_id: classes[c]['id'],
+            section_id: Section.find_by(course_id: classes[c]['id']).id,
             instructor_id: assigned_prof['id']
           )
 
-          next
         end
       end
     end
@@ -201,14 +211,14 @@ class ScheduleSolver
   # Find if two timeslots overlap
   # time1 = [days, start_time, end_time]
   def self.overlaps?(time1, time2)
-    days1 = time1.day
-    days2 = time2.day
+    days1 = time1[0]
+    days2 = time2[0]
     return false unless day_overlaps?(days1, days2)
 
-    start1 = Time.parse(time1.start_time)
-    start2 = Time.parse(time2.start_time)
-    end1 = Time.parse(time1.end_time)
-    end2 = Time.parse(time2.end_time)
+    start1 = Time.parse(time1[1])
+    start2 = Time.parse(time2[1])
+    end1 = Time.parse(time1[2])
+    end2 = Time.parse(time2[2])
     (start1 <= start2 && start2 <= end1) || (start2 <= start1 && start1 <= end2)
   end
 
@@ -220,10 +230,12 @@ class ScheduleSolver
   end
 
   def self.before_9?(time)
-    Time.parse(time['start_time']) <= Time.parse('9:00')
+    start_time = time[1]
+    Time.parse(start_time) <= Time.parse('9:00')
   end
 
   def self.after_3?(time)
-    Time.parse(time.start_time) >= Time.parse('15:00')
+    end_time = time[2]
+    Time.parse(end_time) >= Time.parse('15:00')
   end
 end

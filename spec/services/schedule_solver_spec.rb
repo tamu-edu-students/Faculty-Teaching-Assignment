@@ -3,7 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe ScheduleSolver, type: :model do
-  fixtures :schedules, :rooms, :courses, :time_slots, :instructors
+  fixtures :schedules, :rooms, :courses, :instructors
+  let(:morning) {["MWF","08:00","8:50",1]}
+  let(:afternoon) {["MWF","13:50","14:40",2]}
+  let(:evening) {["TR","15:50","17:10",3]}
+  let(:friday_lab) {["F","08:30","10:30",4]}
 
   describe 'test error conditions' do
     context 'when there are not enough professors' do
@@ -11,7 +15,7 @@ RSpec.describe ScheduleSolver, type: :model do
         expect do
           ScheduleSolver.solve([courses(:large_course), courses(:small_course)],
                                [rooms(:small_room, :large_room)],
-                               [time_slots(:morning)],
+                               [morning],
                                [instructors(:amicable)],
                                [])
         end.to raise_error(StandardError, 'Not enough teaching hours for given class offerings!')
@@ -23,7 +27,7 @@ RSpec.describe ScheduleSolver, type: :model do
         expect do
           ScheduleSolver.solve([courses(:large_course)],
                                [rooms(:small_room)],
-                               [time_slots(:morning)],
+                               [morning],
                                [instructors(:amicable)],
                                [])
         end.to raise_error(StandardError, 'Solution infeasible!')
@@ -35,7 +39,7 @@ RSpec.describe ScheduleSolver, type: :model do
         expect do
           ScheduleSolver.solve([courses(:small_course)],
                                [rooms(:lab_room)],
-                               [time_slots(:morning)],
+                               [morning],
                                [instructors(:amicable)],
                                [])
         end.to raise_error(StandardError, 'Solution infeasible!')
@@ -47,7 +51,7 @@ RSpec.describe ScheduleSolver, type: :model do
         expect do
           ScheduleSolver.solve([courses(:small_course), courses(:medium_course)],
                                [rooms(:large_room)],
-                               [time_slots(:morning), time_slots(:friday_lab)],
+                               [morning, friday_lab],
                                [instructors(:amicable), instructors(:evening_hater)],
                                [])
         end.to raise_error(StandardError, 'Solution infeasible!')
@@ -58,7 +62,7 @@ RSpec.describe ScheduleSolver, type: :model do
       it 'returns a nonzero unhappiness' do
         unhappiness = ScheduleSolver.solve([courses(:small_course)],
                                [rooms(:large_room)],
-                               [time_slots(:morning)],
+                               [morning],
                                [instructors(:morning_hater)],
                                [])
         expect(unhappiness).to be > 0
@@ -69,7 +73,7 @@ RSpec.describe ScheduleSolver, type: :model do
       it 'returns a nonzero unhappiness' do
         unhappiness = ScheduleSolver.solve([courses(:small_course)],
                                [rooms(:large_room)],
-                               [time_slots(:evening)],
+                               [evening],
                                [instructors(:evening_hater)],
                                [])
         expect(unhappiness).to be > 0
@@ -82,7 +86,7 @@ RSpec.describe ScheduleSolver, type: :model do
       it 'finds a schedule' do
         result = ScheduleSolver.solve([courses(:small_course), courses(:medium_course)],
                                       [rooms(:small_room), rooms(:medium_room), rooms(:large_room)],
-                                      [time_slots(:morning), time_slots(:evening)],
+                                      [morning, evening],
                                       [instructors(:morning_hater), instructors(:evening_hater)],
                                       [])
         expect(result.nil?).to be false

@@ -81,6 +81,7 @@ class SchedulesController < ApplicationController
     else
       flash[:alert] = 'Please upload a CSV file.'
     end
+    Rails.logger.debug "Number of instructors in upload: #{Instructor.count}"
     redirect_to schedule_path(@schedule)
   end
 
@@ -97,41 +98,6 @@ class SchedulesController < ApplicationController
       flash[:alert] = 'Please upload a CSV file.'
     end
     redirect_to schedule_path(@schedule)
-  end
-
-  def generate_schedule
-    # destroy all room bookings
-    RoomBooking.destroy_all
-    # Join room data together
-    active_rooms = Room.where(is_active: true).map do |room|
-      {
-        'id' => room.id,
-        'capacity' => room.capacity
-      }
-    end
-    times = TimeSlot.pluck(:day, :start_time, :end_time, :id)
-
-    instructors =  Instructor.pluck(:id, :before_9, :after_3).map do |i, b, a|
-      { 'id' => i, 'before_9' => b,
-        'after_3' => a }
-    end
-
-    classes = Course.select(:id, :max_seats).map do |course|
-      {
-        'id' => course.id,
-        'max_seats' => course.max_seats
-      }
-    end
-
-    # TODO: Get rid of this and add duplication of professors
-    # Blocked by course load branch
-    classes = classes.first(instructors.length) if classes.length > instructors.length
-
-    # TODO: Garbage value for now
-    locks = []
-
-    ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
-    redirect_to request.path
   end
 
   # Only allow a list of trusted parameters through.

@@ -50,6 +50,7 @@ Rails.application.routes.draw do
       collection do
         get :export_csv
         post :toggle_availability
+        post :generate_schedule
       end
       member do
         patch :toggle_lock

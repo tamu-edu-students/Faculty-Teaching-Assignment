@@ -1,20 +1,24 @@
 morning:
-  day: "MWF"
-  start_time: "08:00"
-  end_time: "8:50"
+  ["MWF",
+   "08:00",
+   "8:50",
+   1]
 
 afternoon:
-  day: "MWF"
-  start_time: "13:50"
-  end_time: "14:40"
+   ["MWF",
+   "13:50",
+   "14:40",
+   2]
 
 evening:
-  day: "TR"
-  start_time: "15:50"
-  end_time: "17:10"
+   ["TR",
+   "15:50",
+   "17:10",
+   3]
 
 friday_lab:
-   day: "F"
-   start_time: "8:30"
-   end_time: "10:30"
+    ["F",
+    "8:30",
+    "10:30",
+    4]
 
