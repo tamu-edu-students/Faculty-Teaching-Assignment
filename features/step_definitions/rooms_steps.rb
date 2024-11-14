@@ -13,7 +13,8 @@ Given(/^a schedule exists with the schedule name "(.*)" and semester name "(.*)"
   @schedule = Schedule.create!(schedule_name:, semester_name:)
 end
 
-Given(/^the following rooms exist for that schedule:$/) do |table|
+Given('the following rooms exist for schedule {string}:') do |string, table|
+  @schedule = @user.schedules.find_by(schedule_name: string)
   table.hashes.each do |room|
     Room.create!(
       campus: room['campus'],
