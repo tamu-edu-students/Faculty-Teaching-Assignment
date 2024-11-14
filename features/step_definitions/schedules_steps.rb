@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
-Given(/the following schedules exist/) do |schedules_table|
+Given('the following schedules exist for the user {string}:') do |name, schedules_table|
+  # user = User.find_by(first_name: name)
+  
   schedules_table.hashes.each do |schedule|
-    Schedule.create schedule
+    created_sched = @user.schedules.create!(schedule)
+    puts "Created schedule: #{created_sched.schedule_name}"
   end
 end
 When('I visit the schedules index page') do
@@ -24,7 +27,7 @@ Given('I am on the schedules index page') do
 end
 
 Given('I have created a schedule called {string}') do |schedule_name|
-  Schedule.create!(schedule_name:, semester_name: 'Fall 2024')
+  @user.schedules.create!(schedule_name:, semester_name: 'Fall 2024')
 end
 
 When('I click the {string} button for {string}') do |button_name, schedule_name|

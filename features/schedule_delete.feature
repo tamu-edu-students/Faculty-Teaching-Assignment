@@ -4,7 +4,7 @@ Feature: Delete a schedule
   So that I can remove it from the system
 
   Scenario: User should be able to delete an existing schedule
-    Given I am logged in as a user with first name "Test"
+    Given I am logged in as a user with first name "John"
     And I have created a schedule called "Fall 2024 Schedule"
     And I am on the schedules index page
     When I click the "Delete" button for "Fall 2024 Schedule"
