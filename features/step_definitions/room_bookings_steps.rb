@@ -9,13 +9,13 @@ Given('the following courses and their sections exist for schedule {string}:') d
   schedule = Schedule.find_by(schedule_name: string)
   table.hashes.each do |row|
     # Create the course with the given name
-    course = Course.create!(
+    Course.create!(
       course_number: row['course_number'],
       max_seats: row['max_seats'],
       lecture_type: row['lecture_type'],
       num_labs: row['num_labs'],
       section_numbers: row['sections'],
-      schedule: @schedule
+      schedule:
     )
   end
 end
@@ -25,7 +25,7 @@ When(/^I visit the room bookings page for "(.*)"$/) do |schedule_name|
   visit schedule_room_bookings_path(@schedule)
 end
 
-Given('the following time slots exist for schedule {string}:') do |_string, table|
+Given('the following time slots exist:') do |table|
   table.hashes.each do |time_slot|
     TimeSlot.create!(
       day: time_slot['day'],
@@ -54,7 +54,7 @@ When(/^I click on the booking table in "(.*)" for "(.*)" in "(.*)" "(.*)"$/) do 
   expect(button[:href]).to include(room.id.to_s)
 end
 
-When(/^I click the select "(.*)" for "(.*)"$/) do |section_number, course_number|
+When(/^I click the select "(.*)" for "(.*)"$/) do |_section_number, course_number|
   # Find the button using the section number
   course = @schedule.courses.find_by(course_number:)
   section = course.section_numbers
@@ -62,7 +62,7 @@ When(/^I click the select "(.*)" for "(.*)"$/) do |section_number, course_number
   button.click
 end
 
-When(/^I book room "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) do |bldg, room, day, time, section_number, course_number|
+When(/^I book room "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) do |bldg, room, day, time, _section_number, course_number|
   # Find the room based on schedule and building code
   room = @schedule.rooms.find_by(building_code: bldg, room_number: room)
   expect(room).not_to be_nil, 'Could not find room'
@@ -78,14 +78,14 @@ When(/^I book room "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) 
     room_booking: {
       room_id: room.id,
       time_slot_id: time_slot.id,
-      course_id: course.id,
+      course_id: course.id
     }
   }
 
   visit schedule_room_bookings_path(@schedule)
 end
 
-When(/^I assign "(.*)" to "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) do |first_name, bldg, room, day, time, section_number, course_number|
+When(/^I assign "(.*)" to "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) do |first_name, bldg, room, day, time, _section_number, course_number|
   # Find the room based on schedule and building code
   room = @schedule.rooms.find_by(building_code: bldg, room_number: room)
   expect(room).not_to be_nil, 'Could not find room'

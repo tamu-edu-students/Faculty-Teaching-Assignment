@@ -161,8 +161,8 @@ class CsvHandler
         max_seats = row[actual_headers.index('Max. Seats')]
         labs = row[actual_headers.index('#Labs')]
         lecture_type = row[actual_headers.index('Lecture Type')]
-        section_number = row[actual_headers.index('Section number')]
-        seats_allocated = row[actual_headers.index('Seat Split')]
+        row[actual_headers.index('Section number')]
+        row[actual_headers.index('Seat Split')]
 
         course_data = {
           schedule_id:,
@@ -172,7 +172,7 @@ class CsvHandler
           num_labs: labs.to_i
         }
 
-        course = Course.create(course_data)
+        Course.create(course_data)
       end
     end
     { notice: 'Courses successfully uploaded.' }

@@ -10,8 +10,9 @@ When(/I visit the rooms page for "(.*)"/) do |schedule_name|
   visit schedule_rooms_path(schedule_id: @schedule.id)
 end
 
-Given(/^a schedule exists with the schedule name "(.*)" and semester name "(.*)"$/) do |schedule_name, semester_name|
-  @schedule = Schedule.create!(schedule_name:, semester_name:)
+Given(/^a schedule exists with the schedule name "(.*)" and semester name "(.*)" for user "(.*)"$/) do |schedule_name, semester_name, user_name|
+  @user_id = User.find_by(first_name: user_name)
+  @schedule = Schedule.create!(schedule_name:, semester_name:, user: @user_id)
 end
 
 Given('the following rooms exist for schedule {string}:') do |string, table|

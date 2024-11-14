@@ -41,9 +41,9 @@ RSpec.describe CoursesController, type: :controller do
         create(:course, course_number: '320', section_numbers: '501', max_seats: 120, lecture_type: 'Online', num_labs: 2, schedule_id: schedule.id)
       end
       let!(:course3) do
-        create(:course, course_number: '400', section_numbers: '502', max_seats: 150, lecture_type: 'F2F', num_labs: 1, schedule_id: schedule.id, hide: true)
+        create(:course, course_number: '400', section_numbers: '502', max_seats: 150, lecture_type: 'F2F', num_labs: 1, schedule_id: schedule.id,
+                        hide: true)
       end
-
 
       context 'without any sorting' do
         it 'assigns all active courses to @courses' do

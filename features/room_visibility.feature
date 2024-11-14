@@ -14,11 +14,11 @@ Feature: Courses Page
     | CS        | BLDG1         | 101         | 30       | true      | true     | true                  | true              |
     | GV        | BLDG2         | 102         | 50       | true      | true     | true                  | true              |
     | CS        | BLDG3         | 102         | 50       | false     | true     | true                  | true              |
-    And the following time slots exist for schedule 'Sched 1':
+    And the following time slots exist:
     | day       | start_time    | end_time      | slot_type     |
     | MWF       | 09:00         | 10:00         | "LEC"         |
     | MW        | 08:00         | 10:00         | "LEC"         |
-    And the following courses and their sections exist for schedule 'Sched 1':
+    And the following courses and their sections exist for schedule "Sched 1":
     | course_number       | max_seats | lecture_type | num_labs         | sections      |
     | 110                 | 96        | F2F          | 4                | 100,101       |
     | 110                 | 96        | F2F          | 4                | 100           |

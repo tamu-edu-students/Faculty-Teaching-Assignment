@@ -3,8 +3,12 @@
 Given('the following schedules exist for the user {string}:') do |name, schedules_table|
   user = User.find_by(first_name: name)
 
-  schedules_table.hashes.each do |schedule|
-    user.schedules.create!(schedule)
+  schedules_table.hashes.each do |row|
+    Schedule.create!(
+      schedule_name: row['schedule_name'],
+      semester_name: row['semester_name'],
+      user_id: user.id
+    )
   end
 end
 When('I visit the schedules index page') do

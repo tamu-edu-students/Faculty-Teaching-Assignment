@@ -89,7 +89,6 @@ class RoomBookingsController < ApplicationController
     end
   end
 
-
   def destroy
     @schedule = current_user.schedules.find(params[:schedule_id])
     @room_booking = RoomBooking.find_by(id: params[:id])
@@ -112,7 +111,7 @@ class RoomBookingsController < ApplicationController
       flash[:alert] = 'Room booking not found.'
     end
 
-   redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
+    redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab])
   end
 
   def toggle_lock
@@ -154,7 +153,7 @@ class RoomBookingsController < ApplicationController
       { 'id' => i, 'before_9' => b,
         'after_3' => a }
     end
-    
+
     classes = Course.where(hide: false, schedule_id: params['schedule_id']).pluck(:id, :max_seats).map do |id, seats|
       {
         'id' => id,
@@ -168,18 +167,18 @@ class RoomBookingsController < ApplicationController
 
     # With the exception of locked courses, all of the room bookings will be stale
     RoomBooking.where(is_locked: [false, nil]).destroy_all
-    
+
     # Get remaining locked courses
     locks = RoomBooking.pluck(:course_id, :room_id, :time_slot_id)
 
     # Offload solve to service
     begin
       total_unhappiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
-      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), notice: "Schedule generated with #{instructors.length-total_unhappiness}/#{instructors.length} professors satisfied"
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]),
+                  notice: "Schedule generated with #{instructors.length - total_unhappiness}/#{instructors.length} professors satisfied"
     rescue StandardError => e
-      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), alert: e.message()
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), alert: e.message
     end
-
   end
 
   def export_csv
@@ -325,5 +324,4 @@ class RoomBookingsController < ApplicationController
       :is_lab
     )
   end
-
 end

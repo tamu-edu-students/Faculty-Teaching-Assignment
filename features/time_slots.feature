@@ -10,7 +10,7 @@ Feature: Time Slots Page
     | Sched 1   | Fall 2024     |
     | Dummy Sched | Fall 2024   |
     And I am logged in as a user with first name "John"
-    And the following time slots exist for schedule "Sched 1":
+    And the following time slots exist:
       | day  | start_time | end_time | slot_type |
       | MWF  | 09:00      | 10:00    | LEC       |
       | MW   | 10:00      | 11:00    | LAB       |

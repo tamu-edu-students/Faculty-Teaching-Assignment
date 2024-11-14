@@ -64,10 +64,10 @@ class ScheduleSolver
 
     # Hash room_id to (0...num_rooms)
     # Allows us to map rooms => array indices
-    room_id_hash = (0...num_rooms).map{|r| [rooms[r]['id'], r]}.to_h
-    class_id_hash = (0...num_classes).map{|c| [classes[c]['id'], c]}.to_h
-    time_id_hash = (0...num_times).map{|t| [times[t][3], t]}.to_h
-    
+    room_id_hash = (0...num_rooms).map { |r| [rooms[r]['id'], r] }.to_h
+    class_id_hash = (0...num_classes).map { |c| [classes[c]['id'], c] }.to_h
+    time_id_hash = (0...num_times).map { |t| [times[t][3], t] }.to_h
+
     # Constraint #4: Respect locked courses
     # locks[i] = (class, room, time) triplet
     puts 'Generating lock constraints'
@@ -86,6 +86,7 @@ class ScheduleSolver
     (0...num_classes).each do |c|
       (0...num_rooms).each do |r|
         next if classes[c]['is_lab'] == rooms[r]['is_lab']
+
         (0...num_times).each do |t|
           designation_constraints.append(sched[c][r][t] + GuaranteedZero_b == 0)
         end
@@ -120,10 +121,10 @@ class ScheduleSolver
     problem = Rulp::Min(objective)
     problem[constraints]
     # Silence RULP output, unless there's an error
-    Rulp::log_level = Logger::ERROR
+    Rulp.log_level = Logger::ERROR
 
     begin
-      status = Rulp::Glpk(problem)
+      Rulp::Glpk(problem)
     rescue StandardError
       raise StandardError, 'Solution infeasible!'
     end
@@ -200,7 +201,6 @@ class ScheduleSolver
             course_id: classes[c]['id'],
             instructor_id: assigned_prof['id']
           )
-
         end
       end
     end

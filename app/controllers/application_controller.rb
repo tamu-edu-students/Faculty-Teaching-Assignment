@@ -32,5 +32,4 @@ class ApplicationController < ActionController::Base
     reset_session # Clears the session to prevent further issues
     redirect_to welcome_path, alert: 'Session expired. Please log in again.'
   end
-
 end

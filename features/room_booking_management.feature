@@ -11,7 +11,7 @@ Feature: Room Booking Management
         | CS        | BLDG1         | 101         | 30       | true      | true     | true                  | true              |
         | GV        | BLDG2         | 102         | 50       | true      | true     | true                  | true              |
         | CS        | BLDG3         | 102         | 50       | false     | true     | true                  | true              |
-    And the following time slots exist for schedule "Sched 1":
+    And the following time slots exist:
         | day       | start_time    | end_time      | slot_type     |
         | MWF       | 09:00         | 10:00         | "LEC"         |
         | MW        | 09:00         | 10:00         | "LEC"         |
