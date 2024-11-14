@@ -6,16 +6,21 @@ Feature: Schedules page
     Background: schedules in database
 
     Given the user "John" exists
+    And the user "Dummy" exists
     And the following schedules exist for the user "John":
     | schedule_name     | semester_name |
     | Test Schedule 1   | Fall 2024     |
     | Another Schedule  | Spring 2024   |
+    And the following schedules exist for the user "Dummy":
+    | schedule_name     | semester_name |
+    | Dummys Schedule   | Summer 2024     |
 
-    Scenario: User sees landing page with generated schedules
+    Scenario: User sees landing page with only his generated schedules
         Given I am logged in as a user with first name "John"
         When I visit the schedules index page
         Then I should see "Test Schedule 1"
         And I should see "Another Schedule"
+        And I should not see "Dummys Schedule"
         
     Scenario: User should be able to see each schedule's details
         Given I am logged in as a user with first name "John"
