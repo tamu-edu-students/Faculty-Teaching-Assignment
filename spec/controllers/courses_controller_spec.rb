@@ -41,32 +41,15 @@ RSpec.describe CoursesController, type: :controller do
     end
     context 'with added courses ' do
       let!(:course1) do
-        create(:course, course_number: '120', max_seats: 90, lecture_type: 'Hybrid', num_labs: 3, schedule_id: schedule.id)
-      end
-      let!(:section11) do
-        create(:section, section_number: '500', seats_alloted: 30, course_id: course1.id)
-      end
-      let!(:section12) do
-        create(:section, section_number: '501', seats_alloted: 30, course_id: course1.id)
-      end
-      let!(:section13) do
-        create(:section, section_number: '502', seats_alloted: 30, course_id: course1.id)
+        create(:course, course_number: '120', section_numbers: '500', max_seats: 90, lecture_type: 'Hybrid', num_labs: 3, schedule_id: schedule.id)
       end
       let!(:course2) do
-        create(:course, course_number: '320', max_seats: 120, lecture_type: 'Online', num_labs: 2, schedule_id: schedule.id)
-      end
-      let!(:section21) do
-        create(:section, section_number: '500', seats_alloted: 60, course_id: course2.id)
-      end
-      let!(:section22) do
-        create(:section, section_number: '501', seats_alloted: 60, course_id: course2.id)
+        create(:course, course_number: '320', section_numbers: '501', max_seats: 120, lecture_type: 'Online', num_labs: 2, schedule_id: schedule.id)
       end
       let!(:course3) do
-        create(:course, course_number: '400', max_seats: 150, lecture_type: 'F2F', num_labs: 1, schedule_id: schedule.id, hide: true)
+        create(:course, course_number: '400', section_numbers: '502', max_seats: 150, lecture_type: 'F2F', num_labs: 1, schedule_id: schedule.id, hide: true)
       end
-      let!(:section31) do
-        create(:section, section_number: '500', seats_alloted: 150, course_id: course3.id)
-      end
+
 
       context 'without any sorting' do
         it 'assigns all active courses to @courses' do
@@ -139,8 +122,7 @@ RSpec.describe CoursesController, type: :controller do
     end
 
     context 'when course has associated room bookings' do
-      let(:section) { create(:section, course:) }
-      let!(:room_booking) { create(:room_booking, section:) }
+      let!(:room_booking) { create(:room_booking, course_id: course.id) }
 
       it 'does not toggle the hide attribute and redirects with an alert' do
         patch :toggle_hide, params: { schedule_id: schedule.id, id: course.id }

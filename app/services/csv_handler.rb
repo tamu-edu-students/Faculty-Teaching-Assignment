@@ -61,7 +61,7 @@ class CsvHandler
       courses_with_preferences = []
       missing_courses = []
       instructor_data[2..].each_with_index do |row, _index|
-        # next if row.join.include?('ImportId')
+        next if row.join.include?('ImportId')
 
         # Extracting values and checking for nulls
         id_number = row[actual_headers.index('anonimized ID')]
@@ -89,56 +89,55 @@ class CsvHandler
           max_course_load: course_load
         }
         instructor = Instructor.create(instructor_data)
-      #   row.each_with_index do |_cell, col_index|
-      #     # Match headers that contain "capability/interest" and "course"
-      #     match = actual_headers[col_index].match(%r{.*capability/interest.*course.*- (\d+(?:/\d+)?) - (.+)}i)
-      #     next unless match
+        row.each_with_index do |_cell, col_index|
+          # Match headers that contain "capability/interest" and "course"
+          match = actual_headers[col_index].match(%r{.*capability/interest.*course.*- (\d+(?:/\d+)?) - (.+)}i)
+          next unless match
 
-      #     course_number = match[1]
-      #     course = schedule.courses.find_by(course_number:)
-      #     if course.nil?
-      #       first_part, last_part = course_number.split('/')
+          course_number = match[1]
+          course = schedule.courses.find_by(course_number:)
+          if course.nil?
+            first_part, last_part = course_number.split('/')
 
-      #       # Attempt to find by first or last part, and update course_number accordingly
-      #       course = schedule.courses.find_by(course_number: first_part) || schedule.courses.find_by(course_number: last_part)
-      #       course_number = course&.course_number if course
-      #     end
+            # Attempt to find by first or last part, and update course_number accordingly
+            course = schedule.courses.find_by(course_number: first_part) || schedule.courses.find_by(course_number: last_part)
+            course_number = course&.course_number if course
+          end
 
-      #     next unless course
+          next unless course
 
-      #     # Store valid preferences temporarily
-      #     preferences_to_upload << {
-      #       instructor_id: instructor.id,
-      #       course:,
-      #       preference_level: row[col_index]
-      #     }
-      #     courses_with_preferences << course_number
-      #   end
-      # end
-      # missing_courses = schedule.courses.pluck(:course_number).uniq - courses_with_preferences.uniq
-      # if missing_courses.any?
-      #   instructors = schedule.instructors.pluck(:id).uniq
-      #   instructors.each do |instructor_id|
-      #     missing_courses.each do |course|
-      #       preferences_to_upload << {
-      #         instructor_id:,
-      #         course: schedule.courses.find_by(course_number: course),
-      #         preference_level: 3
-      #       } # Default preference level for missing courses
-      #     end
-      #   end
-      # end
+          # Store valid preferences temporarily
+          preferences_to_upload << {
+            instructor_id: instructor.id,
+            course:,
+            preference_level: row[col_index]
+          }
+          courses_with_preferences << course_number
+        end
+      end
+      missing_courses = schedule.courses.pluck(:course_number).uniq - courses_with_preferences.uniq
+      if missing_courses.any?
+        instructors = schedule.instructors.pluck(:id).uniq
+        instructors.each do |instructor_id|
+          missing_courses.each do |course|
+            preferences_to_upload << {
+              instructor_id:,
+              course: schedule.courses.find_by(course_number: course),
+              preference_level: 3
+            } # Default preference level for missing courses
+          end
+        end
+      end
 
-      # # Create instructor preferences if all courses are valid
-      # preferences_to_upload.each do |preference|
-      #   InstructorPreference.create(preference)
-      # end
+      # Create instructor preferences if all courses are valid
+      preferences_to_upload.each do |preference|
+        InstructorPreference.create(preference)
+      end
     end
     { notice: 'Instructors and Preferences successfully uploaded.' }
   rescue StandardError => e
     { alert: "There was an error uploading the CSV file: #{e.message}" }
   end
-end
 
   def parse_course_csv(schedule_id)
     ActiveRecord::Base.transaction do
@@ -162,13 +161,12 @@ end
         max_seats = row[actual_headers.index('Max. Seats')]
         labs = row[actual_headers.index('#Labs')]
         lecture_type = row[actual_headers.index('Lecture Type')]
-        section_numbers = row[actual_headers.index('Section number')]
+        section_number = row[actual_headers.index('Section number')]
         seats_allocated = row[actual_headers.index('Seat Split')]
 
         course_data = {
           schedule_id:,
           course_number:,
-          section_numbers:,
           max_seats: max_seats.to_i,
           lecture_type:,
           num_labs: labs.to_i

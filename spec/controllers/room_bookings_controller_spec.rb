@@ -12,11 +12,10 @@ RSpec.describe RoomBookingsController, type: :controller do
   let!(:time_slot1) { create(:time_slot, day: 'Monday', start_time: '09:00', end_time: '10:00') }
   let!(:time_slot2) { create(:time_slot, day: 'Monday', start_time: '10:00', end_time: '11:00') }
 
-  let(:course) { create(:course, schedule:, course_number: 'CS101') }
-  let(:section) { create(:section, course:, section_number: '001') }
+  let(:course) { create(:course, schedule:, course_number: 'CS101', section_numbers: '001') }
   let!(:instructor) { create(:instructor, first_name: 'John', last_name: 'Doe') }
-  let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, section:, instructor:, is_available: true) }
-  let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, section:, instructor:, is_available: false) }
+  let!(:room_booking1) { create(:room_booking, room: room1, time_slot: time_slot1, course:, instructor:, is_available: true) }
+  let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, course:, instructor:, is_available: false) }
 
   before do
     @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John', last_name: 'Doe')
@@ -125,7 +124,7 @@ RSpec.describe RoomBookingsController, type: :controller do
           room_booking: {
             room_id: room1.id,
             time_slot_id: time_slot1.id,
-            section_id: section.id,
+            course: course.id,
             instructor_id: instructor.id,
             course_id: course.id,
             is_available: true,
@@ -145,7 +144,7 @@ RSpec.describe RoomBookingsController, type: :controller do
           room_booking: {
             room_id: room1.id,
             time_slot_id: time_slot1.id,
-            section_id: section.id,
+            course_id: course.id,
             instructor_id: instructor.id,
             is_available: true,
             is_lab: false
@@ -164,7 +163,7 @@ RSpec.describe RoomBookingsController, type: :controller do
           room_booking: {
             room_id: room1.id,
             time_slot_id: time_slot1.id,
-            section_id: section.id,
+            course_id: course.id,
             instructor_id: instructor.id,
             is_available: true,
             is_lab: false

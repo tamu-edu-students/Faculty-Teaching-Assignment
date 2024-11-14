@@ -273,7 +273,7 @@ class RoomBookingsController < ApplicationController
 
   def fetch_room_bookings(time_slot, rooms)
     RoomBooking.where(time_slot:, room: rooms)
-               .includes(room: {}, section: :course, instructor: {})
+               .includes(room: {}, course: {}, instructor: {})
                .index_by { |booking| booking.room.id }
   end
 
@@ -281,18 +281,18 @@ class RoomBookingsController < ApplicationController
     return '' unless booking
 
     course_number = fetch_course_number(booking)
-    section_number = fetch_section_number(booking)
+    section_numbers = fetch_section_numbers(booking)
     instructor_name = fetch_instructor_name(booking)
 
-    "#{course_number} - #{section_number} - #{instructor_name}".strip
+    "#{course_number} - #{section_numbers} - #{instructor_name}".strip
   end
 
   def fetch_course_number(booking)
-    booking.section&.course&.course_number || 'N/A'
+    booking.course&.course_number || 'N/A'
   end
 
-  def fetch_section_number(booking)
-    booking.section&.section_number || 'N/A'
+  def fetch_section_numbers(booking)
+    booking.course&.section_numbers || 'N/A'
   end
 
   def fetch_instructor_name(booking)
