@@ -13,17 +13,9 @@ Given(/^the following courses and their sections exist:$/) do |table|
       max_seats: row['max_seats'],
       lecture_type: row['lecture_type'],
       num_labs: row['num_labs'],
+      section_numbers: row['sections'],
       schedule: @schedule
     )
-
-    # Create sections associated with the course
-    row['sections'].split(',').each do |section_name|
-      Section.create!(
-        course:,
-        section_number: section_name,
-        seats_alloted: 24
-      )
-    end
   end
 end
 
@@ -64,7 +56,7 @@ end
 When(/^I click the select "(.*)" for "(.*)"$/) do |section_number, course_number|
   # Find the button using the section number
   course = @schedule.courses.find_by(course_number:)
-  section = Section.find_by(course:, section_number:)
+  section = course.section_numbers
   button = find("a.btn.btn-primary.course-select-btn[data-section='#{section.id}']", match: :first)
   button.click
 end
@@ -80,13 +72,12 @@ When(/^I book room "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.*)"$/) 
   expect(time_slot).not_to be_nil, "Could not find time slot for '#{day} #{time}'"
 
   course = @schedule.courses.find_by(course_number:)
-  section = Section.find_by(course:, section_number:)
 
   page.driver.post room_bookings_path(schedule_id: @schedule.id), {
     room_booking: {
       room_id: room.id,
       time_slot_id: time_slot.id,
-      section_id: section.id
+      course_id: course.id,
     }
   }
 
@@ -104,8 +95,6 @@ When(/^I assign "(.*)" to "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.
   expect(time_slot).not_to be_nil, "Could not find time slot for '#{day} #{time}'"
 
   course = @schedule.courses.find_by(course_number:)
-  section = Section.find_by(course:, section_number:)
-
   booking = RoomBooking.find_by(room:, time_slot:)
 
   instructor = @schedule.instructors.find_by(first_name:)
@@ -114,7 +103,7 @@ When(/^I assign "(.*)" to "(.*)" "(.*)" in "(.*)" for "(.*)" with "(.*)" for "(.
     room_booking: {
       room_id: room.id,
       time_slot_id: time_slot.id,
-      section_id: section.id,
+      course_id: course.id,
       instructor_id: instructor.id
     }
   }
@@ -144,12 +133,8 @@ Given('the following room bookings exist:') do |table|
     # Ensure the course and section are created and associated with the schedule
     course = Course.find_or_create_by!(
       course_number: attributes['course_number'],
+      section_numbers: attributes['section_number'],
       schedule:
-    )
-
-    section = Section.find_or_create_by!(
-      course:,
-      section_number: attributes['section_number']
     )
 
     # Ensure the instructor is created
@@ -163,7 +148,7 @@ Given('the following room bookings exist:') do |table|
     RoomBooking.create!(
       room:,
       time_slot:,
-      section:,
+      course:,
       instructor:
     )
   end

@@ -232,3 +232,75 @@ Feature: Rooms Page
       | MWF                 | BLDG1 101 (Seats: 30) | BLDG2 102 (Seats: 50) |
     And the CSV file should contain the following rows:
       | 09:00 - 10:00       | 110 - 100 - John Doe  |                        |
+
+    Scenario: User receives a schedule using feasible data 
+      Given I am logged in as a user with first name "Test"
+      And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
+      And the following rooms exist for that schedule:
+        | campus    | building_code | room_number | capacity | is_active | is_lab   | is_learning_studio    | is_lecture_hall   |
+        | CS        | BLDG1         | 101         | 30       | true      | true     | true                  | true              |
+        | CS        | BLDG2         | 102         | 50       | true      | true     | true                  | true              |
+      And the following time slots exist for that schedule:
+        | day       | start_time    | end_time      | slot_type     |
+        | MWF       | 09:00         | 10:00         | "LEC"         |
+        | TR        | 08:00         | 10:00         | "LEC"         |
+      And the following courses and their sections exist:
+        | course_number       | max_seats | lecture_type | num_labs         | sections      |
+        | 110                 | 50        | F2F          | 4                | 100,101       |
+        | 111                 | 25        | F2F          | 4                | 100           |
+      And the following instructors exist:
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
+        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       |
+        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            |
+      When I visit the room bookings page for "Sched 1"
+      Then I should see "Generate Remaining"
+      When I click the "Generate Remaining" button
+      Then I should see "Schedule generated with 2/2 professors satisfied"
+
+    Scenario: User can see that schedule dissatisfies a professor
+      Given I am logged in as a user with first name "Test"
+      And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
+      And the following rooms exist for that schedule:
+        | campus    | building_code | room_number | capacity | is_active | is_lab   | is_learning_studio    | is_lecture_hall   |
+        | CS        | BLDG1         | 101         | 30       | true      | true     | true                  | true              |
+        | CS        | BLDG2         | 102         | 50       | true      | true     | true                  | true              |
+      And the following time slots exist for that schedule:
+        | day       | start_time    | end_time      | slot_type     |
+        | MWF       | 09:00         | 10:00         | "LEC"         |
+        | TR        | 08:00         | 10:00         | "LEC"         |
+      And the following courses and their sections exist:
+        | course_number       | max_seats | lecture_type | num_labs         | sections      |
+        | 110                 | 50        | F2F          | 4                | 100,101       |
+        | 111                 | 25        | F2F          | 4                | 100           |
+      And the following instructors exist:
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
+        | 1001      | John       | Doe       | A           | john@example.com | false       | false    | test       |
+        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            |
+      When I visit the room bookings page for "Sched 1"
+      Then I should see "Generate Remaining"
+      When I click the "Generate Remaining" button
+      Then I should see "Schedule generated with 1/2 professors satisfied"
+
+    Scenario: User receives an error when schedule is infeasible
+      Given I am logged in as a user with first name "Test"
+      And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
+      And the following rooms exist for that schedule:
+        | campus    | building_code | room_number | capacity | is_active | is_lab   | is_learning_studio    | is_lecture_hall   |
+        | CS        | BLDG1         | 101         | 30       | true      | true     | true                  | true              |
+        | CS        | BLDG2         | 102         | 50       | true      | true     | true                  | true              |
+      And the following time slots exist for that schedule:
+        | day       | start_time    | end_time      | slot_type     |
+        | MWF       | 09:00         | 10:00         | "LEC"         |
+        | TR        | 08:00         | 10:00         | "LEC"         |
+      And the following courses and their sections exist:
+        | course_number       | max_seats | lecture_type | num_labs         | sections      |
+        | 110                 | 55        | F2F          | 4                | 100,101       |
+        | 111                 | 50        | F2F          | 4                | 100           |
+      And the following instructors exist:
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
+        | 1001      | John       | Doe       | A           | john@example.com | false       | false    | test       |
+        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            |
+      When I visit the room bookings page for "Sched 1"
+      Then I should see "Generate Remaining"
+      When I click the "Generate Remaining" button
+      Then I should see "Solution infeasible!"
