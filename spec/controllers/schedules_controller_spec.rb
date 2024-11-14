@@ -9,12 +9,15 @@ RSpec.describe SchedulesController, type: :controller do
   end
 
   let(:user) { create(:user) }
+  let(:another_user) { create(:user) }
   let!(:schedule1) { create(:schedule, user:) }  
+  let!(:other_schedule) { create(:schedule, user: another_user) }
 
   describe 'GET #index' do
     it 'populates an array of schedules' do
       get :index
       expect(assigns(:schedules)).to eq([schedule1])
+      expect(assigns(:schedules)).not_to include(other_schedule)
     end
 
     it 'filters schedules by search term' do
@@ -64,7 +67,7 @@ RSpec.describe SchedulesController, type: :controller do
       it 'saves the new schedule in the database' do
         expect do
           post :create, params: { schedule: attributes_for(:schedule) }
-        end.to change(Schedule, :count).by(1)
+        end.to change(user.schedules, :count).by(1)
       end
 
       it 'redirects to the schedules index' do
