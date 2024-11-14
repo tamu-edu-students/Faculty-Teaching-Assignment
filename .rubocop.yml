@@ -13,5 +13,7 @@ Metrics/ParameterLists:
 AllCops:
   NewCops: enable
   TargetRubyVersion: 3.3.x
+Bundler/OrderedGems:
+  Enabled: false
 Documentation:
   Enabled: false
