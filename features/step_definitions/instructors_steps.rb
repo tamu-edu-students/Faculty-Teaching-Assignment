@@ -7,7 +7,7 @@ Given('the following courses exist:') do |courses_table|
   end
 end
 
-Given('the following instructors exist:') do |table|
+Given('the following instructors exist for schedule {string}:') do |string, table|
   table.hashes.each do |hash|
     Instructor.create!(
       id_number: hash['id_number'],
@@ -30,7 +30,6 @@ Given('the following preferences exist for {string}:') do |instructor_name, tabl
     course = @schedule.courses.find_by!(course_number: preference_data['course'].to_s)
     preference_data['course'] = course
     instructor.instructor_preferences.create!(preference_data)
-    # instructor.instructor_preferences.create!(preference_data)
   end
 end
 
@@ -44,16 +43,16 @@ When('I visit the instructor page for id {string}') do |schedule_id|
 end
 
 Given('there is no schedule with id {string}') do |schedule_id|
-  # This step can be left empty as it is assumed that the schedule does not exist
   expect(Schedule.find_by(id: schedule_id)).to be_nil
 end
 
 When('I visit the instructors index for schedule {string}') do |schedule_id|
-  visit schedule_instructors_path(schedule_id) # Adjust this based on your routes
+  visit schedule_instructors_path(schedule_id)
 end
 
 Given('I am on the details page for {string}') do |_schedule_name|
-  visit schedule_path(id: @schedule.id) # Adjust this based on your routes
+  @schedule = Schedule.find_by(schedule_name: _schedule_name)
+  visit schedule_path(id: @schedule.id) 
 end
 
 When('I attach a valid {string} with path {string}') do |csv_location, file_path|

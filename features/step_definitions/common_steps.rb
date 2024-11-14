@@ -23,3 +23,12 @@ end
 Then('I should be on the schedules page') do
   expect(page).to have_current_path(schedules_path)
 end
+
+Given('the user {string} exists') do |name|
+  @user = User.find_or_create_by!(email:'user@tamu.edu') do |user|
+    user.first_name = name
+    user.last_name = 'Doe'
+    user.provider = 'google_oauth2'
+    user.uid = '123456789'
+  end
+end
