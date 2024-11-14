@@ -6,7 +6,8 @@ require 'csv'
 
 RSpec.describe RoomBookingsController, type: :controller do
   render_views
-  let!(:schedule) { create(:schedule) }
+  let(:user) { create(:user) }
+  let!(:schedule) { create(:schedule, user:) }
   let!(:room1) { create(:room, schedule:, building_code: 'EABB', room_number: '106', capacity: 118, is_active: true) }
   let!(:room2) { create(:room, schedule:, building_code: 'HRBB', room_number: '113', capacity: 65, is_active: true) }
   let!(:time_slot1) { create(:time_slot, day: 'Monday', start_time: '09:00', end_time: '10:00') }
@@ -18,9 +19,9 @@ RSpec.describe RoomBookingsController, type: :controller do
   let!(:room_booking2) { create(:room_booking, room: room2, time_slot: time_slot2, course:, instructor:, is_available: false) }
 
   before do
-    @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John', last_name: 'Doe')
     allow(controller).to receive(:logged_in?).and_return(true)
-    controller.instance_variable_set(:@current_user, @user)
+    controller.instance_variable_set(:@current_user, user)
+    session[:user_id] = user.id
   end
 
   describe 'GET #index' do

@@ -39,7 +39,7 @@ class CoursesController < ApplicationController
 
   # Set the schedule correctly
   def set_schedule
-    @schedule = Schedule.find(params[:schedule_id]) if params[:schedule_id]
+    @schedule = current_user.schedules.find(params[:schedule_id]) if params[:schedule_id]
   rescue ActiveRecord::RecordNotFound
     flash[:alert] = 'Schedule not found.'
     redirect_to schedules_path

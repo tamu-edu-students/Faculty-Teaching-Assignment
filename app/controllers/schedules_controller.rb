@@ -3,8 +3,9 @@
 # app/controllers/schedules_controller.rb
 class SchedulesController < ApplicationController
   before_action :set_schedule, only: %i[show destroy upload_rooms upload_instructors upload_courses]
+  before_action :require_login
   def index
-    @schedules = Schedule.all
+    @schedules = current_user.schedules
 
     return unless params[:search_by_name] && params[:search_by_name] != ''
 
@@ -30,7 +31,7 @@ class SchedulesController < ApplicationController
   end
 
   def create
-    @schedule = Schedule.new(schedule_params)
+    @schedule = current_user.schedules.new(schedule_params)
 
     respond_to do |format|
       if @schedule.save
@@ -111,7 +112,7 @@ class SchedulesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_schedule
-    @schedule = Schedule.find(params[:id])
+    @schedule = current_user.schedules.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     flash[:alert] = 'Schedule not found.'
     redirect_to schedules_path

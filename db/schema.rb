@@ -87,6 +87,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_14_022249) do
     t.string "semester_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_schedules_on_user_id"
   end
 
   create_table "time_slots", force: :cascade do |t|
@@ -118,4 +120,5 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_14_022249) do
   add_foreign_key "room_bookings", "rooms"
   add_foreign_key "room_bookings", "time_slots"
   add_foreign_key "rooms", "schedules"
+  add_foreign_key "schedules", "users"
 end

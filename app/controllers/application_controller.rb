@@ -25,7 +25,12 @@ class ApplicationController < ActionController::Base
     # redirect to the welcome page unless user is logged in
     return if logged_in?
 
-    redirect_to welcome_path, alert: 'You must be logged in to access this section.'
+    reset_session_and_redirect
+  end
+
+  def reset_session_and_redirect
+    reset_session # Clears the session to prevent further issues
+    redirect_to welcome_path, alert: 'Session expired. Please log in again.'
   end
 
 end

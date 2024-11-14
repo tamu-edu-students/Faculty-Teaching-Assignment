@@ -5,7 +5,8 @@ Given(/I am on the rooms page for "(.*)"/) do |schedule_name|
   visit schedule_rooms_path(schedule_id: @schedule.id)
 end
 
-When(/I visit the rooms page for "(.*)"/) do |_schedule_name|
+When(/I visit the rooms page for "(.*)"/) do |schedule_name|
+  @schedule = Schedule.find_by(schedule_name:)
   visit schedule_rooms_path(schedule_id: @schedule.id)
 end
 
@@ -13,7 +14,8 @@ Given(/^a schedule exists with the schedule name "(.*)" and semester name "(.*)"
   @schedule = Schedule.create!(schedule_name:, semester_name:)
 end
 
-Given(/^the following rooms exist for that schedule:$/) do |table|
+Given('the following rooms exist for schedule {string}:') do |string, table|
+  schedule = Schedule.find_by(schedule_name: string)
   table.hashes.each do |room|
     Room.create!(
       campus: room['campus'],
@@ -24,7 +26,7 @@ Given(/^the following rooms exist for that schedule:$/) do |table|
       is_lab: room['is_lab'] == 'true',
       is_learning_studio: room['is_learning_studio'] == 'true',
       is_lecture_hall: room['is_lecture_hall'] == 'true',
-      schedule_id: @schedule.id
+      schedule_id: schedule.id
     )
   end
 end

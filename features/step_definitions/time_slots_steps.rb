@@ -1,16 +1,5 @@
 # frozen_string_literal: true
 
-Given('the following time slots exist:') do |table|
-  table.hashes.each do |time_slot|
-    TimeSlot.create!(
-      day: time_slot['day'],
-      start_time: time_slot['start_time'],
-      end_time: time_slot['end_time'],
-      slot_type: time_slot['slot_type']
-    )
-  end
-end
-
 When('I visit the time slots page for {string}') do |schedule_name|
   schedule = Schedule.find_by(schedule_name:)
   visit schedule_time_slots_path(schedule)
