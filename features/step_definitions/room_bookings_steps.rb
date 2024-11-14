@@ -14,7 +14,7 @@ Given('the following courses and their sections exist for schedule {string}:') d
       max_seats: row['max_seats'],
       lecture_type: row['lecture_type'],
       num_labs: row['num_labs'],
-      schedule: schedule
+      schedule:
     )
 
     # Create sections associated with the course
@@ -33,7 +33,7 @@ When(/^I visit the room bookings page for "(.*)"$/) do |schedule_name|
   visit schedule_room_bookings_path(@schedule)
 end
 
-Given('the following time slots exist for schedule {string}:') do |string, table|
+Given('the following time slots exist for schedule {string}:') do |_string, table|
   table.hashes.each do |time_slot|
     TimeSlot.create!(
       day: time_slot['day'],

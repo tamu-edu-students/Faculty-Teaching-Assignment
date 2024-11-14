@@ -25,7 +25,7 @@ Then('I should be on the schedules page') do
 end
 
 Given('the user {string} exists') do |name|
-  user = User.find_or_create_by!(email:"user#{name}@tamu.edu") do |user|
+  User.find_or_create_by!(email: "user#{name}@tamu.edu") do |user|
     user.first_name = name
     user.last_name = 'Doe'
     user.provider = 'google_oauth2'

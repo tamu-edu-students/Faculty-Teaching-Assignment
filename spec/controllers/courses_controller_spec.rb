@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe CoursesController, type: :controller do
   render_views
   let(:user) { create(:user) }
-  let(:schedule) { create(:schedule, user:) }  
+  let(:schedule) { create(:schedule, user:) }
   let(:course) { create(:course, schedule:, hide: false) }
 
   before do

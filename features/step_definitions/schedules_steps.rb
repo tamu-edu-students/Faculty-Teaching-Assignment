@@ -2,9 +2,9 @@
 
 Given('the following schedules exist for the user {string}:') do |name, schedules_table|
   user = User.find_by(first_name: name)
-  
+
   schedules_table.hashes.each do |schedule|
-    created_sched = user.schedules.create!(schedule)
+    user.schedules.create!(schedule)
   end
 end
 When('I visit the schedules index page') do

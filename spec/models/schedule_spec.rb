@@ -23,6 +23,6 @@ RSpec.describe Schedule, type: :model do
   it 'is invalid without a user' do
     @schedule1.user = nil
     expect(@schedule1).to_not be_valid
-    expect(@schedule1.errors[:user]).to include("must exist")
+    expect(@schedule1.errors[:user]).to include('must exist')
   end
 end

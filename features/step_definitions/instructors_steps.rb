@@ -20,7 +20,7 @@ Given('the following instructors exist for schedule {string}:') do |string, tabl
       after_3: hash['after_3'] == 'true',
       beaware_of: hash['beaware_of'],
 
-      schedule: schedule # Associate instructors with the created schedule
+      schedule: # Associate instructors with the created schedule
     )
   end
 end
@@ -53,7 +53,7 @@ end
 
 Given('I am on the details page for {string}') do |_schedule_name|
   @schedule = Schedule.find_by(schedule_name: _schedule_name)
-  visit schedule_path(id: @schedule.id) 
+  visit schedule_path(id: @schedule.id)
 end
 
 When('I attach a valid {string} with path {string}') do |csv_location, file_path|

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Given(/I am on the courses page for "(.*)"/) do |schedule_name|
+Given(/I am on the courses page for "(.*)"/) do |_schedule_name|
   visit schedule_courses_path(schedule_id: @schedule.id)
 end
 
@@ -24,7 +24,7 @@ Given('the following courses exist for schedule {string}:') do |string, table|
       lecture_type: course['lecture_type'],
       num_labs: course['num_labs'],
 
-      schedule: schedule
+      schedule:
     )
   end
 end

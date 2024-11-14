@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe RoomsController, type: :controller do
   render_views
   let(:user) { create(:user) }
-  let(:schedule) { create(:schedule, user:) }  
+  let(:schedule) { create(:schedule, user:) }
 
   describe 'GET #index' do
     before do

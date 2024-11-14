@@ -14,23 +14,22 @@ class ApplicationController < ActionController::Base
   def current_user
     # if @current _user is undefined or falsy, evaluate the RHS
     # Look up user by id if user id is in the session hash
-    return unless session[:user_id]  
+    return unless session[:user_id]
+
     @current_user ||= User.find_by(id: session[:user_id])
   end
-  
+
   def logged_in?
     current_user
   end
 
   def require_login
     # redirect to the welcome page unless user is logged in
-    unless logged_in?
-      reset_session_and_redirect
-    end
+    return if logged_in?
+
+    reset_session_and_redirect
   end
 
-  private
-  
   def reset_session_and_redirect
     reset_session # Clears the session to prevent further issues
     redirect_to welcome_path, alert: 'Session expired. Please log in again.'

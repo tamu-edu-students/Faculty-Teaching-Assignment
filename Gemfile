@@ -69,12 +69,12 @@ group :test do
   gem 'cucumber-rails', require: false
   gem 'database_cleaner'
   gem 'database_cleaner-active_record'
+  gem 'faker'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
   gem 'simplecov', require: false
   gem 'ZenTest'
-  gem 'faker'
 end
 group :production do
   gem 'pg' # for Heroku deployment
