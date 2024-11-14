@@ -67,10 +67,13 @@ class ScheduleSolver
     room_id_hash = (0...num_rooms).map{|r| [rooms[r]['id'], r]}.to_h
     class_id_hash = (0...num_classes).map{|c| [classes[c]['id'], c]}.to_h
     time_id_hash = (0...num_times).map{|t| [times[t][3], t]}.to_h
+
+    puts class_id_hash.inspect
     
     # Constraint #4: Respect locked courses
     # locks[i] = (class, room, time) triplet
     puts 'Generating lock constraints'
+    puts locks.inspect
     lock_constraints = []
     locks.each do |class_id, room_id, time_id|
       # For unknown reasons, I can't write sched[c][r][t] == 1
@@ -197,7 +200,7 @@ class ScheduleSolver
             is_lab: false,
             created_at: Time.now,
             updated_at: Time.now,
-            section_id: Section.find_by(course_id: classes[c]['id']).id,
+            course_id: classes[c]['id'],
             instructor_id: assigned_prof['id']
           )
 

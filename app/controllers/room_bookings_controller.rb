@@ -15,7 +15,7 @@ class RoomBookingsController < ApplicationController
     # Fetch room bookings only for the specified schedule
     @room_bookings = RoomBooking.includes(
       room: {},
-      section: [:course],
+      course: {},
       time_slot: {},
       instructor: {}
     ).where(rooms: { schedule_id: @schedule.id }, time_slots: { day: @active_tab })
@@ -27,7 +27,7 @@ class RoomBookingsController < ApplicationController
       overlapping_time_slots.each do |overlapping_slot|
         overlapping_booking = RoomBooking.find_or_initialize_by(room_id: booking.room_id, time_slot_id: overlapping_slot.id)
 
-        next unless section_alloted?(overlapping_booking)
+        next unless course_allotted?(overlapping_booking)
 
         unless booking.id == overlapping_booking.id
           @block_due_to_parallel_booking[[booking.room_id, booking.time_slot_id]] =
@@ -70,7 +70,7 @@ class RoomBookingsController < ApplicationController
 
     respond_to do |format|
       if room_booking.save
-        room_booking.update(section_id: room_booking_params[:section_id])
+        room_booking.update(course_id: room_booking_params[:course_id])
 
         overlapping_time_slots = find_overlapping_time_slots(room_booking.time_slot)
 
@@ -167,20 +167,13 @@ class RoomBookingsController < ApplicationController
     classes = classes.first(instructors.length) if classes.length > instructors.length
 
     # With the exception of locked courses, all of the room bookings will be stale
-    RoomBooking.where(is_locked: true).delete_all
-
+    RoomBooking.where(is_locked: [false, nil]).destroy_all
+    
     # Get remaining locked courses
-    # We need both the course id (for the constraints) and the section id (for the RoomBooking)
-    # For stacked sections, we will arbitrarily pick one section_id as a representative to display
-    # Doing something like CSCE 120:500-505 will require a change to the database schema that isn't high priority
-    locks = RoomBooking.joins(:section).pluck('sections.course_id, room_bookings.room_id, room_bookings.time_slot_id')
+    locks = RoomBooking.pluck(:course_id, :room_id, :time_slot_id)
 
     # Offload solve to service
-    begin
-      total_unhappiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
-    rescue StandardError => e 
-      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), alert: e.message()
-    end
+    total_unhappiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
 
     redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), notice: "Schedule generated with #{instructors.length-total_unhappiness}/#{instructors.length} professors satisfied"
 
@@ -314,15 +307,15 @@ class RoomBookingsController < ApplicationController
     "#{time_slot.start_time} - #{time_slot.end_time}"
   end
 
-  def section_alloted?(overlapping_booking)
-    overlapping_booking.section_id.present?
+  def course_allotted?(overlapping_booking)
+    overlapping_booking.course_id.present?
   end
 
   def room_booking_params
     params.require(:room_booking).permit(
       :room_id,
       :time_slot_id,
-      :section_id,
+      :course_id,
       :instructor_id,
       :course_id,
       :is_available,

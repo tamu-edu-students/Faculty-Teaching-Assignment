@@ -10,18 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
-  create_table 'courses', force: :cascade do |t|
-    t.string 'course_number'
-    t.integer 'max_seats'
-    t.string 'lecture_type'
-    t.integer 'num_labs'
-    t.integer 'schedule_id', null: false
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
-    t.boolean 'hide', default: false, null: false
-    t.index ['schedule_id'], name: 'index_courses_on_schedule_id'
+ActiveRecord::Schema[7.2].define(version: 2024_11_14_022249) do
+  create_table "courses", force: :cascade do |t|
+    t.string "course_number"
+    t.integer "max_seats"
+    t.string "lecture_type"
+    t.integer "num_labs"
+    t.integer "schedule_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "hide", default: false, null: false
+    t.string "section_numbers"
+    t.index ["schedule_id"], name: "index_courses_on_schedule_id"
   end
 
   create_table "instructor_preferences", force: :cascade do |t|
@@ -50,20 +50,20 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
     t.index ["schedule_id"], name: "index_instructors_on_schedule_id"
   end
 
-  create_table 'room_bookings', force: :cascade do |t|
-    t.integer 'room_id', null: false
-    t.integer 'time_slot_id', null: false
-    t.boolean 'is_available', default: true
-    t.boolean 'is_lab'
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
-    t.integer 'instructor_id'
-    t.integer 'section_id'
-    t.boolean 'is_locked'
-    t.index ['instructor_id'], name: 'index_room_bookings_on_instructor_id'
-    t.index ['room_id'], name: 'index_room_bookings_on_room_id'
-    t.index ['section_id'], name: 'index_room_bookings_on_section_id'
-    t.index ['time_slot_id'], name: 'index_room_bookings_on_time_slot_id'
+  create_table "room_bookings", force: :cascade do |t|
+    t.integer "room_id", null: false
+    t.integer "time_slot_id", null: false
+    t.boolean "is_available", default: true
+    t.boolean "is_lab"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "instructor_id"
+    t.boolean "is_locked"
+    t.integer "course_id"
+    t.index ["course_id"], name: "index_room_bookings_on_course_id"
+    t.index ["instructor_id"], name: "index_room_bookings_on_instructor_id"
+    t.index ["room_id"], name: "index_room_bookings_on_room_id"
+    t.index ["time_slot_id"], name: "index_room_bookings_on_time_slot_id"
   end
 
   create_table "rooms", force: :cascade do |t|
@@ -87,15 +87,6 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
     t.string "semester_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "sections", force: :cascade do |t|
-    t.string "section_number"
-    t.integer "seats_alloted"
-    t.integer "course_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_sections_on_course_id"
   end
 
   create_table "time_slots", force: :cascade do |t|
@@ -125,8 +116,6 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
   add_foreign_key "room_bookings", "courses"
   add_foreign_key "room_bookings", "instructors"
   add_foreign_key "room_bookings", "rooms"
-  add_foreign_key "room_bookings", "sections"
   add_foreign_key "room_bookings", "time_slots"
   add_foreign_key "rooms", "schedules"
-  add_foreign_key "sections", "courses"
 end

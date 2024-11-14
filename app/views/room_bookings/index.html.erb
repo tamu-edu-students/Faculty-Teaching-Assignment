@@ -9,14 +9,14 @@
             <%= link_to 'Back to Schedules', schedules_path, class: 'col btn btn-dark px-4' %>
             <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col btn btn-secondary px-4 mx-1' %>
             <% if !@rooms.empty? %>
-                <button class="col-5 btn btn-dark px-4">
-                    Generate Remaining
-                </button>
+                <%= form_with url: generate_schedule_schedule_room_bookings_path, method: :post, class: "col-5 px-4" do %>
+                    <%= button_tag "Generate Remaining", class: "btn btn-dark" %>
+                <% end %>
             <%#= button_to 'Generate Remaining', generate_schedule_schedule_path(@schedule), method: :post, class: 'col-5 btn btn-dark px-4  ' %>
             <% end %>
         </div>
     </div>
-</div>k
+</div>
 <% if !@rooms.empty? %>
 <div class="row">
     <div class="col-10">
@@ -52,12 +52,12 @@
 
                         
                         <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>" data-schedule-id="<%= @schedule.id %>">
-                            <% if booking && booking.is_available? && booking.section %>
+                            <% if booking && booking.is_available? && booking.course %>
                                 <strong>
-                                    <%= booking.section.course.course_number %>
-                                    (<%= booking.section.section_number %>)
+                                    <%= booking.course.course_number %>
+                                    (<%= booking.course.section_numbers %>)
                                 </strong> |
-                                <%= booking.section.seats_alloted %>
+                                <%= booking.course.max_seats %>
 
                                 <% if !booking.is_locked? %>
                                     <%= link_to "Delete", 
@@ -105,7 +105,7 @@
         </div>
     </div>
     <div id="courses-list" class="col-2 bg-secondary-subtle vh-100 overflow-auto p-3">
-        <%= available_sections(@schedule) %>
+        <%= available_courses(@schedule) %>
     </div>
 </div>
 <% else %>

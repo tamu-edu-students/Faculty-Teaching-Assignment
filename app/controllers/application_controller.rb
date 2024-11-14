@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   def current_user
     # if @current _user is undefined or falsy, evaluate the RHS
     # Look up user by id if user id is in the session hash
-    @current_user ||= User.find(session[:user_id]) if session[:user_id]
+    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
   end
 
   def logged_in?
@@ -27,4 +27,5 @@ class ApplicationController < ActionController::Base
 
     redirect_to welcome_path, alert: 'You must be logged in to access this section.'
   end
+
 end
