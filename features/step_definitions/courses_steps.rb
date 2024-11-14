@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 Given(/I am on the courses page for "(.*)"/) do |schedule_name|
-  # @schedule = Schedule.find_by(schedule_name:)
   visit schedule_courses_path(schedule_id: @schedule.id)
 end
 

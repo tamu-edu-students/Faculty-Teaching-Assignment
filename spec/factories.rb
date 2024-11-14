@@ -3,8 +3,8 @@
 FactoryBot.define do
 
   factory :user do
-    first_name { 'John' }
-    last_name { 'Doe' }
+    first_name { 'Alex' }
+    last_name { 'Don' }
     email { Faker::Internet.unique.email }
     uid { 123456 }
     provider { 'test_provider' }
