@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 Given('the following schedules exist for the user {string}:') do |name, schedules_table|
-  # user = User.find_by(first_name: name)
+  user = User.find_by(first_name: name)
   
   schedules_table.hashes.each do |schedule|
-    created_sched = @user.schedules.create!(schedule)
-    puts "Created schedule: #{created_sched.schedule_name}"
+    created_sched = user.schedules.create!(schedule)
   end
 end
 When('I visit the schedules index page') do

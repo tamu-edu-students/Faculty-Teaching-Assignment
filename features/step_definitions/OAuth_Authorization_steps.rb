@@ -14,7 +14,7 @@ When('I click the button {string}') do |button_text|
 end
 
 When('I authorize access from Google') do
-  mock_google_oauth_login
+  mock_google_oauth_login('John')
   visit '/auth/google_oauth2/callback'
 end
 
@@ -32,7 +32,7 @@ When('I login with a non TAMU Google account') do
 end
 
 Given('I am logged in as a user') do
-  mock_google_oauth_login
+  mock_google_oauth_login('John')
   visit '/auth/google_oauth2/callback'
 end
 

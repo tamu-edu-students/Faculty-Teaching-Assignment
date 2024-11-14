@@ -6,6 +6,7 @@ Given(/I am on the room bookings page for "(.*)"/) do |schedule_name|
 end
 
 Given('the following courses and their sections exist for schedule {string}:') do |string, table|
+  schedule = Schedule.find_by(schedule_name: string)
   table.hashes.each do |row|
     # Create the course with the given name
     course = Course.create!(
@@ -13,7 +14,7 @@ Given('the following courses and their sections exist for schedule {string}:') d
       max_seats: row['max_seats'],
       lecture_type: row['lecture_type'],
       num_labs: row['num_labs'],
-      schedule: @schedule
+      schedule: schedule
     )
 
     # Create sections associated with the course

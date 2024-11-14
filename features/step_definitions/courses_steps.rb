@@ -16,7 +16,7 @@ Then(/I should see "(.*)" first/) do |course_num|
 end
 
 Given('the following courses exist for schedule {string}:') do |string, table|
-  @schedule = @user.schedules.find_by(schedule_name: string)
+  schedule = Schedule.find_by(schedule_name: string)
   table.hashes.each do |course|
     Course.create!(
       course_number: course['course_number'],
@@ -24,7 +24,7 @@ Given('the following courses exist for schedule {string}:') do |string, table|
       lecture_type: course['lecture_type'],
       num_labs: course['num_labs'],
 
-      schedule: @schedule
+      schedule: schedule
     )
   end
 end

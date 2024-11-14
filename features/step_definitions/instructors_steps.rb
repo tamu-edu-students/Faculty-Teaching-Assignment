@@ -8,6 +8,7 @@ Given('the following courses exist:') do |courses_table|
 end
 
 Given('the following instructors exist for schedule {string}:') do |string, table|
+  schedule = Schedule.find_by(schedule_name: string)
   table.hashes.each do |hash|
     Instructor.create!(
       id_number: hash['id_number'],
@@ -19,7 +20,7 @@ Given('the following instructors exist for schedule {string}:') do |string, tabl
       after_3: hash['after_3'] == 'true',
       beaware_of: hash['beaware_of'],
 
-      schedule: @schedule # Associate instructors with the created schedule
+      schedule: schedule # Associate instructors with the created schedule
     )
   end
 end
