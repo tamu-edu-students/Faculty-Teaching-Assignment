@@ -5,7 +5,7 @@ class CoursesController < ApplicationController
   helper_method :sort_column, :sort_direction
   before_action :set_schedule, only: [:index]
   def index
-    @schedule = Schedule.find(params[:schedule_id])
+    @schedule = current_user.schedules.find(params[:schedule_id])
     @show_hidden = false
     @show_hidden = true if params[:show_hidden] == 'true'
     @courses  = @schedule.courses.where(hide: @show_hidden).includes(:sections).all
@@ -40,7 +40,7 @@ class CoursesController < ApplicationController
 
   # Set the schedule correctly
   def set_schedule
-    @schedule = Schedule.find(params[:schedule_id]) if params[:schedule_id]
+    @schedule = current_user.schedules.find(params[:schedule_id]) if params[:schedule_id]
   rescue ActiveRecord::RecordNotFound
     flash[:alert] = 'Schedule not found.'
     redirect_to schedules_path

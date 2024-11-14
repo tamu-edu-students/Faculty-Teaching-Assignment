@@ -19,4 +19,10 @@ RSpec.describe Schedule, type: :model do
     schedule2 = build(:schedule, semester_name: nil)
     expect(schedule2).to_not be_valid
   end
+
+  it 'is invalid without a user' do
+    @schedule1.user = nil
+    expect(@schedule1).to_not be_valid
+    expect(@schedule1.errors[:user]).to include('must exist')
+  end
 end

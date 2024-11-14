@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
+ActiveRecord::Schema[7.2].define(version: 20_241_111_191_548) do
   create_table 'courses', force: :cascade do |t|
     t.string 'course_number'
     t.integer 'max_seats'
@@ -88,6 +88,8 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
     t.string 'semester_name'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
+    t.integer 'user_id', null: false
+    t.index ['user_id'], name: 'index_schedules_on_user_id'
   end
 
   create_table 'sections', force: :cascade do |t|
@@ -128,5 +130,6 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_015_305) do
   add_foreign_key 'room_bookings', 'sections'
   add_foreign_key 'room_bookings', 'time_slots'
   add_foreign_key 'rooms', 'schedules'
+  add_foreign_key 'schedules', 'users'
   add_foreign_key 'sections', 'courses'
 end

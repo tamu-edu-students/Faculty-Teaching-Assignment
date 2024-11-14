@@ -74,6 +74,7 @@ group :test do
   gem 'selenium-webdriver'
   gem 'simplecov', require: false
   gem 'ZenTest'
+  gem 'faker'
 end
 group :production do
   gem 'pg' # for Heroku deployment

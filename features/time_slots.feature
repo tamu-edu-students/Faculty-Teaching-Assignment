@@ -4,9 +4,13 @@ Feature: Time Slots Page
   So that I can filter and find time slots by day and type
 
   Background:
-    Given a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024"
-    And I am logged in as a user with first name "Test"
-    And the following time slots exist:
+    Given the user "John" exists
+    And the following schedules exist for the user "John":
+    | schedule_name     | semester_name |
+    | Sched 1   | Fall 2024     |
+    | Dummy Sched | Fall 2024   |
+    And I am logged in as a user with first name "John"
+    And the following time slots exist for schedule "Sched 1":
       | day  | start_time | end_time | slot_type |
       | MWF  | 09:00      | 10:00    | LEC       |
       | MW   | 10:00      | 11:00    | LAB       |

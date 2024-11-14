@@ -4,23 +4,17 @@ require 'rails_helper'
 
 RSpec.describe CoursesController, type: :controller do
   render_views
-  let(:schedule) { Schedule.create!(schedule_name: 'Fall Semester', semester_name: '2024') }
+  let(:user) { create(:user) }
+  let(:schedule) { create(:schedule, user:) }
   let(:course) { create(:course, schedule:, hide: false) }
 
   before do
-    @user = User.find_or_initialize_by(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John', last_name: 'Doe')
     allow(controller).to receive(:logged_in?).and_return(true)
-    controller.instance_variable_set(:@current_user, @user)
+    controller.instance_variable_set(:@current_user, user)
+    session[:user_id] = user.id
   end
 
   describe 'GET #index' do
-    before do
-      @user = User.create!(uid: '12345', provider: 'google_oauth2', email: 'test@example.com', first_name: 'John',
-                           last_name: 'Doe')
-      allow(controller).to receive(:logged_in?).and_return(true)
-      controller.instance_variable_set(:@current_user, @user)
-    end
-
     it 'incorrect schedule id' do
       get :index, params: { schedule_id: (schedule.id + 1) }
       expect(flash[:alert]).to eq('Schedule not found.')

@@ -1,9 +1,18 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :user do
+    first_name { 'Alex' }
+    last_name { 'Don' }
+    email { Faker::Internet.unique.email }
+    uid { 123_456 }
+    provider { 'test_provider' }
+  end
+
   factory :schedule do
     schedule_name { 'Test Schedule' }
     semester_name { 'Fall 2024' }
+    association :user
   end
 
   factory :room do
