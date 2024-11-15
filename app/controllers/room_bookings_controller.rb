@@ -170,8 +170,9 @@ class RoomBookingsController < ApplicationController
     # Offload solve to service
     begin
       total_unhappiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
+      satisfaction_rate = (100*(classes.length - total_unhappiness).to_f/classes.length).to_i
       redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]),
-                  notice: "Schedule generated with #{instructors.length - total_unhappiness}/#{instructors.length} professors satisfied"
+                  notice: "Schedule generated with #{satisfaction_rate}% satisfaction"
     rescue StandardError => e
       redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), alert: e.message
     end
