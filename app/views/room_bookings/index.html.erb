@@ -51,7 +51,9 @@
 
                         
                         <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>" data-schedule-id="<%= @schedule.id %>">
-                            <% if booking && booking.is_available? && booking.course %>
+                            <% if @block_due_to_parallel_booking[[room.id, time_slot.id]] %>
+                                Booked in <%= @block_due_to_parallel_booking[[room.id, time_slot.id]] %>
+                            <% elsif booking && booking.is_available? && booking.course %>
                                 <strong>
                                     <%= booking.course.course_number %>
                                     (<%= booking.course.section_numbers %>)
@@ -87,9 +89,6 @@
                                         <%= form.select :instructor_id, options_from_collection_for_select(@instructors, :id, :first_name, booking.instructor_id), { prompt: "Select Instructor" }, onchange: "this.form.submit()" %>
                                     </div>
                                 <% end %>
-
-                            <% elsif @block_due_to_parallel_booking[[room.id, time_slot.id]] %>
-                                Booked in <%= @block_due_to_parallel_booking[[room.id, time_slot.id]] %>
                             <% elsif booking && !booking.is_available %>
                                 <%= button_to "U", toggle_availability_schedule_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id, is_available: true }, class: "btn btn-sm btn-success" %>
                             <% else %>
@@ -135,8 +134,8 @@
             });
 
             document.querySelectorAll('a.course-select-btn').forEach(button => {
-                const sectionId = button.dataset.section
-                button.href = `/schedules/${scheduleId}/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bsection_id%5D=${sectionId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`
+                const courseId = button.dataset.course
+                button.href = `/schedules/${scheduleId}/room_bookings?room_booking%5Broom_id%5D=${roomId}&room_booking%5Bcourse_id%5D=${courseId}&room_booking%5Btime_slot_id%5D=${timeSlotId}`
             })
 
             //Fix the message in the bar

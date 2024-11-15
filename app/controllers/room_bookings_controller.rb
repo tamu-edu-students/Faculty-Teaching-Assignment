@@ -280,8 +280,8 @@ class RoomBookingsController < ApplicationController
     return '' unless booking
 
     course_number = fetch_course_number(booking)
-    section_numbers = fetch_section_numbers(booking)
     instructor_name = fetch_instructor_name(booking)
+    section_numbers = fetch_section_numbers(booking)
 
     "#{course_number} - #{section_numbers} - #{instructor_name}".strip
   end

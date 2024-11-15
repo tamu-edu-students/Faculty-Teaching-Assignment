@@ -170,7 +170,7 @@ class CsvHandler
           max_seats: max_seats.to_i,
           lecture_type:,
           num_labs: labs.to_i,
-          section_numbers: section_numbers
+          section_numbers:
         }
 
         Course.create(course_data)
