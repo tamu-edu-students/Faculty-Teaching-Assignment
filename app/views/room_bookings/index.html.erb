@@ -6,12 +6,13 @@
             </div>
         </a>
         <div class="col row justify-content-end align-items-center" style="height: 2.5em;">
-            <%= link_to 'Back to Schedules', schedules_path, class: 'col btn btn-dark px-4' %> 
+            <%= link_to 'Back to Schedules', schedules_path, class: 'col btn btn-dark px-4' %>
             <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col btn btn-secondary px-4 mx-1' %>
             <% if !@rooms.empty? %>
-                <button class="col btn btn-dark px-4">
-                    Generate Remaining
-                </button>
+                <%= form_with url: generate_schedule_schedule_room_bookings_path, method: :post, class: "col-5 px-4" do %>
+                    <%= button_tag "Generate Remaining", class: "btn btn-dark" %>
+                <% end %>
+            <%#= button_to 'Generate Remaining', generate_schedule_schedule_path(@schedule), method: :post, class: 'col-5 btn btn-dark px-4  ' %>
             <% end %>
         </div>
     </div>
@@ -37,7 +38,7 @@
                     <th>24 hr</th>
                     <% @rooms.each do |room| %>
                         <th scope="col" ><%= room.building_code %> <%= room.room_number %></th>
-                        
+
                     <% end %>
                     </tr>
                 </thead>
@@ -45,17 +46,19 @@
                     <% @time_slots.each do |time_slot| %>
                     <tr>
                         <th scope="row" class="table-secondary"><%= time_slot.start_time %> - <%= time_slot.end_time %></th>
-                        
+
                         <% @rooms.each do |room| %>
                         <% booking = @bookings_matrix[[room.id, time_slot.id]] %>
+
                         
                         <td class="table-cell <%= "bg-primary-subtle" if room.is_lab? %>" data-room-id="<%= room.id %>" data-time-slot-id="<%= time_slot.id %>" data-schedule-id="<%= @schedule.id %>">
-                            <% if booking && booking.is_available? && booking.section %>
+                            <% if booking && booking.is_available? && booking.course %>
                                 <strong>
-                                    <%= booking.section.course.course_number %>
-                                    (<%= booking.section.section_number %>)
+                                    <%= booking.course.course_number %>
+                                    (<%= booking.course.section_numbers %>)
                                 </strong> |
-                                <%= booking.section.seats_alloted %>
+                                <%= booking.course.max_seats %>
+
                                 <% if !booking.is_locked? %>
                                     <%= link_to "Delete", 
                                         schedule_room_booking_path(@schedule,booking), 
@@ -74,12 +77,12 @@
                                         confirm: "Are you sure you want to toggle the lock status?", 
                                         turbo_method: :patch 
                                     } %>
-                                <%= form_with model: booking, 
-                                    url: update_instructor_schedule_room_booking_path(@schedule, booking), 
+                                <%= form_with model: booking,
+                                    url: update_instructor_schedule_room_booking_path(@schedule, booking),
                                     method: :patch,
-                                    data: { 
+                                    data: {
                                         turbo_method: :patch
-                                    }, 
+                                    },
                                     remote: true do |form| %>
                                     <div class="field">
                                         <%= form.select :instructor_id, options_from_collection_for_select(@instructors, :id, :first_name, booking.instructor_id), { prompt: "Select Instructor" }, onchange: "this.form.submit()" %>
@@ -102,7 +105,7 @@
         </div>
     </div>
     <div id="courses-list" class="col-2 bg-secondary-subtle vh-100 overflow-auto p-3">
-        <%= available_sections(@schedule) %>
+        <%= available_courses(@schedule) %>
     </div>
 </div>
 <% else %>

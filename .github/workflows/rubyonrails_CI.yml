@@ -27,6 +27,8 @@ jobs:
           bundler-cache: true
       - name: Install dependencies
         run: bundle install
+      - name: Build GLPK
+        run: bundle exec rake glpk:install
       # Add or replace database setup steps here
       - name: Set up SQLite database
         run: |
@@ -37,6 +39,7 @@ jobs:
         run: bundle exec rspec
       - name: Run cucumber tests
         run: bundle exec cucumber
+
 
   lint:
     runs-on: ubuntu-latest

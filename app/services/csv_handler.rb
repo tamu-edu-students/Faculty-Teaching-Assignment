@@ -161,8 +161,8 @@ class CsvHandler
         max_seats = row[actual_headers.index('Max. Seats')]
         labs = row[actual_headers.index('#Labs')]
         lecture_type = row[actual_headers.index('Lecture Type')]
-        section_number = row[actual_headers.index('Section number')]
-        seats_allocated = row[actual_headers.index('Seat Split')]
+        row[actual_headers.index('Section number')]
+        row[actual_headers.index('Seat Split')]
 
         course_data = {
           schedule_id:,
@@ -172,20 +172,7 @@ class CsvHandler
           num_labs: labs.to_i
         }
 
-        course = Course.create(course_data)
-
-        section_array = section_number.split(',')
-        seats_array = seats_allocated.split(',')
-
-        section_array.each_with_index do |section, index|
-          section_data = {
-            course_id: course.id,
-            section_number: section,
-            seats_alloted: seats_array[index].to_i
-          }
-
-          Section.create(section_data)
-        end
+        Course.create(course_data)
       end
     end
     { notice: 'Courses successfully uploaded.' }

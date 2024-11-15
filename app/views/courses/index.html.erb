@@ -27,13 +27,7 @@
                 <td><%= course.max_seats %></td>
                 <td><%= course.lecture_type %></td>
                 <td><%= course.num_labs %></td>
-                <td>
-                    <% if course.sections.any? %>
-                        <%= course.sections.order(:section_number).map(&:section_number).join(', ') %>
-                    <% else %>
-                        No Sections
-                    <% end %>
-                </td>
+                <td><%= course.section_numbers%></td>
                 <td>
                     <%= link_to (course.hide ? "Keep" : "Hide"), 
                         toggle_hide_schedule_course_path(@schedule, course), 

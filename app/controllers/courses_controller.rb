@@ -5,10 +5,9 @@ class CoursesController < ApplicationController
   helper_method :sort_column, :sort_direction
   before_action :set_schedule, only: [:index]
   def index
-    @schedule = current_user.schedules.find(params[:schedule_id])
-    @show_hidden = false
-    @show_hidden = true if params[:show_hidden] == 'true'
-    @courses  = @schedule.courses.where(hide: @show_hidden).includes(:sections).all
+    @schedule = Schedule.find(params[:schedule_id])
+    @show_hidden = params[:show_hidden] == 'true'
+    @courses  = @schedule.courses.where(hide: @show_hidden).all
     direction = params[:direction] == 'desc' ? 'desc' : 'asc'
     @courses = @courses.order("#{sort_column} #{direction}")
   end
@@ -51,7 +50,7 @@ class CoursesController < ApplicationController
   end
 
   def course_has_room_bookings?(course)
-    RoomBooking.joins(:section).where(sections: { course_id: course.id }).exists?
+    RoomBooking.exists?(course_id: course.id)
   end
 
   def redirect_to_schedule_with_alert

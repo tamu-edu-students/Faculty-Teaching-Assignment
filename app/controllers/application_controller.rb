@@ -14,9 +14,7 @@ class ApplicationController < ActionController::Base
   def current_user
     # if @current _user is undefined or falsy, evaluate the RHS
     # Look up user by id if user id is in the session hash
-    return unless session[:user_id]
-
-    @current_user ||= User.find_by(id: session[:user_id])
+    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
   end
 
   def logged_in?

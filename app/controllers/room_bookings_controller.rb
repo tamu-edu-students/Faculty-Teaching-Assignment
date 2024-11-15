@@ -15,7 +15,7 @@ class RoomBookingsController < ApplicationController
     # Fetch room bookings only for the specified schedule
     @room_bookings = RoomBooking.includes(
       room: {},
-      section: [:course],
+      course: {},
       time_slot: {},
       instructor: {}
     ).where(rooms: { schedule_id: @schedule.id }, time_slots: { day: @active_tab })
@@ -27,7 +27,7 @@ class RoomBookingsController < ApplicationController
       overlapping_time_slots.each do |overlapping_slot|
         overlapping_booking = RoomBooking.find_or_initialize_by(room_id: booking.room_id, time_slot_id: overlapping_slot.id)
 
-        next unless section_alloted?(overlapping_booking)
+        next unless course_allotted?(overlapping_booking)
 
         unless booking.id == overlapping_booking.id
           @block_due_to_parallel_booking[[booking.room_id, booking.time_slot_id]] =
@@ -70,7 +70,7 @@ class RoomBookingsController < ApplicationController
 
     respond_to do |format|
       if room_booking.save
-        room_booking.update(section_id: room_booking_params[:section_id])
+        room_booking.update(course_id: room_booking_params[:course_id])
 
         overlapping_time_slots = find_overlapping_time_slots(room_booking.time_slot)
 
@@ -138,6 +138,47 @@ class RoomBookingsController < ApplicationController
 
     # Redirect to the previous page or another relevant page
     redirect_back(fallback_location: room_bookings_path)
+  end
+
+  # Get data from DB to pass to scheduling algorithm
+  def generate_schedule
+    active_rooms = Room.where(is_active: true, schedule_id: params['schedule_id']).map do |room|
+      {
+        'id' => room.id,
+        'capacity' => room.capacity
+      }
+    end
+    times = TimeSlot.pluck(:day, :start_time, :end_time, :id)
+    instructors =  Instructor.where(schedule_id: params['schedule_id']).pluck(:id, :before_9, :after_3).map do |i, b, a|
+      { 'id' => i, 'before_9' => b,
+        'after_3' => a }
+    end
+
+    classes = Course.where(hide: false, schedule_id: params['schedule_id']).pluck(:id, :max_seats).map do |id, seats|
+      {
+        'id' => id,
+        'max_seats' => seats
+      }
+    end
+
+    # TODO: Get rid of this and add duplication of professors
+    # Blocked by course load branch
+    classes = classes.first(instructors.length) if classes.length > instructors.length
+
+    # With the exception of locked courses, all of the room bookings will be stale
+    RoomBooking.where(is_locked: [false, nil]).destroy_all
+
+    # Get remaining locked courses
+    locks = RoomBooking.pluck(:course_id, :room_id, :time_slot_id)
+
+    # Offload solve to service
+    begin
+      total_unhappiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]),
+                  notice: "Schedule generated with #{instructors.length - total_unhappiness}/#{instructors.length} professors satisfied"
+    rescue StandardError => e
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), alert: e.message
+    end
   end
 
   def export_csv
@@ -234,7 +275,7 @@ class RoomBookingsController < ApplicationController
 
   def fetch_room_bookings(time_slot, rooms)
     RoomBooking.where(time_slot:, room: rooms)
-               .includes(room: {}, section: :course, instructor: {})
+               .includes(room: {}, course: {}, instructor: {})
                .index_by { |booking| booking.room.id }
   end
 
@@ -242,18 +283,18 @@ class RoomBookingsController < ApplicationController
     return '' unless booking
 
     course_number = fetch_course_number(booking)
-    section_number = fetch_section_number(booking)
+    section_numbers = fetch_section_numbers(booking)
     instructor_name = fetch_instructor_name(booking)
 
-    "#{course_number} - #{section_number} - #{instructor_name}".strip
+    "#{course_number} - #{section_numbers} - #{instructor_name}".strip
   end
 
   def fetch_course_number(booking)
-    booking.section&.course&.course_number || 'N/A'
+    booking.course&.course_number || 'N/A'
   end
 
-  def fetch_section_number(booking)
-    booking.section&.section_number || 'N/A'
+  def fetch_section_numbers(booking)
+    booking.course&.section_numbers || 'N/A'
   end
 
   def fetch_instructor_name(booking)
@@ -268,11 +309,19 @@ class RoomBookingsController < ApplicationController
     "#{time_slot.start_time} - #{time_slot.end_time}"
   end
 
-  def section_alloted?(overlapping_booking)
-    overlapping_booking.section_id.present?
+  def course_allotted?(overlapping_booking)
+    overlapping_booking.course_id.present?
   end
 
   def room_booking_params
-    params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id, :section_id)
+    params.require(:room_booking).permit(
+      :room_id,
+      :time_slot_id,
+      :course_id,
+      :instructor_id,
+      :course_id,
+      :is_available,
+      :is_lab
+    )
   end
 end

@@ -63,6 +63,8 @@ class SchedulesController < ApplicationController
       csv_handler.upload(params[:room_file])
       flash_result = csv_handler.parse_room_csv(@schedule.id)
       flash[flash_result.keys.first] = flash_result.values.first
+      # Delete stale room bookings
+      RoomBooking.destroy_all
     else
       flash[:alert] = 'Please upload a CSV file.'
     end
@@ -77,6 +79,8 @@ class SchedulesController < ApplicationController
       csv_handler.upload(params[:instructor_file])
       flash_result = csv_handler.parse_instructor_csv(@schedule.id)
       flash[flash_result.keys.first] = flash_result.values.first
+      # Delete stale room bookings
+      RoomBooking.destroy_all
     else
       flash[:alert] = 'Please upload a CSV file.'
     end
@@ -86,12 +90,13 @@ class SchedulesController < ApplicationController
   def upload_courses
     if params[:course_file].present?
       # FIXME: See concern in upload_rooms
-      Section.where(course_id: @schedule.courses.pluck(:id)).destroy_all
       @schedule.courses.destroy_all
       csv_handler = CsvHandler.new
       csv_handler.upload(params[:course_file])
       flash_result = csv_handler.parse_course_csv(@schedule.id)
       flash[flash_result.keys.first] = flash_result.values.first
+      # Delete stale room bookings
+      RoomBooking.destroy_all
     else
       flash[:alert] = 'Please upload a CSV file.'
     end

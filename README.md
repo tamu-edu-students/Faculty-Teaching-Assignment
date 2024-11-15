@@ -7,6 +7,23 @@ The main customer need is to have an application that creates an **efficient cla
 
 The key stakeholder for this application is the Associate Department Head, who is responsible for creating the teaching schedule before every semester. The secondary stakeholders are the Instructors and Students, who benefit indirectly from having flexible course schedules. The application integrates all scheduling requirements into one platform, allowing for streamlined data input, constraint satisfaction, and schedule optimization, while being scalable for future adjustments.
 
+## Prerequisites
+-**Ruby** (version `>= 2.7.0`)
+
+-**Some C compiler** (`gcc`, `clang`, etc.)
+
+## Build Instructions
+Clone repository:
+```
+git clone git@github.com:tamu-edu-students/Faculty-Teaching-Assignment.git
+```
+Download gems and other dependencies:
+```
+cd Faculty-Teaching-Assignment
+bundle install
+rake glpk:install
+```
+The schedule builder relies on [GLPK](https://www.gnu.org/software/glpk/), an open-source linear program solver. This is downloaded, configured, and installed by the `glpk:install` Rake task. By default, it is installed to the top-level app directory, as to prevent the user from having to add the required binaries to their path. See `lib/tasks/glpk.rake` for details.
 ## Links
 - **App** : https://faculty-teaching-assignment-31f5f9c405bc.herokuapp.com
 - **Code Climate Report**: https://codeclimate.com/github/tamu-edu-students/Faculty-Teaching-Assignment

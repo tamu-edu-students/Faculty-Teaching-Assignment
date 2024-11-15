@@ -2,11 +2,11 @@
 
 # Room Bookings Helper
 module RoomBookingsHelper
-  def available_sections(schedule)
-    @sections = Section.joins(:course)
-                       .where(courses: { schedule_id: schedule.id, hide: false })
-                       .left_joins(:room_booking)
-                       .where(room_booking: { id: nil })
-    render partial: '/shared/courses_list', locals: { sections: @sections }
+  def available_courses(schedule)
+    @courses = Course.joins(:schedule)
+                     .where(schedule_id: schedule.id, hide: false)
+                     .left_joins(:room_bookings)
+                     .where(room_bookings: { id: nil })
+    render partial: '/shared/courses_list', locals: { courses: @courses }
   end
 end

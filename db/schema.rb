@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 20_241_111_191_548) do
+ActiveRecord::Schema[7.2].define(version: 20_241_114_022_249) do
   create_table 'courses', force: :cascade do |t|
     t.string 'course_number'
     t.integer 'max_seats'
@@ -22,6 +20,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_191_548) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.boolean 'hide', default: false, null: false
+    t.string 'section_numbers'
     t.index ['schedule_id'], name: 'index_courses_on_schedule_id'
   end
 
@@ -59,11 +58,11 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_191_548) do
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.integer 'instructor_id'
-    t.integer 'section_id'
     t.boolean 'is_locked'
+    t.integer 'course_id'
+    t.index ['course_id'], name: 'index_room_bookings_on_course_id'
     t.index ['instructor_id'], name: 'index_room_bookings_on_instructor_id'
     t.index ['room_id'], name: 'index_room_bookings_on_room_id'
-    t.index ['section_id'], name: 'index_room_bookings_on_section_id'
     t.index ['time_slot_id'], name: 'index_room_bookings_on_time_slot_id'
   end
 
@@ -92,15 +91,6 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_191_548) do
     t.index ['user_id'], name: 'index_schedules_on_user_id'
   end
 
-  create_table 'sections', force: :cascade do |t|
-    t.string 'section_number'
-    t.integer 'seats_alloted'
-    t.integer 'course_id', null: false
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
-    t.index ['course_id'], name: 'index_sections_on_course_id'
-  end
-
   create_table 'time_slots', force: :cascade do |t|
     t.string 'day'
     t.string 'start_time'
@@ -125,11 +115,10 @@ ActiveRecord::Schema[7.2].define(version: 20_241_111_191_548) do
   add_foreign_key 'instructor_preferences', 'courses'
   add_foreign_key 'instructor_preferences', 'instructors'
   add_foreign_key 'instructors', 'schedules'
+  add_foreign_key 'room_bookings', 'courses'
   add_foreign_key 'room_bookings', 'instructors'
   add_foreign_key 'room_bookings', 'rooms'
-  add_foreign_key 'room_bookings', 'sections'
   add_foreign_key 'room_bookings', 'time_slots'
   add_foreign_key 'rooms', 'schedules'
   add_foreign_key 'schedules', 'users'
-  add_foreign_key 'sections', 'courses'
 end

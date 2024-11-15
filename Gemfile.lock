@@ -166,6 +166,7 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashie (5.0.0)
+    hungarian_algorithm (1.0.0)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.0.1)
@@ -360,6 +361,7 @@ GEM
       rubocop-rails
     ruby-progressbar (1.13.0)
     rubyzip (2.3.2)
+    rulp (0.0.50)
     securerandom (0.3.1)
     selenium-webdriver (4.25.0)
       base64 (~> 0.2)
@@ -452,6 +454,7 @@ DEPENDENCIES
   debug
   factory_bot_rails
   faker
+  hungarian_algorithm
   importmap-rails
   jbuilder
   omniauth
@@ -463,6 +466,7 @@ DEPENDENCIES
   rails-controller-testing
   rspec-rails
   rubocop-rails-omakase
+  rulp
   selenium-webdriver
   shoulda-matchers
   simplecov
