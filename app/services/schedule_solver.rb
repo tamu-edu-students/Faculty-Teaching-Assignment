@@ -174,7 +174,6 @@ class ScheduleSolver
       course_id = assigned_course['id']
       total_unhappiness += copy[true_prof_id][class_id_hash[course_id]]
       assigned_time = assigned_course['time_slot']
-      puts"Assigning to room ID: #{assigned_course['room_id']} at time #{assigned_time.inspect}"
       # Generate room booking for scheduled course
       RoomBooking.create(
         room_id: assigned_course['room_id'],
@@ -190,7 +189,6 @@ class ScheduleSolver
         # This manifests in the schedule and prevents the user from scheduling something that would cause conflict
       conflicting_times = overlap_map[assigned_time]
       conflicting_times.each do |time_slot|
-        puts "Blocking on room ID: #{assigned_course['room_id']} at time #{time_slot.inspect}"
         RoomBooking.create(
           room_id: assigned_course['room_id'],
           time_slot_id: time_slot[3],
