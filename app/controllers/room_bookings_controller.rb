@@ -161,11 +161,9 @@ class RoomBookingsController < ApplicationController
       }
     end
 
-    # With the exception of locked courses, all of the room bookings will be stale
-    RoomBooking.where(is_locked: [false, nil]).destroy_all
-
-    # Get remaining locked courses
-    locks = RoomBooking.pluck(:course_id, :room_id, :time_slot_id)
+    # Get locked courses and destroy all stale records
+    locks = RoomBooking.where(is_locked: true).pluck(:course_id, :room_id, :time_slot_id)
+    RoomBooking.destroy_all
 
     # Offload solve to service
     begin

@@ -9,14 +9,14 @@ class ScheduleSolver
     num_classes = classes.length
     num_rooms = rooms.length
     num_times = times.length
-    instructors.length
+    num_instructors = instructors.length
 
-    # Get the total number of contracted hours and ensure it's at least the number offered classes
-    hours = instructors.map { |i| i['max_course_load'] }
-    total_course_velocity = hours.sum
+    # Get the total number of contracted hours and ensure it's at least the number offered classes 
+    hours = instructors.map{ |i| i['max_course_load']}
+    total_course_velocity = hours.sum 
     if total_course_velocity < num_classes
       raise StandardError, 'Not enough teaching hours for given class offerings!'
-    elsif total_course_velocity > num_classes
+    elsif total_course_velocity > num_classes 
       # Two options: add more classes or assign professors fewer classes than their contract specifies
       # We choose the latter and reduce professors' hours in a greedy fashion
       hours = reduce_hours(hours, total_course_velocity - num_classes)
@@ -32,7 +32,7 @@ class ScheduleSolver
     # Create objective function
     # Minimize the number of empty seats in a full section
     puts 'Creating objective function'
-    objective =
+    objective = 
       (0...num_classes).map do |c|
         (0...num_rooms).map do |r|
           (0...num_times).map do |t|
@@ -107,11 +107,17 @@ class ScheduleSolver
     # Go through all pairs of time slots and find those that overlap
     puts 'Generating overlapping constraints'
     overlapping_pairs = []
+    overlap_map = Hash.new { |hash, key| hash[key] = Set.new }
     (0...num_times).each do |t1|
       (t1 + 1...num_times).each do |t2|
-        overlapping_pairs.append([t1, t2]) if overlaps?(times[t1], times[t2])
+        if overlaps?(times[t1], times[t2])
+          overlapping_pairs.append([t1, t2])
+          overlap_map[times[t1]] << times[t2] 
+          overlap_map[times[t2]] << times[t1] # by symmetry
+        end
       end
     end
+
 
     # For each pair of overlapping times, ensure that at most one is used
     overlap_constraints = []
@@ -144,7 +150,6 @@ class ScheduleSolver
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           next unless sched[c][r][t].value
-
           classes[c]['time_slot'] = times[t]
           classes[c]['room_id'] = rooms[r]['id']
         end
@@ -162,26 +167,48 @@ class ScheduleSolver
     # matching is a 2D array, where each element [i,j] represents the assignment of professsor i to class j
     # Map the course to prof_ids[prof], which gives the position of the true professor in the instructors array
     matching = matching.map { |prof, course| [classes[course], prof_ids[prof]] }.to_h
-
+    
     total_unhappiness = 0
     classes.each do |assigned_course|
       true_prof_id = matching[assigned_course]
       course_id = assigned_course['id']
       total_unhappiness += copy[true_prof_id][class_id_hash[course_id]]
+      assigned_time = assigned_course['time_slot']
+      puts"Assigning to room ID: #{assigned_course['room_id']} at time #{assigned_time.inspect}"
+      # Generate room booking for scheduled course
       RoomBooking.create(
         room_id: assigned_course['room_id'],
-        time_slot_id: assigned_course['time_slot'][3],
+        time_slot_id: assigned_time[3],
         is_available: true,
         is_lab: false,
         created_at: Time.now,
         updated_at: Time.now,
-        course_id:,
+        course_id: course_id,
         instructor_id: instructors[true_prof_id]['id']
-      )
+        )
+        # Create room bookings for given room at all conflicting timeslots
+        # This manifests in the schedule and prevents the user from scheduling something that would cause conflict
+      conflicting_times = overlap_map[assigned_time]
+      conflicting_times.each do |time_slot|
+        puts "Blocking on room ID: #{assigned_course['room_id']} at time #{time_slot.inspect}"
+        RoomBooking.create(
+          room_id: assigned_course['room_id'],
+          time_slot_id: time_slot[3],
+          is_available: false,
+          is_lab: false,
+          created_at: Time.now,
+          updated_at: Time.now,
+        )
+        # If we have assigned a course to 
+        overlap_map[assigned_time].delete(time_slot)
+      end
+
     end
 
     total_unhappiness
   end
+
+  private
 
   # Find if two timeslots overlap
   # time1 = [days, start_time, end_time]
@@ -216,16 +243,16 @@ class ScheduleSolver
 
   def self.reduce_hours(hours, courses_to_drop)
     # Create max heap with hour as key and index as value
-    heap = Containers::MaxHeap.new
-    hours.each_with_index do |h, i|
+    heap = Containers::MaxHeap.new 
+    hours.each_with_index do |h,i|
       heap.push(h, i)
     end
-
+    
     # Reduce hours from prof with highest number of hours
     courses_to_drop.times do
       hour = heap.next_key
       idx = heap.pop
-      heap.push(hour - 1, idx)
+      heap.push(hour-1, idx)
     end
 
     # Reconstitute modified array
@@ -245,16 +272,17 @@ class ScheduleSolver
     unhappiness_matrix = Array.new(classes.length) { Array.new(classes.length) { 0 } }
 
     curr_row = 0
+    instructor_idx = 0
 
     # Since row i likely doesn't correspond to prof i, keep track of underlying prof ID
     # i.e. if prof 0 has 3 courses prof_id[0...3] = 0
-    prof_ids = Array.new(classes.length) { -1 }
+    prof_ids = Array.new(classes.length) {-1}
     (0...instructors.length).each do |instructor_idx|
       # Set true professor ID
       prof_ids[curr_row] = instructor_idx
       hates_mornings = !instructors[instructor_idx]['before_9']
       hates_evenings = !instructors[instructor_idx]['after_3']
-
+      
       # Fill out row, comparing assigned time with temporal preference
       (0...classes.length).each do |course|
         assigned_time = classes[course]['time_slot']
@@ -264,19 +292,21 @@ class ScheduleSolver
           unhappiness_matrix[curr_row][course] = 1
         end
       end
-
+      
       # Duplicate the row according to the professor's teaching capacity
-      num_duplications = hours[instructor_idx] - 1
+      num_duplications = hours[instructor_idx]-1
       num_duplications.times do
-        unhappiness_matrix[curr_row + 1] = unhappiness_matrix[curr_row].dup
-        prof_ids[curr_row + 1] = instructor_idx
-        curr_row += 1
+        unhappiness_matrix[curr_row+1] = unhappiness_matrix[curr_row].dup 
+        prof_ids[curr_row+1] = instructor_idx
+        curr_row += 1 
       end
 
       # Move up one, since previous loop was one ahead
       curr_row += 1
+
     end
     # Return matrix and true ids
     [unhappiness_matrix, prof_ids]
   end
-end
+
+end 
