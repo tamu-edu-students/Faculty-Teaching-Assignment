@@ -137,16 +137,7 @@ class RoomBookingsController < ApplicationController
     @section = Section.find_by(id: @booking.section_id)
     @course =  Course.find_by(id: @section.course_id)
     time_slot = TimeSlot.find_by(id: @booking.time_slot_id)
-    # @allowed_instructors = eligible_instructors(@schedule, time_slot).sort_by do |instructor|
-    #   # You can customize this sorting logic based on the structure of your `InstructorPreference` model.
-    #   # For example, if `instructor.instructor_preferences` has a `preference_level` attribute,
-    #   # you could sort by this value:
-    #   preference = instructor.instructor_preferences.find_by(course_id: @course.id)
-    #   preference_level = preference.preference_level || 0
-  
-    #   # Return preference_level for sorting, instructors with lower preference level will come first
-    #   preference_level
-    # end.reverse
+    
     
     if @booking.update(instructor_id: params[:room_booking][:instructor_id])
       flash[:notice] = 'Instructor updated successfully.'
@@ -154,8 +145,7 @@ class RoomBookingsController < ApplicationController
       flash[:alert] = 'Failed to update instructor.'
     end
 
-    # Redirect to the previous page or another relevant page
-    # redirect_back(fallback_location: room_bookings_path)
+    
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_back(fallback_location: room_bookings_path) }
@@ -176,9 +166,8 @@ class RoomBookingsController < ApplicationController
   private
 
   def set_schedule
-    @schedule = Schedule.find(params[:schedule_id])
+    @schedule = Schedule.find(params[:schedule_id]) if params[:schedule_id]
   end
-
   def find_overlapping_time_slots(time_slot)
     start_time = Time.strptime(time_slot.start_time, '%H:%M')
     end_time = Time.strptime(time_slot.end_time, '%H:%M')
@@ -298,32 +287,6 @@ class RoomBookingsController < ApplicationController
     params.require(:room_booking).permit(:room_id, :time_slot_id, :is_available, :is_lab, :instructor_id, :section_id)
   end
 
-  # def eligible_instructors(schedule, time_slot)
-  #   before_9 = Time.parse("09:00 AM")
-  #   after_3 = Time.parse("03:00 PM")
-    
-  #   schedule.instructors&.select do |instructor| #which instructors have time
-  #     # unless instructor.before_9
-  #     #   start_time = Time.parse(time_slot.start_time)
-  #     #   next if start_time < before_9 #instructor unavalible check the next
-  #     # end
-
-  #     # unless instructor.after_3
-  #     #   end_time = Time.parse(time_slot.end_time)
-  #     #   next if end_time > after_3 #instructor unavalible check the next
-  #     # end
-  #     # next if get_teach_count(instructor) == instructor.max_course_load
-  #     true #teacher is avalable
-  #   end
-    
-    
-  # end
-
-  # def get_teach_count(instructor)
-  #   bookings_for_instructor = RoomBooking.all.select do |booking|
-  #     booking.instructor_id == instructor.id
-  #   end
-  #   bookings_for_instructor.length
-  # end
+  
 
 end
