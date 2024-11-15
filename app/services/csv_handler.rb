@@ -38,6 +38,10 @@ class CsvHandler
       instructor_data = CSV.parse(@file.read)
       actual_headers = instructor_data[1]
 
+      # FIXME: This should be removed before go-live. This is to add missing data to the csv so that we can work with it
+      missing_names = !actual_headers.include?('First Name') || !actual_headers.include?('Last Name') || !actual_headers.include?('Email')
+      instructor_data, actual_headers = add_missing_data(instructor_data, actual_headers) if missing_names
+
       required_headers = [
         'anonimized ID',
         'First Name',
@@ -70,7 +74,7 @@ class CsvHandler
         beaware_of = row[actual_headers.index(
           'Is there anything else we should be aware of regarding your teaching load (special course reduction, ...)'
         )]
-        max_course_load = row[actual_headers.index('Number of courses to assign')]
+        course_load = row[actual_headers.index('Number of courses to assign')]
 
         instructor_data = {
           schedule_id:,
@@ -82,7 +86,7 @@ class CsvHandler
           before_9:,
           after_3:,
           beaware_of:,
-          max_course_load:
+          max_course_load: course_load
         }
         instructor = Instructor.create(instructor_data)
         row.each_with_index do |_cell, col_index|
@@ -145,6 +149,7 @@ class CsvHandler
         'Lecture Type',
         '#Labs',
         'Section number',
+        'Seat Split'
       ]
 
       missing_headers = required_headers - actual_headers
@@ -157,6 +162,7 @@ class CsvHandler
         labs = row[actual_headers.index('#Labs')]
         lecture_type = row[actual_headers.index('Lecture Type')]
         section_numbers = row[actual_headers.index('Section number')]
+        row[actual_headers.index('Seat Split')]
 
         course_data = {
           schedule_id:,
@@ -175,4 +181,39 @@ class CsvHandler
     { alert: "There was an error uploading the CSV file: #{e.message}" }
   end
 
+  private
+
+  # Function to add random names and emails to the csv
+  def add_missing_data(instructor_data, actual_headers)
+    # Modify the header row
+    actual_headers += ['First Name', 'Middle Name', 'Last Name', 'Email']
+
+    # Update the actual headers in instructor_data
+    instructor_data[1] = actual_headers
+
+    # Add random names and emails to each subsequent row
+    instructor_data[2..].each_with_index do |row, index|
+      # Generate random names
+      random_first_name = random_name
+      random_last_name = random_name
+      random_email = generate_email(random_first_name, random_last_name)
+
+      # Append random names and email to the row
+      new_row = row + [random_first_name, '', random_last_name, random_email]
+      instructor_data[index + 2] = new_row
+    end
+    [instructor_data, actual_headers]
+  end
+
+  # Function to generate a random name
+  def random_name
+    length = 6 # Adjust the length of the name as needed
+    letters = ('A'..'Z').to_a + ('a'..'z').to_a
+    Array.new(length) { letters.sample }.join.capitalize
+  end
+
+  # Function to generate a random email
+  def generate_email(first_name, last_name)
+    "#{first_name.downcase}.#{last_name.downcase}@example.com"
+  end
 end

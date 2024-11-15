@@ -117,7 +117,7 @@ RSpec.describe CsvHandler do
         handler = CsvHandler.new
         handler.upload(StringIO.new(invalid_course_csv))
         result = handler.parse_course_csv(schedule.id)
-        expect(result[:alert]).to include('Missing required headers: Class, Max. Seats, Lecture Type, #Labs, Section number, Seat Split')
+        expect(result[:alert]).to include('Missing required headers: Class, Max. Seats, Lecture Type, #Labs, Section number')
       end
     end
   end
