@@ -11,7 +11,7 @@ RSpec.describe ScheduleSolver do
   let(:large_course) { { 'max_seats' => 80, 'id' => 2 } }
 
   let(:morning_hater) { { 'before_9' => false, 'after_3' => true, 'id' => 1, 'max_course_load' => 1 } }
-  let(:evening_hater) { { 'before_9' => true, 'after_3' => false, 'id' => 2, 'max_course_load' => 2} }
+  let(:evening_hater) { { 'before_9' => true, 'after_3' => false, 'id' => 2, 'max_course_load' => 2 } }
   let(:amicable) { { 'before_9' => true, 'after_3' => true, 'id' => 3, 'max_course_load' => 3 } }
 
   let(:morning) { ['MWF', '08:00', '8:50', 1] }
@@ -113,6 +113,5 @@ RSpec.describe ScheduleSolver do
         expect(result.nil?).to be false
       end
     end
-
   end
 end
