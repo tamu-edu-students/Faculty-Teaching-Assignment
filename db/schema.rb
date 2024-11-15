@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 20_241_114_022_249) do
+ActiveRecord::Schema[7.2].define(version: 20_241_115_032_725) do
   create_table 'courses', force: :cascade do |t|
     t.string 'course_number'
     t.integer 'max_seats'
@@ -46,7 +46,7 @@ ActiveRecord::Schema[7.2].define(version: 20_241_114_022_249) do
     t.integer 'schedule_id'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
-    t.integer 'max_course_load'
+    t.integer 'max_course_load', default: 1
     t.index ['schedule_id'], name: 'index_instructors_on_schedule_id'
   end
 

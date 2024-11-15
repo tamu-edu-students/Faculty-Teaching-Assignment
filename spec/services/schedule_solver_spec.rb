@@ -10,9 +10,9 @@ RSpec.describe ScheduleSolver do
   let(:small_course) { { 'max_seats' => 20, 'id' => 1 } }
   let(:large_course) { { 'max_seats' => 80, 'id' => 2 } }
 
-  let(:morning_hater) { { 'before_9' => false, 'after_3:' => true, 'id' => 1 } }
-  let(:evening_hater) { { 'before_9' => true, 'after_3' => false, 'id' => 2 } }
-  let(:amicable) { { 'before_9' => true, 'after_3' => true, 'id' => 3 } }
+  let(:morning_hater) { { 'before_9' => false, 'after_3' => true, 'id' => 1, 'max_course_load' => 1 } }
+  let(:evening_hater) { { 'before_9' => true, 'after_3' => false, 'id' => 2, 'max_course_load' => 2 } }
+  let(:amicable) { { 'before_9' => true, 'after_3' => true, 'id' => 3, 'max_course_load' => 3 } }
 
   let(:morning) { ['MWF', '08:00', '8:50', 1] }
   let(:afternoon) { ['MWF', '13:50', '14:40', 2] }
@@ -20,13 +20,13 @@ RSpec.describe ScheduleSolver do
   let(:friday_lab) { ['F', '08:30', '10:30', 4] }
 
   describe 'test error conditions' do
-    context 'when there are not enough professors' do
-      it 'raises an error due to insufficient instructors' do
+    context 'when there are not enough teaching hours' do
+      it 'raises an error due to insufficient manpower' do
         expect do
           ScheduleSolver.solve([large_course, small_course],
                                [small_room, large_room],
-                               [morning],
-                               [amicable],
+                               [evening],
+                               [morning_hater],
                                [])
         end.to raise_error(StandardError, 'Not enough teaching hours for given class offerings!')
       end
@@ -98,6 +98,17 @@ RSpec.describe ScheduleSolver do
                                       [small_room, large_room],
                                       [morning, evening],
                                       [morning_hater, evening_hater],
+                                      [])
+        expect(result.nil?).to be false
+      end
+    end
+
+    context 'professor is contracted for multiple classes' do
+      it 'assigns the professor to multiple classes' do
+        result = ScheduleSolver.solve([small_course, large_course],
+                                      [large_room],
+                                      [morning, evening],
+                                      [amicable],
                                       [])
         expect(result.nil?).to be false
       end
