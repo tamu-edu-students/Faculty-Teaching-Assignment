@@ -161,7 +161,7 @@ class CsvHandler
         max_seats = row[actual_headers.index('Max. Seats')]
         labs = row[actual_headers.index('#Labs')]
         lecture_type = row[actual_headers.index('Lecture Type')]
-        row[actual_headers.index('Section number')]
+        section_numbers = row[actual_headers.index('Section number')]
         row[actual_headers.index('Seat Split')]
 
         course_data = {
@@ -169,7 +169,8 @@ class CsvHandler
           course_number:,
           max_seats: max_seats.to_i,
           lecture_type:,
-          num_labs: labs.to_i
+          num_labs: labs.to_i,
+          section_numbers:
         }
 
         Course.create(course_data)
