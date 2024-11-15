@@ -457,6 +457,7 @@ DEPENDENCIES
   hungarian_algorithm
   importmap-rails
   jbuilder
+  matrix
   omniauth
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
