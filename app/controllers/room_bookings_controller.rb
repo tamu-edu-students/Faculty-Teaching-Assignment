@@ -149,9 +149,9 @@ class RoomBookingsController < ApplicationController
       }
     end
     times = TimeSlot.pluck(:day, :start_time, :end_time, :id)
-    instructors =  Instructor.where(schedule_id: params['schedule_id']).pluck(:id, :before_9, :after_3).map do |i, b, a|
+    instructors =  Instructor.where(schedule_id: params['schedule_id']).pluck(:id, :before_9, :after_3, :max_course_load).map do |i, b, a, c|
       { 'id' => i, 'before_9' => b,
-        'after_3' => a }
+        'after_3' => a, 'max_course_load' => c }
     end
 
     classes = Course.where(hide: false, schedule_id: params['schedule_id']).pluck(:id, :max_seats).map do |id, seats|
@@ -160,10 +160,6 @@ class RoomBookingsController < ApplicationController
         'max_seats' => seats
       }
     end
-
-    # TODO: Get rid of this and add duplication of professors
-    # Blocked by course load branch
-    classes = classes.first(instructors.length) if classes.length > instructors.length
 
     # With the exception of locked courses, all of the room bookings will be stale
     RoomBooking.where(is_locked: [false, nil]).destroy_all

@@ -2,6 +2,7 @@
 
 require 'rulp'
 require 'hungarian_algorithm'
+require 'algorithms'
 
 class ScheduleSolver
   def self.solve(classes, rooms, times, instructors, locks)
@@ -10,8 +11,16 @@ class ScheduleSolver
     num_times = times.length
     num_instructors = instructors.length
 
-    # Sanity check: contracted teaching classes >= offered classes
-    raise StandardError, 'Not enough teaching hours for given class offerings!' if num_instructors < num_classes
+    # Get the total number of contracted hours and ensure it's at least the number offered classes 
+    hours = instructors.map{ |i| i['max_course_load']}
+    total_course_velocity = hours.sum 
+    if total_course_velocity < num_classes
+      raise StandardError, 'Not enough teaching hours for given class offerings!'
+    elsif total_course_velocity > num_classes 
+      # Two options: add more classes or assign professors fewer classes than their contract specifies
+      # We choose the latter and reduce professors' hours in a greedy fashion
+      hours = reduce_hours(hours, total_course_velocity - num_classes)
+    end
 
     # Allocate ijk binary decision variables
     sched_flat = Array.new(num_classes * num_rooms * num_times, &X_b)
@@ -23,13 +32,14 @@ class ScheduleSolver
     # Create objective function
     # Minimize the number of empty seats in a full section
     puts 'Creating objective function'
-    objective = sched.map.with_index do |mat, c|
-      mat.map.with_index do |row, r|
-        row.map.with_index do |val, _t|
-          val * (rooms[r]['capacity'] - classes[c]['max_seats'])
+    objective = 
+      (0...num_classes).map do |c|
+        (0...num_rooms).map do |r|
+          (0...num_times).map do |t|
+            sched[c][r][t] * (rooms[r]['capacity'] - classes[c]['max_seats'])
+          end.reduce(:+)
         end.reduce(:+)
       end.reduce(:+)
-    end.reduce(:+)
 
     # Constraint #1: Room capacity >= class enrollment
     puts 'Generating capacity constraints'
@@ -129,84 +139,50 @@ class ScheduleSolver
       raise StandardError, 'Solution infeasible!'
     end
 
-    # Now that the courses have been assigned rooms and times, we now add instructors
-    # This can be viewed as a bipartite matching (see ILP doc)
-    unhappiness_matrix = Array.new(num_instructors) { Array.new(num_classes) { 0 } }
-    morning_haters = instructors.reject { |i| i['before_9'] }
-    evening_haters = instructors.reject { |i| i['after_3'] }
-
-    # Map professor name in database to (0...num_instructors) so we can use them as array indices
-    hash = {}
-    (0...num_instructors).each do |i|
-      hash[instructors[i]] = i
-    end
-
-    morning_classes = []
-    evening_classes = []
+    # Add time and room data to classes hash
     (0...num_classes).each do |c|
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           next unless sched[c][r][t].value
-
-          if before_9?(times[t])
-            morning_classes.append(c)
-          elsif after_3?(times[t])
-            evening_classes.append(c)
-          end
+          classes[c]['time_slot'] = times[t]
+          classes[c]['room_id'] = rooms[r]['id']
         end
       end
     end
 
-    # Fill in unhappiness matrix
-    morning_haters.each do |p|
-      morning_classes.each do |c|
-        unhappiness_matrix[hash[p]][c] = 1
-      end
-    end
-
-    evening_haters.each do |p|
-      evening_classes.each do |c|
-        unhappiness_matrix[hash[p]][c] = 1
-      end
-    end
+    # Generate unhappiness matrix with prof ID
+    unhappiness_matrix, prof_ids = generate_unhappiness_matrix(classes, instructors, hours)
 
     # Solve the min weight perfect matching via the Hungarian algorithm
-    # While extensions to nonperfect matchings exist for HA, this particular library doesn't support them
-    # The library modifies the matrix, so create a deep copy first
+    # The library clobbers the matrix, so create a deep copy first
     copy = unhappiness_matrix.map(&:dup)
     matching = HungarianAlgorithm.new(unhappiness_matrix).process.sort
 
     # matching is a 2D array, where each element [i,j] represents the assignment of professsor i to class j
-    # Flatten this to a simpler map of profs to classes
-    # i.e have matching[i] = j instead of matching[i] = [i,j]
-    matching = matching.map { |_u, v| v }
+    # Map the course to prof_ids[prof], which gives the position of the true professor in the instructors array
+    matching = matching.map { |prof, course| [classes[course], prof_ids[prof]] }.to_h
 
     total_unhappiness = 0
-    (0...num_classes).each do |c|
-      assigned_prof = instructors[matching.index(c)]
-      (0...num_rooms).each do |r|
-        (0...num_times).each do |t|
-          next unless sched[c][r][t].value
-
-          unhappiness = copy[hash[assigned_prof]][c]
-          total_unhappiness += unhappiness
-
-          RoomBooking.create(
-            room_id: rooms[r]['id'],
-            time_slot_id: times[t][3],
-            is_available: true,
-            is_lab: false,
-            created_at: Time.now,
-            updated_at: Time.now,
-            course_id: classes[c]['id'],
-            instructor_id: assigned_prof['id']
-          )
-        end
-      end
+    classes.each do |assigned_course|
+      true_prof_id = matching[assigned_course]
+      course_id = assigned_course['id']
+      total_unhappiness += copy[true_prof_id][class_id_hash[course_id]]
+      RoomBooking.create(
+        room_id: assigned_course['room_id'],
+        time_slot_id: assigned_course['time_slot'][3],
+        is_available: true,
+        is_lab: false,
+        created_at: Time.now,
+        updated_at: Time.now,
+        course_id: course_id,
+        instructor_id: instructors[true_prof_id]['id']
+      )
     end
 
     total_unhappiness
   end
+
+  private
 
   # Find if two timeslots overlap
   # time1 = [days, start_time, end_time]
@@ -238,4 +214,73 @@ class ScheduleSolver
     end_time = time[2]
     Time.parse(end_time) >= Time.parse('15:00')
   end
-end
+
+  def self.reduce_hours(hours, courses_to_drop)
+    # Create max heap with hour as key and index as value
+    heap = Containers::MaxHeap.new 
+    hours.each_with_index do |h,i|
+      heap.push(h, i)
+    end
+    
+    # Reduce hours from prof with highest number of hours
+    courses_to_drop.times do
+      hour = heap.next_key
+      idx = heap.pop
+      heap.push(hour-1, idx)
+    end
+
+    # Reconstitute modified array
+    adjusted_hours = Array.new(hours.size, -1)
+    until heap.empty?
+      hour = heap.next_key
+      idx = heap.pop
+      adjusted_hours[idx] = hour
+    end
+
+    adjusted_hours
+  end
+
+  def self.generate_unhappiness_matrix(classes, instructors, hours)
+    # Because of the hour reduction scheme, we know that num_classes == num_profs, where profs are counted with multiplicity
+    # Generate num_profs * (1+num_classes) matrix
+    unhappiness_matrix = Array.new(classes.length) { Array.new(classes.length) { 0 } }
+
+    curr_row = 0
+    instructor_idx = 0
+
+    # Since row i likely doesn't correspond to prof i, keep track of underlying prof ID
+    # i.e. if prof 0 has 3 courses prof_id[0...3] = 0
+    prof_ids = Array.new(classes.length) {-1}
+    (0...instructors.length).each do |instructor_idx|
+      # Set true professor ID
+      prof_ids[curr_row] = instructor_idx
+      hates_mornings = !instructors[instructor_idx]['before_9']
+      hates_evenings = !instructors[instructor_idx]['after_3']
+      
+      # Fill out row, comparing assigned time with temporal preference
+      (0...classes.length).each do |course|
+        assigned_time = classes[course]['time_slot']
+        if hates_mornings && before_9?(assigned_time)
+          unhappiness_matrix[curr_row][course] = 1
+        elsif hates_evenings && after_3?(assigned_time)
+          unhappiness_matrix[curr_row][course] = 1
+        end
+      end
+      
+      # Duplicate the row according to the professor's teaching capacity
+      num_duplications = hours[instructor_idx]-1
+      num_duplications.times do
+        unhappiness_matrix[curr_row+1] = unhappiness_matrix[curr_row].dup 
+        prof_ids[curr_row+1] = instructor_idx
+        curr_row += 1 
+      end
+
+      # Move up one, since previous loop was one ahead
+      curr_row += 1
+
+    end
+    # Return matrix and true ids
+    [unhappiness_matrix, prof_ids]
+  end
+
+end 

@@ -140,9 +140,9 @@ Feature: Rooms Page
         | 111                 | 96        | F2F          | 4                | 100       |
         | 435/735/735D        | 135       | F2F          | 2                | 100      |
         And the following instructors exist for schedule "Sched 1":
-        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
-        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       |
-        | 1002      | Jane       | Smith     | B           | jane@example.com | false       | false    |            |
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of | max_course_load
+        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       | 1
+        | 1002      | Jane       | Smith     | B           | jane@example.com | false       | false    |            | 1
         When I visit the room bookings page for "Sched 1"
         And I book room "BLDG1" "101" in "MWF" for "09:00 - 10:00" with "100" for "110"
         Then I should see "Unlocked"
@@ -168,9 +168,9 @@ Feature: Rooms Page
         | 111                 | 96        | F2F          | 4                | 100       |
         | 435/735/735D        | 135       | F2F          | 2                | 100      |
         And the following instructors exist for schedule "Sched 1":
-        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
-        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       |
-        | 1002      | Jane       | Smith     | B           | jane@example.com | false       | false    |            |
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of | max_course_load 
+        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       | 1
+        | 1002      | Jane       | Smith     | B           | jane@example.com | false       | false    |            | 1
         When I visit the room bookings page for "Sched 1"
         And I book room "BLDG1" "101" in "MWF" for "09:00 - 10:00" with "100" for "110"
         And I click "Unlocked"
@@ -196,9 +196,9 @@ Feature: Rooms Page
         | 111                 | 96        | F2F          | 4                | 100       |
         | 435/735/735D        | 135       | F2F          | 2                | 100      |
         And the following instructors exist for schedule "Sched 1":
-        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
-        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       |
-        | 1002      | Jane       | Smith     | B           | jane@example.com | false       | false    |            |
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of | max_course_load 
+        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       | 1
+        | 1002      | Jane       | Smith     | B           | jane@example.com | false       | false    |            | 1
         When I visit the room bookings page for "Sched 1"
         And I toggle availability for the room booking in "BLDG1" "101" at "09:00"
         And I book room "BLDG1" "101" in "MWF" for "09:00 - 10:00" with "100" for "110"
@@ -249,9 +249,9 @@ Feature: Rooms Page
         | 110                 | 50        | F2F          | 4                | 100,101       |
         | 111                 | 25        | F2F          | 4                | 100           |
       And the following instructors exist for schedule "Sched 1":
-        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
-        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       |
-        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            |
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of | max_course_load 
+        | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       | 1
+        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            | 1
       When I visit the room bookings page for "Sched 1"
       Then I should see "Generate Remaining"
       When I click the "Generate Remaining" button
@@ -273,9 +273,9 @@ Feature: Rooms Page
         | 110                 | 50        | F2F          | 4                | 100,101       |
         | 111                 | 25        | F2F          | 4                | 100           |
       And the following instructors exist for schedule "Sched 1":
-        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
-        | 1001      | John       | Doe       | A           | john@example.com | false       | false    | test       |
-        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            |
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of | max_course_load 
+        | 1001      | John       | Doe       | A           | john@example.com | false       | false    | test       | 1
+        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            | 1
       When I visit the room bookings page for "Sched 1"
       Then I should see "Generate Remaining"
       When I click the "Generate Remaining" button
@@ -297,9 +297,9 @@ Feature: Rooms Page
         | 110                 | 55        | F2F          | 4                | 100,101       |
         | 111                 | 50        | F2F          | 4                | 100           |
       And the following instructors exist for schedule "Sched 1":
-        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of |
-        | 1001      | John       | Doe       | A           | john@example.com | false       | false    | test       |
-        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            |
+        | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of | max_course_load 
+        | 1001      | John       | Doe       | A           | john@example.com | false       | false    | test       | 1
+        | 1002      | Jane       | Smith     | B           | jane@example.com | true        | false    |            | 1
       When I visit the room bookings page for "Sched 1"
       Then I should see "Generate Remaining"
       When I click the "Generate Remaining" button
