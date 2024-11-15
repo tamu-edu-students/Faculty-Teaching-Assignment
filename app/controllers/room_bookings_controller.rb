@@ -283,18 +283,13 @@ class RoomBookingsController < ApplicationController
     return '' unless booking
 
     course_number = fetch_course_number(booking)
-    section_numbers = fetch_section_numbers(booking)
     instructor_name = fetch_instructor_name(booking)
 
-    "#{course_number} - #{section_numbers} - #{instructor_name}".strip
+    "#{course_number} - #{instructor_name}".strip
   end
 
   def fetch_course_number(booking)
     booking.course&.course_number || 'N/A'
-  end
-
-  def fetch_section_numbers(booking)
-    booking.course&.section_numbers || 'N/A'
   end
 
   def fetch_instructor_name(booking)
