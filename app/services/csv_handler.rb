@@ -110,7 +110,7 @@ class CsvHandler
           preferences_to_upload << {
             instructor_id: instructor.id,
             course:,
-            preference_level: row[col_index]
+            preference_level: row[col_index] || 3 # Default value if nil
           }
           courses_with_preferences << course_number
         end

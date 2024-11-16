@@ -15,7 +15,7 @@ class ScheduleSolver
     hours = instructors.map{ |i| i['max_course_load']}
     total_course_velocity = hours.sum 
     if total_course_velocity < num_classes
-      raise StandardError, 'Not enough teaching hours for given class offerings!'
+      raise StandardError, "Not enough teaching hours (#{total_course_velocity}) for given class offerings (#{num_classes})!"
     elsif total_course_velocity > num_classes 
       # Two options: add more classes or assign professors fewer classes than their contract specifies
       # We choose the latter and reduce professors' hours in a greedy fashion
@@ -157,7 +157,7 @@ class ScheduleSolver
     end
 
     # Generate unhappiness matrix with prof ID
-    unhappiness_matrix, prof_ids = generate_unhappiness_matrix(classes, instructors, hours)
+    unhappiness_matrix, prof_ids = generate_unhappiness_matrix(classes, instructors, hours, class_id_hash)
 
     # Solve the min weight perfect matching via the Hungarian algorithm
     # The library clobbers the matrix, so create a deep copy first
@@ -264,16 +264,33 @@ class ScheduleSolver
     adjusted_hours
   end
 
-  def self.generate_unhappiness_matrix(classes, instructors, hours)
+  def self.generate_unhappiness_matrix(classes, instructors, hours, class_hash)
     # Because of the hour reduction scheme, we know that num_classes == num_profs, where profs are counted with multiplicity
-    # Generate num_profs * (1+num_classes) matrix
+    # Generate num_profs * num_classes matrix
     unhappiness_matrix = Array.new(classes.length) { Array.new(classes.length) { 0 } }
 
-    curr_row = 0
-    instructor_idx = 0
+    # Create the preference matrix ahead of time to reduce DB reads
+    prof_hash = (0...instructors.length).map { |i| [instructors[i]['id'], i] }.to_h
+    preference_matrix = Array.new(instructors.length) { Array.new(classes.length, 0) }
+
+    # Populate the matrix based on InstructorPreference data
+    InstructorPreference.find_each do |preference|
+      i = prof_hash[preference.instructor_id]
+      j = class_hash[preference.course_id]
+      preference_matrix[i][j] = preference.preference_level
+    end
+
+    # Hyperparameters for the unhappiness function
+    # We choose a simple linear combination:
+    # unhappiness(p,c) = time_weight * I[class c is at a bad time for prof p] + class_weight*(5-PM[c][p])
+    # If we choose weights such that time_weight + 4*class_weight = 10, the unhappiness score is bounded between 0 and 10
+    time_weight = 2
+    class_weight = 2
 
     # Since row i likely doesn't correspond to prof i, keep track of underlying prof ID
     # i.e. if prof 0 has 3 courses prof_id[0...3] = 0
+    curr_row = 0
+    instructor_idx = 0
     prof_ids = Array.new(classes.length) {-1}
     (0...instructors.length).each do |instructor_idx|
       # Set true professor ID
@@ -281,14 +298,20 @@ class ScheduleSolver
       hates_mornings = !instructors[instructor_idx]['before_9']
       hates_evenings = !instructors[instructor_idx]['after_3']
       
+      # Gather corresponding preferences, which requires prof/course id from database
+      # prof_id_from_db = instructors[instructor_idx]['id']
+
       # Fill out row, comparing assigned time with temporal preference
       (0...classes.length).each do |course|
+        # course_id_from_db = classes[course]['id']
         assigned_time = classes[course]['time_slot']
         if hates_mornings && before_9?(assigned_time)
-          unhappiness_matrix[curr_row][course] = 1
+          unhappiness_matrix[curr_row][course] = time_weight
         elsif hates_evenings && after_3?(assigned_time)
-          unhappiness_matrix[curr_row][course] = 1
+          unhappiness_matrix[curr_row][course] = time_weight
         end
+        # Account for class preference
+        unhappiness_matrix[curr_row][course] += class_weight * preference_matrix[instructor_idx][course]
       end
       
       # Duplicate the row according to the professor's teaching capacity
