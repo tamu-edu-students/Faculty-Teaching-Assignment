@@ -279,7 +279,7 @@ Feature: Rooms Page
       When I visit the room bookings page for "Sched 1"
       Then I should see "Generate Remaining"
       When I click the "Generate Remaining" button
-      Then I should see "Schedule generated with 50% satisfaction"
+      Then I should see "Schedule generated with 90% satisfaction"
 
     Scenario: User receives an error when schedule is infeasible
       Given I am logged in as a user with first name "Test"

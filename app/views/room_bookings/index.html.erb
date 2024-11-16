@@ -9,9 +9,9 @@
             <%= link_to 'Back to Schedules', schedules_path, class: 'col btn btn-dark px-4' %>
             <%= link_to 'View Data', schedule_rooms_path(@schedule.id), class: 'col btn btn-secondary px-4 mx-1' %>
             <% if !@rooms.empty? %>
-            <%= form_with url: generate_schedule_schedule_room_bookings_path, method: :post, class: "col-5 px-4" do %>
-            <%= button_tag "Generate Remaining", class: "btn btn-dark" %>
-            <% end %>
+                <%= form_with url: generate_schedule_schedule_room_bookings_path, method: :post, class: "col-5 px-4" do %>
+                    <%= button_tag "Generate Remaining", class: "btn btn-dark" %>
+                <% end %>
             <% end %>
         </div>
     </div>

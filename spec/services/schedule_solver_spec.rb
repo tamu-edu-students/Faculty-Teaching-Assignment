@@ -28,7 +28,7 @@ RSpec.describe ScheduleSolver do
                                [evening],
                                [morning_hater],
                                [])
-        end.to raise_error(StandardError, 'Not enough teaching hours for given class offerings!')
+        end.to raise_error(StandardError, 'Not enough teaching hours (1) for given class offerings (2)!')
       end
     end
 
