@@ -177,19 +177,15 @@ Then('the CSV file should contain the following rows:') do |table|
   end
 end
 
-When('I close the form') do 
+When('I close the form') do
   page.find('body').click
 end
-When('I view the instructor form for {string} {string}  @ {string}') do |building, room, time| 
-  
- 
-  
+When('I view the instructor form for {string} {string}  @ {string}') do |building, room, time|
   row = find('tr', text: time)
   room_headers = all('th')
   room_header_index = room_headers.find_index { |header| header.text == "#{building} #{room}" }
   room_cell = row.all('td')[room_header_index - 1]
   room_cell.find('select').click
-  
 end
 Then('I should see {string} for {string} {string}  @ {string}') do |message, building, room, time|
   row = find('tr', text: time)
