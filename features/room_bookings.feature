@@ -303,3 +303,49 @@ Feature: Rooms Page
       Then I should see "Generate Remaining"
       When I click the "Generate Remaining" button
       Then I should see "Solution infeasible!"
+
+    Scenario: User should be only be able to add elligble instructors
+      Given I am logged in as a user with first name "Test"
+      And a schedule exists with the schedule name "Sched 1" and semester name "Fall 2024" for user "Test"
+      And the following rooms exist for schedule "Sched 1":
+      | campus    | building_code | room_number | capacity | is_active | is_lab   | is_learning_studio    | is_lecture_hall   |
+      | CS        | BLDG1         | 101         | 30       | true      | true     | true                  | true              |
+      | GV        | BLDG2         | 102         | 50       | true      | true     | true                  | true              |
+      | CS        | BLDG3         | 102         | 50       | false     | true     | true                  | true              |
+      And the following time slots exist:
+      | day       | start_time    | end_time      | slot_type     |
+      | MWF       | 09:00         | 10:00         | "LEC"         |
+      | MWF       | 14:00         | 17:00          | "LEC"         |
+      | MWF       | 08:00         | 09:00          | "LEC"         |
+      
+      And the following courses and their sections exist for schedule "Sched 1":
+      | course_number       | max_seats | lecture_type | num_labs         | sections      |
+      | 110                 | 96        | F2F          | 4                | 100,101       |
+      | 111                 | 96        | F2F          | 4                | 100       |
+      | 435/735/735D        | 135       | F2F          | 2                | 100      |
+      And the following instructors exist for schedule "Sched 1":
+      | id_number | first_name | last_name | middle_name | email            | before_9    | after_3  | beaware_of | max_course_load |
+      | 1001      | John       | Doe       | A           | john@example.com | true        | false    | test       | 2 |
+      | 1002      | Jane       | Smith     | B           | jane@example.com | false       | true     |            | 2 |
+      | 1002      | Bob        | Smith     | C           | bob@example.com  | true        | true     |            | 1 |
+      When I visit the room bookings page for "Sched 1"
+      And I book room "BLDG1" "101" in "MWF" for "09:00 - 10:00" with "100" for "110"
+      And I book room "BLDG2" "102" in "MWF" for "09:00 - 10:00" with "100" for "111"
+      And I book room "BLDG1" "101" in "MWF" for "08:00 - 09:00" with "101" for "110"
+      And I book room "BLDG2" "102" in "MWF" for "14:00 - 17:00" with "100" for "435/735/735D"
+      Then I should see "Unlocked"
+      
+      When I view the instructor form for "BLDG1" "101"  @ "09:00 - 10:00"
+      Then I should see "John Doe" for "BLDG1" "101"  @ "09:00 - 10:00"
+      And I should see "Jane Smith" for "BLDG1" "101"  @ "09:00 - 10:00"
+      And I should see "Bob Smith" for "BLDG1" "101"  @ "09:00 - 10:00"
+      When I close the form
+      And I view the instructor form for "BLDG1" "101"  @ "08:00 - 09:00"
+      Then I should see "John Doe" for "BLDG1" "101"  @ "08:00 - 09:00"
+      And I should not see "Jane Smith" for "BLDG1" "101"  @ "08:00 - 09:00"
+      And I should see "Bob Smith" for "BLDG1" "101"  @ "08:00 - 09:00"
+      When I close the form
+      And I view the instructor form for "BLDG2" "102"  @ "14:00 - 17:00"
+      Then I should not see "John Doe" for "BLDG2" "102"  @ "14:00 - 17:00"
+      And I should see "Jane Smith" for "BLDG2" "102"  @ "14:00 - 17:00"
+      And I should see "Bob Smith" for "BLDG2" "102"  @ "14:00 - 17:00"
