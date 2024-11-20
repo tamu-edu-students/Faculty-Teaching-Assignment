@@ -1,9 +1,11 @@
 <%= render_navbar("courses", @schedule) %>
 
 <% if @courses.empty? %>
+  <div class="container border-2 border-dark">
   <%= link_to (@show_hidden ? "Show Active Courses" : "Show Hidden Courses"),
               schedule_courses_path(@schedule, show_hidden: @show_hidden ? false : true),
               class: "btn btn-dark m-4" %>
+  </div>
   <p class="container h1 text-secondary">No courses added to this schedule!</p>
 <% else %>
   <div class="container border-2 border-dark">
