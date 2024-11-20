@@ -164,6 +164,9 @@ GEM
     ffi (1.17.0-x86_64-darwin)
     ffi (1.17.0-x86_64-linux-gnu)
     ffi (1.17.0-x86_64-linux-musl)
+    get_process_mem (1.0.0)
+      bigdecimal (>= 2.0)
+      ffi (~> 1.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashie (5.0.0)
@@ -262,6 +265,10 @@ GEM
     public_suffix (6.0.1)
     puma (6.4.3)
       nio4r (~> 2.0)
+    puma_worker_killer (1.0.0)
+      bigdecimal (>= 2.0)
+      get_process_mem (>= 0.2)
+      puma (>= 2.7)
     racc (1.8.1)
     rack (3.1.7)
     rack-protection (4.0.0)
@@ -465,6 +472,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection
   pg
   puma (>= 5.0)
+  puma_worker_killer
   rails (~> 7.2.1)
   rails-controller-testing
   rspec-rails
