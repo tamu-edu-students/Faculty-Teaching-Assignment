@@ -74,20 +74,19 @@ class ScheduleSolver
 
     # Hash room_id to (0...num_rooms)
     # Allows us to map rooms => array indices
-    room_id_hash = (0...num_rooms).map { |r| [rooms[r]['id'], r] }.to_h
-    class_id_hash = (0...num_classes).map { |c| [classes[c]['id'], c] }.to_h
-    time_id_hash = (0...num_times).map { |t| [times[t][3], t] }.to_h
+    room_id_hash = (0...num_rooms).to_h { |r| [rooms[r]['id'], r] }
+    class_id_hash = (0...num_classes).to_h { |c| [classes[c]['id'], c] }
+    time_id_hash = (0...num_times).to_h { |t| [times[t][3], t] }
 
     # Constraint #4: Respect locked courses
     # locks[i] = (class, room, time) triplet
     puts 'Generating lock constraints'
-    lock_constraints = []
-    locks.each do |class_id, room_id, time_id|
+    lock_constraints = locks.map do |class_id, room_id, time_id|
       # For unknown reasons, I can't write sched[c][r][t] == 1
       # Ruby will evaluate this as a boolean expression, instead of giving the constraint
       # Introduce a dummy variable that is guaranteed to be zero
       # If their sum is one  => sched[c][r][t] must be 1
-      lock_constraints.append(sched[class_id_hash[class_id]][room_id_hash[room_id]][time_id_hash[time_id]] + GuaranteedZero_b == 1)
+      sched[class_id_hash[class_id]][room_id_hash[room_id]][time_id_hash[time_id]] + GuaranteedZero_b == 1
     end
 
     # Constraint #5: Courses that require special designations get rooms that meet them
@@ -98,7 +97,7 @@ class ScheduleSolver
         next if classes[c]['is_lab'] == rooms[r]['is_lab']
 
         (0...num_times).each do |t|
-          designation_constraints.append(sched[c][r][t] + GuaranteedZero_b == 0)
+          designation_constraints.append((sched[c][r][t] + GuaranteedZero_b).zero?)
         end
       end
     end
@@ -166,7 +165,7 @@ class ScheduleSolver
 
     # matching is a 2D array, where each element [i,j] represents the assignment of professsor i to class j
     # Map the course to prof_ids[prof], which gives the position of the true professor in the instructors array
-    matching = matching.map { |prof, course| [classes[course], prof_ids[prof]] }.to_h
+    matching = matching.to_h { |prof, course| [classes[course], prof_ids[prof]] }
 
     total_unhappiness = 0
     classes.each do |assigned_course|
@@ -223,7 +222,7 @@ class ScheduleSolver
   def self.day_overlaps?(days1, days2)
     d1 = days1.scan(/M|T|W|R|F/)
     d2 = days2.scan(/M|T|W|R|F/)
-    !(d1 & d2).empty?
+    !!d1.intersect?(d2)
   end
 
   def self.before_9?(time)
@@ -267,7 +266,7 @@ class ScheduleSolver
     unhappiness_matrix = Array.new(classes.length) { Array.new(classes.length) { 0 } }
 
     # Create the preference matrix ahead of time to reduce DB reads
-    prof_hash = (0...instructors.length).map { |i| [instructors[i]['id'], i] }.to_h
+    prof_hash = (0...instructors.length).to_h { |i| [instructors[i]['id'], i] }
     preference_matrix = Array.new(instructors.length) { Array.new(classes.length, 0) }
 
     # Populate the matrix based on InstructorPreference data
