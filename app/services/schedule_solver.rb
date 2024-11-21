@@ -97,7 +97,7 @@ class ScheduleSolver
         next if classes[c]['is_lab'] == rooms[r]['is_lab']
 
         (0...num_times).each do |t|
-          designation_constraints.append((sched[c][r][t] + GuaranteedZero_b).zero?)
+          designation_constraints.append((sched[c][r][t] + GuaranteedZero_b) == GuaranteedZero_b)
         end
       end
     end
