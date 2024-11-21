@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DropSections < ActiveRecord::Migration[7.2]
   def change
     remove_foreign_key :room_bookings, :sections if foreign_key_exists?(:room_bookings, :sections)
