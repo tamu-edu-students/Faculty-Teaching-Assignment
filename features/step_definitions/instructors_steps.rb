@@ -19,7 +19,7 @@ Given('the following instructors exist for schedule {string}:') do |string, tabl
       before_9: hash['before_9'] == 'true',
       after_3: hash['after_3'] == 'true',
       beaware_of: hash['beaware_of'],
-
+      max_course_load: hash['max_course_load'] || 1,
       schedule: # Associate instructors with the created schedule
     )
   end
