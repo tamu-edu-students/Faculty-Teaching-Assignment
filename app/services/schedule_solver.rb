@@ -305,12 +305,14 @@ class ScheduleSolver
       unless prof['before_9']
         morning_class_ids.each do |c|
           happiness_matrix[c][p] -= time_weight
+
         end
       end
       next if prof['after_3']
 
       evening_class_ids.each do |c|
         happiness_matrix[c][p] -= time_weight
+
       end
     end
 
@@ -404,5 +406,6 @@ class ScheduleSolver
     end
 
     [matching, relaxed]
+
   end
 end
