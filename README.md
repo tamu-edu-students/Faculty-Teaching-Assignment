@@ -124,7 +124,7 @@ Run database migrations and set up the database:
 ```bash
 rails db:create
 rails db:migrate
-rails db:seed # If there are any seed files
+rails db:seed 
 ```
 
 ### 4. Run the server (Locally)
@@ -203,13 +203,13 @@ If the above steps do not work, see [Deploy to Heroku](https://github.com/tamu-e
 1. Login using your TAMU Email ID
 2. The landing page shows the schedules you have been working on
 3. Click on ```Create a New Schedule``` to create one with a name and semester
-4. CLick on the schedule card to upload required files
-   a. Sample files are in the ```db/sample``` folder of the project
-   b. Upload the rooms, courses and instructors csv files
+4. Click on the schedule card to upload required files
+    - Sample files are in the ```db/sample``` folder of the project
+    - Upload the rooms, courses and instructors csv files
 5. Once the files are uploaded, click on ```View Data``` to view the available data for this schedule
 6. Click on ```Add Predefined Courses``` to lock any course/instructor to a particular time slot
-   a. Click on the Lock icon to lock and unclock a particular time slot and room to ensure no courses are scheduled in that slot
-   b. Click on a particular cell and select a course from the sidebar to assign a course to a particular slot and room
+    - Click on the Lock icon to lock and unclock a particular time slot and room to ensure no courses are scheduled in that slot
+    - Click on a particular cell and select a course from the sidebar to assign a course to a particular slot and room
 7. Click on ```Generate Remaining``` to generate the schedule
 8. If there is an error in the data that is highlighted, such as the number of courses being more than the instructor hours, go back to ```View Data``` and hide courses that don't need to be scheduled
 9. Once the schedule is generated, room bookings can be deleted or locked to modify the schedule as needed
