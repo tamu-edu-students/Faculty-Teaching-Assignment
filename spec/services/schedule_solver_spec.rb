@@ -69,26 +69,26 @@ RSpec.describe ScheduleSolver do
     end
 
     context 'when a morning hater is assigned to a morning class' do
-      it 'returns an error' do
-        expect do 
-          ScheduleSolver.solve([small_course],
-                              [large_room],
-                              [morning],
-                              [morning_hater],
-                              [])
-        end.to raise_error(StandardError, 'Solution infeasible!')
+      it 'returns a schedule, with a warning about relaxed constraints' do
+        result, relax = ScheduleSolver.solve([small_course],
+                            [large_room],
+                            [morning],
+                            [morning_hater],
+                            [])
+        expect(result.nil?).to be false
+        expect(relax).to be true      
       end
     end
 
     context 'when a evening hater is assigned to a evening class' do
-      it 'returns an error' do
-        expect do 
-          ScheduleSolver.solve([small_course],
-                                           [large_room],
-                                           [evening],
-                                           [evening_hater],
-                                           [])
-        end.to raise_error(StandardError, 'Solution infeasible!')
+      it 'returns a schedule, with a warning about relaxed constraints' do
+        result, relax = ScheduleSolver.solve([small_course],
+                                          [large_room],
+                                          [evening],
+                                          [evening_hater],
+                                          [])
+        expect(result.nil?).to be false
+        expect(relax).to be true
       end
     end
 
@@ -97,7 +97,7 @@ RSpec.describe ScheduleSolver do
         expect do
           ScheduleSolver.solve([small_course, large_course],
                                [small_room, large_room],
-                               [morning, friday_lab],
+                               [morning],
                                [amicable],
                                [])
         end.to raise_error(StandardError, 'Solution infeasible!')
