@@ -291,7 +291,6 @@ Feature: Rooms Page
       And the following time slots exist:
         | day       | start_time    | end_time      | slot_type     |
         | MWF       | 09:00         | 10:00         | LEC         |
-        | MW        | 08:00         | 9:35         | LEC         |
       And the following courses and their sections exist for schedule "Sched 1":
         | course_number       | max_seats | lecture_type | num_labs         | sections      |
         | 110                 | 20        | F2F          | 4                | 100,101       |

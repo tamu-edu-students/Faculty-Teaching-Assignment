@@ -8,27 +8,26 @@ class ScheduleSolver
     num_classes = classes.length
     num_rooms = rooms.length
     num_times = times.length
-    num_instructors = instructors.length
 
-    # Get the total number of contracted hours and ensure it's at least the number offered classes 
-    hours = instructors.map{ |i| i['max_course_load']}
-    total_course_velocity = hours.sum 
+    # Get the total number of contracted hours and ensure it's at least the number offered classes
+    hours = instructors.map { |i| i['max_course_load'] }
+    total_course_velocity = hours.sum
     if total_course_velocity < num_classes
       raise StandardError, "Not enough teaching hours (#{total_course_velocity}) for given class offerings (#{num_classes})!"
-    elsif total_course_velocity > num_classes 
+    elsif total_course_velocity > num_classes
       # Two options: add more classes or assign professors fewer classes than their contract specifies
       # We choose the latter and reduce professors' hours in a greedy fashion
       hours = reduce_hours(hours, total_course_velocity - num_classes)
     end
 
     # Initialize schedule tensor
-    # i.e. sched[i][j][k] = 1 is class i is located at room j for time k    
+    # i.e. sched[i][j][k] = 1 is class i is located at room j for time k
     sched = init_ilp_tensor(num_classes, num_rooms, num_times)
 
     # Create objective function
     # Minimize the number of empty seats in a full section
     puts 'Creating objective function'
-    objective = 
+    objective =
       (0...num_classes).map do |c|
         (0...num_rooms).map do |r|
           (0...num_times).map do |t|
@@ -70,20 +69,19 @@ class ScheduleSolver
 
     # Hash room_id to (0...num_rooms)
     # Allows us to map rooms => array indices
-    room_id_hash = (0...num_rooms).map { |r| [rooms[r]['id'], r] }.to_h
-    class_id_hash = (0...num_classes).map { |c| [classes[c]['id'], c] }.to_h
-    time_id_hash = (0...num_times).map { |t| [times[t][3], t] }.to_h
+    room_id_hash = (0...num_rooms).to_h { |r| [rooms[r]['id'], r] }
+    class_id_hash = (0...num_classes).to_h { |c| [classes[c]['id'], c] }
+    time_id_hash = (0...num_times).to_h { |t| [times[t][3], t] }
 
     # Constraint #4: Respect locked courses
     # locks[i] = (class, room, time) triplet
     puts 'Generating lock constraints'
-    lock_constraints = []
-    locks.each do |class_id, room_id, time_id|
+    lock_constraints = locks.map do |class_id, room_id, time_id|
       # For unknown reasons, I can't write sched[c][r][t] == 1
       # Ruby will evaluate this as a boolean expression, instead of giving the constraint
       # Introduce a dummy variable that is guaranteed to be zero
       # If their sum is one  => sched[c][r][t] must be 1
-      lock_constraints.append(sched[class_id_hash[class_id]][room_id_hash[room_id]][time_id_hash[time_id]] + GuaranteedZero_b == 1)
+      sched[class_id_hash[class_id]][room_id_hash[room_id]][time_id_hash[time_id]] + GuaranteedZero_b == 1
     end
 
     # Constraint #5: Courses that require special designations get rooms that meet them
@@ -94,39 +92,43 @@ class ScheduleSolver
         next if classes[c]['is_lab'] == rooms[r]['is_lab']
 
         (0...num_times).each do |t|
-          designation_constraints.append(sched[c][r][t] + GuaranteedZero_b == 0)
+          designation_constraints.append((sched[c][r][t] + GuaranteedZero_b == 0))
         end
       end
     end
 
     # Constraint #6: Ensure rooms are not scheduled at overlapping times
     # Go through all pairs of time slots and find those that overlap
-    puts 'Generating overlapping constraints'
-    overlapping_pairs = []
-    overlap_map = Hash.new { |hash, key| hash[key] = Set.new }
-    (0...num_times).each do |t1|
-      (t1 + 1...num_times).each do |t2|
-        if overlaps?(times[t1], times[t2])
-          overlapping_pairs.append([t1, t2])
-          overlap_map[times[t1]] << times[t2] 
-          overlap_map[times[t2]] << times[t1] # by symmetry
-        end
-      end
-    end
+    # NOTE: This iteration only supports scheduling lectures
+    # Lecture times are disjoint, so there's no possibility of nontrivial overlap
+    # However, if you choose to implement labs, the following logic will be necessary
+    
+    # puts 'Generating overlapping constraints'
+    # overlapping_pairs = []
+    # overlap_map = Hash.new { |hash, key| hash[key] = Set.new }
+    # (0...num_times).each do |t1|
+    #   (t1 + 1...num_times).each do |t2|
+    #     next unless overlaps?(times[t1], times[t2])
 
-    # For each pair of overlapping times, ensure that at most one is used
-    overlap_constraints = []
-    (0...num_rooms).each do |r|
-      overlapping_pairs.each do |t1, t2|
-        overlap_constraints.append((0...num_classes).map { |c| sched[c][r][t1] + sched[c][r][t2] }.reduce(:+) <= 1)
-      end
-    end
+    #     overlapping_pairs.append([t1, t2])
+    #     overlap_map[times[t1]] << times[t2]
+    #     overlap_map[times[t2]] << times[t1] # by symmetry
+    #   end
+    # end
+
+    # # For each pair of overlapping times, ensure that at most one is used
+    # overlap_constraints = []
+    # (0...num_rooms).each do |r|
+    #   overlapping_pairs.each do |t1, t2|
+    #     overlap_constraints.append((0...num_classes).map { |c| sched[c][r][t1] + sched[c][r][t2] }.reduce(:+) <= 1)
+    #   end
+    # end
 
     # Ensure GuaranteedZero is, in fact, zero
     zero_constraint = [GuaranteedZero_b <= 0]
 
     # Consolidate constraints
-    constraints = cap_constraints + share_constraints + place_constraints + lock_constraints + overlap_constraints + designation_constraints + zero_constraint
+    constraints = cap_constraints + share_constraints + place_constraints + lock_constraints + designation_constraints + zero_constraint
 
     # Form ILP and solve
     problem = Rulp::Min(objective)
@@ -134,7 +136,7 @@ class ScheduleSolver
     # Silence RULP output, unless there's an error
     Rulp.log_level = Logger::ERROR
 
-    begin       
+    begin
       Rulp::Glpk(problem)
     rescue StandardError
       raise StandardError, 'Solution infeasible!'
@@ -145,6 +147,7 @@ class ScheduleSolver
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           next unless sched[c][r][t].value
+
           classes[c]['time_slot'] = times[t]
           classes[c]['room_id'] = rooms[r]['id']
         end
@@ -152,10 +155,10 @@ class ScheduleSolver
     end
 
     # Pair professors to courses
-    matching, relaxed = assign_instructors(classes, instructors, hours, class_id_hash, overlap_map)
+    matching, relaxed = assign_instructors(classes, instructors, hours, class_id_hash)
 
     total_happiness = 0
-    curr_time = Time.now 
+    curr_time = Time.now
     matching.each_with_index do |data, i|
       assigned_course = classes[i]
       assigned_time = assigned_course['time_slot']
@@ -173,26 +176,25 @@ class ScheduleSolver
       )
       # Create room bookings for given room at all conflicting timeslots
       # This manifests in the schedule and prevents the user from scheduling something that would cause conflict
-      conflicting_times = overlap_map[assigned_time]
-      conflicting_times.each do |time_slot|
-        RoomBooking.create(
-          room_id: assigned_course['room_id'],
-          time_slot_id: time_slot[3],
-          is_available: false,
-          is_lab: false,
-          created_at: curr_time,
-          updated_at: curr_time,
-        )
-        overlap_map[assigned_time].delete(time_slot)
-      end
-
+      # NOTE: See commentary about overlap_constraints for why this is commented out
+      # conflicting_times = overlap_map[assigned_time]
+      # conflicting_times.each do |time_slot|
+      #   RoomBooking.create(
+      #     room_id: assigned_course['room_id'],
+      #     time_slot_id: time_slot[3],
+      #     is_available: false,
+      #     is_lab: false,
+      #     created_at: curr_time,
+      #     updated_at: curr_time
+      #   )
+      #   overlap_map[assigned_time].delete(time_slot)
+      # end
     end
     [total_happiness, relaxed]
   end
 
-  private
-    THREE_PM = Time.parse('15:00')
-    NINE_AM = Time.parse('9:00')
+  THREE_PM = Time.parse('15:00')
+  NINE_AM = Time.parse('9:00')
 
   # Find if two timeslots overlap
   # time1 = [days, start_time, end_time]
@@ -219,7 +221,7 @@ class ScheduleSolver
     end
     days2.each_char do |c|
       day2_mask |= 1 << (c.ord - 'F'.ord)
-    end  
+    end
     day1_mask & day2_mask != 0
   end
 
@@ -243,16 +245,16 @@ class ScheduleSolver
 
   def self.reduce_hours(hours, courses_to_drop)
     # Create max heap with hour as key and index as value
-    heap = Containers::MaxHeap.new 
-    hours.each_with_index do |h,i|
+    heap = Containers::MaxHeap.new
+    hours.each_with_index do |h, i|
       heap.push(h, i)
     end
-    
+
     # Reduce hours from prof with highest number of hours
     courses_to_drop.times do
       hour = heap.next_key
       idx = heap.pop
-      heap.push(hour-1, idx)
+      heap.push(hour - 1, idx)
     end
 
     # Reconstitute modified array
@@ -266,22 +268,22 @@ class ScheduleSolver
     adjusted_hours
   end
 
-  def self.assign_instructors(classes, instructors, hours, class_hash, overlap_map)
+  def self.assign_instructors(classes, instructors, hours, class_hash)
     # Identify morning and evening courses
     morning_class_ids = []
     evening_class_ids = []
     (0...classes.length).each do |c|
       assigned_time = classes[c]['time_slot']
       if before_9?(assigned_time)
-        morning_class_ids << c 
+        morning_class_ids << c
       elsif after_3?(assigned_time)
-        evening_class_ids << c 
+        evening_class_ids << c
       end
     end
 
     # Generate num_profs * num_classes matrix
-    happiness_matrix = Array.new(classes.length) { Array.new(instructors.length) { 0 } }
-    prof_hash = (0...instructors.length).map { |i| [instructors[i]['id'], i] }.to_h
+    happiness_matrix = Array.new(classes.length) { Array.new(instructors.length) { 3 } }
+    prof_hash = (0...instructors.length).to_h { |i| [instructors[i]['id'], i] }
 
     # Hyperparameters for the unhappiness function
     # We choose a simple linear combination:
@@ -300,15 +302,15 @@ class ScheduleSolver
 
     # Encourage scheduler to respect time preferences
     instructors.each_with_index do |prof, p|
-      if !prof['before_9']
+      unless prof['before_9']
         morning_class_ids.each do |c|
-          happiness_matrix[c][p] -= time_weight 
+          happiness_matrix[c][p] -= time_weight
         end
       end
-      if !prof['after_3']
-        evening_class_ids.each do |c|
-          happiness_matrix[c][p] -= time_weight 
-        end
+      next if prof['after_3']
+
+      evening_class_ids.each do |c|
+        happiness_matrix[c][p] -= time_weight
       end
     end
 
@@ -317,10 +319,10 @@ class ScheduleSolver
     pairing = pairing.each_slice(instructors.length).to_a
 
     # Objective: maximize happiness
-    objective = 
+    objective =
       (0...classes.length).map do |c|
         (0...instructors.length).map do |p|
-            pairing[c][p] * happiness_matrix[c][p]
+          pairing[c][p] * happiness_matrix[c][p]
         end.reduce(:+)
       end.reduce(:+)
 
@@ -334,17 +336,16 @@ class ScheduleSolver
       hates_evenings = !p['after_3']
       prof_id = prof_hash[p['id']]
       if hates_mornings && !morning_class_ids.empty?
-        negotiable_constraints.append((morning_class_ids.map {|c| pairing[c][prof_id]}.reduce(:+) + GuaranteedZero_b == 0))
+        negotiable_constraints.append((morning_class_ids.map { |c| pairing[c][prof_id] }.reduce(:+) + GuaranteedZero_b == 0))
       end
       if hates_evenings && !evening_class_ids.empty?
-        negotiable_constraints.append((evening_class_ids.map {|c| pairing[c][prof_id]}.reduce(:+) + GuaranteedZero_b == 0))
+        negotiable_constraints.append((evening_class_ids.map { |c| pairing[c][prof_id] }.reduce(:+) + GuaranteedZero_b == 0))
       end
     end
 
     # Constraint 2: Each professor is scheduled for their (modified) contracted hours
-    temporal_constraints = []
-    (0...instructors.length).each do |p|
-      temporal_constraints.append((0...classes.length).map{|c| pairing[c][p]}.reduce(:+) + GuaranteedZero_b == hours[p])
+    temporal_constraints = (0...instructors.length).map do |p|
+      (0...classes.length).map { |c| pairing[c][p] }.reduce(:+) + GuaranteedZero_b == hours[p]
     end
 
     # Constraint 3: A professor cannot be scheduled for two concurrent classes
@@ -353,10 +354,11 @@ class ScheduleSolver
       # NOTE: We are not considering lab times here
       # Lecture times are disjoint, so there's no possibility of overlap there
       # The only exception are courses at the exact same time slot
-      conflicting_classes = classes.select{ |c| c['time_slot'] == assigned_time}
-      next unless !conflicting_classes.empty?
+      conflicting_classes = classes.select { |c| c['time_slot'] == assigned_time }
+      next if conflicting_classes.empty?
+
       (0...instructors.length).each do |p|
-        temporal_constraints.append((conflicting_classes.map {|c| pairing[class_hash[c['id']]][p]}.reduce(:+) <= 1))
+        temporal_constraints.append((conflicting_classes.map { |c| pairing[class_hash[c['id']]][p] }.reduce(:+) <= 1))
       end
     end
 
@@ -385,23 +387,22 @@ class ScheduleSolver
         raise StandardError, 'Solution infeasible!'
       end
     end
-    
+
     # Get matching data from ILP matrix
-    # The index c in the matching array corresponds to the courses array 
+    # The index c in the matching array corresponds to the courses array
     matching = []
     (0...classes.length).each do |c|
       (0...instructors.length).each do |p|
         next unless pairing[c][p].value
+
         matching << {
           'prof_id' => instructors[p]['id'],
-          'happiness'=> happiness_matrix[c][p]
+          'happiness' => happiness_matrix[c][p]
         }
         next
       end
     end
 
     [matching, relaxed]
-
   end
-
-end 
+end
