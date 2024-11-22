@@ -167,11 +167,16 @@ class RoomBookingsController < ApplicationController
 
     # Offload solve to service
     begin
-      total_happiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
-      max_happiness = classes.length * 5 # Individual unhappiness is capped at 5
+      total_happiness, relaxed = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
+      max_happiness = classes.length * 10 # Individual happiness is capped at 10
       satisfaction_rate = (100 * total_happiness.to_f / max_happiness).to_i
-      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]),
-                  notice: "Schedule generated with #{satisfaction_rate}% satisfaction"
+      if !relaxed
+        msg = "Schedule generated with #{satisfaction_rate}% satisfaction"
+      else 
+        msg = "Schedule generated under relaxed time constraints with #{satisfaction_rate}% satisfaction"
+      end
+      redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), notice: msg
+
     rescue StandardError => e
       redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]), alert: e.message
     end
