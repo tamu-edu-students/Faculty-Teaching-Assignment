@@ -148,7 +148,7 @@ class RoomBookingsController < ApplicationController
         'capacity' => room.capacity
       }
     end
-    times = TimeSlot.pluck(:day, :start_time, :end_time, :id)
+    times = TimeSlot.where(slot_type: 'LEC').pluck(:day, :start_time, :end_time, :id)
     instructors =  Instructor.where(schedule_id: params['schedule_id']).pluck(:id, :before_9, :after_3, :max_course_load).map do |i, b, a, c|
       { 'id' => i, 'before_9' => b,
         'after_3' => a, 'max_course_load' => c }
@@ -167,9 +167,9 @@ class RoomBookingsController < ApplicationController
 
     # Offload solve to service
     begin
-      total_unhappiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
-      max_unhappiness = classes.length * 10 # Individual unhappiness is capped at 10
-      satisfaction_rate = (100 * (max_unhappiness - total_unhappiness).to_f / max_unhappiness).to_i
+      total_happiness = ScheduleSolver.solve(classes, active_rooms, times, instructors, locks)
+      max_happiness = classes.length * 5 # Individual unhappiness is capped at 5
+      satisfaction_rate = (100 * total_happiness.to_f / max_happiness).to_i
       redirect_to schedule_room_bookings_path(@schedule, active_tab: params[:active_tab]),
                   notice: "Schedule generated with #{satisfaction_rate}% satisfaction"
     rescue StandardError => e

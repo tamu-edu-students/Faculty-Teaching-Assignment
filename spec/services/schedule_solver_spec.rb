@@ -69,24 +69,38 @@ RSpec.describe ScheduleSolver do
     end
 
     context 'when a morning hater is assigned to a morning class' do
-      it 'returns a nonzero unhappiness' do
-        unhappiness = ScheduleSolver.solve([small_course],
-                                           [large_room],
-                                           [morning],
-                                           [morning_hater],
-                                           [])
-        expect(unhappiness).to be > 0
+      it 'returns an error' do
+        expect do 
+          ScheduleSolver.solve([small_course],
+                              [large_room],
+                              [morning],
+                              [morning_hater],
+                              [])
+        end.to raise_error(StandardError, 'Solution infeasible!')
       end
     end
 
     context 'when a evening hater is assigned to a evening class' do
-      it 'returns a nonzero unhappiness' do
-        unhappiness = ScheduleSolver.solve([small_course],
+      it 'returns an error' do
+        expect do 
+          ScheduleSolver.solve([small_course],
                                            [large_room],
                                            [evening],
                                            [evening_hater],
                                            [])
-        expect(unhappiness).to be > 0
+        end.to raise_error(StandardError, 'Solution infeasible!')
+      end
+    end
+
+    context 'when a professor is forced to be in two places at once' do
+      it 'return an error' do
+        expect do
+          ScheduleSolver.solve([small_course, large_course],
+                               [small_room, large_room],
+                               [morning, friday_lab],
+                               [amicable],
+                               [])
+        end.to raise_error(StandardError, 'Solution infeasible!')
       end
     end
   end
@@ -103,15 +117,16 @@ RSpec.describe ScheduleSolver do
       end
     end
 
-    context 'professor is contracted for multiple classes' do
-      it 'assigns the professor to multiple classes' do
+    context 'professors teach multiple courses' do
+      it 'finds a schedule' do
         result = ScheduleSolver.solve([small_course, large_course],
                                       [large_room],
-                                      [morning, evening],
+                                      [morning, evening, friday_lab],
                                       [amicable],
                                       [])
         expect(result.nil?).to be false
       end
     end
+
   end
 end

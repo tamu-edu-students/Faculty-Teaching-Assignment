@@ -9,29 +9,27 @@ class ScheduleSolver
     num_classes = classes.length
     num_rooms = rooms.length
     num_times = times.length
+    num_instructors = instructors.length
 
-    # Get the total number of contracted hours and ensure it's at least the number offered classes
-    hours = instructors.map { |i| i['max_course_load'] }
-    total_course_velocity = hours.sum
+    # Get the total number of contracted hours and ensure it's at least the number offered classes 
+    hours = instructors.map{ |i| i['max_course_load']}
+    total_course_velocity = hours.sum 
     if total_course_velocity < num_classes
       raise StandardError, "Not enough teaching hours (#{total_course_velocity}) for given class offerings (#{num_classes})!"
-    elsif total_course_velocity > num_classes
+    elsif total_course_velocity > num_classes 
       # Two options: add more classes or assign professors fewer classes than their contract specifies
       # We choose the latter and reduce professors' hours in a greedy fashion
       hours = reduce_hours(hours, total_course_velocity - num_classes)
     end
 
-    # Allocate ijk binary decision variables
-    sched_flat = Array.new(num_classes * num_rooms * num_times, &X_b)
-
-    # Reshape into a 3D tensor
-    # i.e. sched[i][j][k] = 1 is class i is located at room j for time k
-    sched = sched_flat.each_slice(num_times).each_slice(num_rooms).to_a
+    # Initialize schedule tensor
+    # i.e. sched[i][j][k] = 1 is class i is located at room j for time k    
+    sched = init_ilp_tensor(num_classes, num_rooms, num_times)
 
     # Create objective function
     # Minimize the number of empty seats in a full section
     puts 'Creating objective function'
-    objective =
+    objective = 
       (0...num_classes).map do |c|
         (0...num_rooms).map do |r|
           (0...num_times).map do |t|
@@ -73,19 +71,20 @@ class ScheduleSolver
 
     # Hash room_id to (0...num_rooms)
     # Allows us to map rooms => array indices
-    room_id_hash = (0...num_rooms).to_h { |r| [rooms[r]['id'], r] }
-    class_id_hash = (0...num_classes).to_h { |c| [classes[c]['id'], c] }
-    time_id_hash = (0...num_times).to_h { |t| [times[t][3], t] }
+    room_id_hash = (0...num_rooms).map { |r| [rooms[r]['id'], r] }.to_h
+    class_id_hash = (0...num_classes).map { |c| [classes[c]['id'], c] }.to_h
+    time_id_hash = (0...num_times).map { |t| [times[t][3], t] }.to_h
 
     # Constraint #4: Respect locked courses
     # locks[i] = (class, room, time) triplet
     puts 'Generating lock constraints'
-    lock_constraints = locks.map do |class_id, room_id, time_id|
+    lock_constraints = []
+    locks.each do |class_id, room_id, time_id|
       # For unknown reasons, I can't write sched[c][r][t] == 1
       # Ruby will evaluate this as a boolean expression, instead of giving the constraint
       # Introduce a dummy variable that is guaranteed to be zero
       # If their sum is one  => sched[c][r][t] must be 1
-      sched[class_id_hash[class_id]][room_id_hash[room_id]][time_id_hash[time_id]] + GuaranteedZero_b == 1
+      lock_constraints.append(sched[class_id_hash[class_id]][room_id_hash[room_id]][time_id_hash[time_id]] + GuaranteedZero_b == 1)
     end
 
     # Constraint #5: Courses that require special designations get rooms that meet them
@@ -96,7 +95,7 @@ class ScheduleSolver
         next if classes[c]['is_lab'] == rooms[r]['is_lab']
 
         (0...num_times).each do |t|
-          designation_constraints.append((sched[c][r][t] + GuaranteedZero_b) == 0)
+          designation_constraints.append(sched[c][r][t] + GuaranteedZero_b == 0)
         end
       end
     end
@@ -108,11 +107,11 @@ class ScheduleSolver
     overlap_map = Hash.new { |hash, key| hash[key] = Set.new }
     (0...num_times).each do |t1|
       (t1 + 1...num_times).each do |t2|
-        next unless overlaps?(times[t1], times[t2])
-
-        overlapping_pairs.append([t1, t2])
-        overlap_map[times[t1]] << times[t2]
-        overlap_map[times[t2]] << times[t1] # by symmetry
+        if overlaps?(times[t1], times[t2])
+          overlapping_pairs.append([t1, t2])
+          overlap_map[times[t1]] << times[t2] 
+          overlap_map[times[t2]] << times[t1] # by symmetry
+        end
       end
     end
 
@@ -136,7 +135,7 @@ class ScheduleSolver
     # Silence RULP output, unless there's an error
     Rulp.log_level = Logger::ERROR
 
-    begin
+    begin       
       Rulp::Glpk(problem)
     rescue StandardError
       raise StandardError, 'Solution infeasible!'
@@ -147,41 +146,35 @@ class ScheduleSolver
       (0...num_rooms).each do |r|
         (0...num_times).each do |t|
           next unless sched[c][r][t].value
-
           classes[c]['time_slot'] = times[t]
           classes[c]['room_id'] = rooms[r]['id']
         end
       end
     end
 
-    # Generate unhappiness matrix with prof ID
-    unhappiness_matrix, prof_ids = generate_unhappiness_matrix(classes, instructors, hours, class_id_hash)
+    # Pair professors to courses
+    begin 
+      matching = assign_instructors(classes, instructors, hours, class_id_hash, overlap_map)
+    rescue StandardError 
+      raise StandardError, 'Solution infeasible!'
+    end
 
-    # Solve the min weight perfect matching via the Hungarian algorithm
-    # The library clobbers the matrix, so create a deep copy first
-    copy = unhappiness_matrix.map(&:dup)
-    matching = HungarianAlgorithm.new(unhappiness_matrix).process.sort
-
-    # matching is a 2D array, where each element [i,j] represents the assignment of professsor i to class j
-    # Map the course to prof_ids[prof], which gives the position of the true professor in the instructors array
-    matching = matching.to_h { |prof, course| [classes[course], prof_ids[prof]] }
-
-    total_unhappiness = 0
-    classes.each do |assigned_course|
-      true_prof_id = matching[assigned_course]
-      course_id = assigned_course['id']
-      total_unhappiness += copy[true_prof_id][class_id_hash[course_id]]
+    total_happiness = 0
+    curr_time = Time.now 
+    matching.each_with_index do |data, i|
+      assigned_course = classes[i]
       assigned_time = assigned_course['time_slot']
+      total_happiness += data['happiness']
       # Generate room booking for scheduled course
       RoomBooking.create(
         room_id: assigned_course['room_id'],
         time_slot_id: assigned_time[3],
         is_available: true,
         is_lab: false,
-        created_at: Time.now,
-        updated_at: Time.now,
-        course_id:,
-        instructor_id: instructors[true_prof_id]['id']
+        created_at: curr_time,
+        updated_at: curr_time,
+        course_id: assigned_course['id'],
+        instructor_id: data['prof_id']
       )
       # Create room bookings for given room at all conflicting timeslots
       # This manifests in the schedule and prevents the user from scheduling something that would cause conflict
@@ -192,16 +185,19 @@ class ScheduleSolver
           time_slot_id: time_slot[3],
           is_available: false,
           is_lab: false,
-          created_at: Time.now,
-          updated_at: Time.now
+          created_at: curr_time,
+          updated_at: curr_time,
         )
-        # If we have assigned a course to
         overlap_map[assigned_time].delete(time_slot)
       end
-    end
 
-    total_unhappiness
+    end
+    total_happiness
   end
+
+  private
+    THREE_PM = Time.parse('15:00')
+    NINE_AM = Time.parse('9:00')
 
   # Find if two timeslots overlap
   # time1 = [days, start_time, end_time]
@@ -218,34 +214,50 @@ class ScheduleSolver
   end
 
   # Check if two times overlap on at least one day
+  # Memory is precious, so use bit masks here
   def self.day_overlaps?(days1, days2)
-    d1 = days1.scan(/M|T|W|R|F/)
-    d2 = days2.scan(/M|T|W|R|F/)
-    !!d1.intersect?(d2)
+    day1_mask = 0
+    day2_mask = 0
+    # Assume that days only contains the characters MWTRF
+    days1.each_char do |c|
+      day1_mask |= 1 << (c.ord - 'F'.ord)
+    end
+    days2.each_char do |c|
+      day2_mask |= 1 << (c.ord - 'F'.ord)
+    end  
+    day1_mask & day2_mask != 0
   end
 
   def self.before_9?(time)
     start_time = time[1]
-    Time.parse(start_time) <= Time.parse('9:00')
+    Time.parse(start_time) <= NINE_AM
   end
 
   def self.after_3?(time)
     end_time = time[2]
-    Time.parse(end_time) >= Time.parse('15:00')
+    Time.parse(end_time) >= THREE_PM
+  end
+
+  # Move this generation to a separate function
+  # Allows sched_flat to fall out of scope and get claimed by GC
+  def self.init_ilp_tensor(num_classes, num_rooms, num_times)
+    # Allocate ijk binary decision variables and reshape into 3D tensor
+    sched_flat = Array.new(num_classes * num_rooms * num_times, &X_b)
+    sched_flat.each_slice(num_times).each_slice(num_rooms).to_a
   end
 
   def self.reduce_hours(hours, courses_to_drop)
     # Create max heap with hour as key and index as value
-    heap = Containers::MaxHeap.new
-    hours.each_with_index do |h, i|
+    heap = Containers::MaxHeap.new 
+    hours.each_with_index do |h,i|
       heap.push(h, i)
     end
-
+    
     # Reduce hours from prof with highest number of hours
     courses_to_drop.times do
       hour = heap.next_key
       idx = heap.pop
-      heap.push(hour - 1, idx)
+      heap.push(hour-1, idx)
     end
 
     # Reconstitute modified array
@@ -259,67 +271,111 @@ class ScheduleSolver
     adjusted_hours
   end
 
-  def self.generate_unhappiness_matrix(classes, instructors, hours, class_hash)
-    # Because of the hour reduction scheme, we know that num_classes == num_profs, where profs are counted with multiplicity
+  def self.assign_instructors(classes, instructors, hours, class_hash, overlap_map)
     # Generate num_profs * num_classes matrix
-    unhappiness_matrix = Array.new(classes.length) { Array.new(classes.length) { 0 } }
+    happiness_matrix = Array.new(classes.length) { Array.new(instructors.length) { 0 } }
+    prof_hash = (0...instructors.length).map { |i| [instructors[i]['id'], i] }.to_h
 
-    # Create the preference matrix ahead of time to reduce DB reads
-    prof_hash = (0...instructors.length).to_h { |i| [instructors[i]['id'], i] }
-    preference_matrix = Array.new(instructors.length) { Array.new(classes.length, 0) }
-
-    # Populate the matrix based on InstructorPreference data
+    # Initialize the matrix based on InstructorPreference data
+    # Use find_each for batching, reducing calls to DB
     InstructorPreference.find_each do |preference|
-      i = prof_hash[preference.instructor_id]
-      j = class_hash[preference.course_id]
-      preference_matrix[i][j] = preference.preference_level
+      c = class_hash[preference.course_id]
+      p = prof_hash[preference.instructor_id]
+      happiness_matrix[c][p] = preference.preference_level
     end
 
-    # Hyperparameters for the unhappiness function
-    # We choose a simple linear combination:
-    # unhappiness(p,c) = time_weight * I[class c is at a bad time for prof p] + class_weight*(5-PM[c][p])
-    # If we choose weights such that time_weight + 4*class_weight = 10, the unhappiness score is bounded between 0 and 10
-    time_weight = 2
-    class_weight = 2
+    # Setup ILP and objective function
+    puts "classes: #{classes}"
+    puts "instructors: #{instructors}"
+    pairing = Array.new(classes.length * instructors.length, &X_b)
+    pairing = pairing.each_slice(instructors.length).to_a
 
-    # Since row i likely doesn't correspond to prof i, keep track of underlying prof ID
-    # i.e. if prof 0 has 3 courses prof_id[0...3] = 0
-    curr_row = 0
-    prof_ids = Array.new(classes.length) { -1 }
-    (0...instructors.length).each do |instructor_idx|
-      # Set true professor ID
-      prof_ids[curr_row] = instructor_idx
-      hates_mornings = !instructors[instructor_idx]['before_9']
-      hates_evenings = !instructors[instructor_idx]['after_3']
+    objective = 
+      (0...classes.length).map do |c|
+        (0...instructors.length).map do |p|
+            pairing[c][p] * happiness_matrix[c][p]
+        end.reduce(:+)
+      end.reduce(:+)
 
-      # Gather corresponding preferences, which requires prof/course id from database
-      # prof_id_from_db = instructors[instructor_idx]['id']
-
-      # Fill out row, comparing assigned time with temporal preference
-      (0...classes.length).each do |course|
-        # course_id_from_db = classes[course]['id']
-        assigned_time = classes[course]['time_slot']
-        if hates_mornings && before_9?(assigned_time)
-          unhappiness_matrix[curr_row][course] = time_weight
-        elsif hates_evenings && after_3?(assigned_time)
-          unhappiness_matrix[curr_row][course] = time_weight
-        end
-        # Account for class preference
-        unhappiness_matrix[curr_row][course] += class_weight * preference_matrix[instructor_idx][course]
+    # Identify morning and evening courses
+    morning_class_ids = []
+    evening_class_ids = []
+    (0...classes.length).each do |c|
+      assigned_time = classes[c]['time_slot']
+      if before_9?(assigned_time)
+        morning_class_ids << c 
+      elsif after_3?(assigned_time)
+        evening_class_ids << c 
       end
-
-      # Duplicate the row according to the professor's teaching capacity
-      num_duplications = hours[instructor_idx] - 1
-      num_duplications.times do
-        unhappiness_matrix[curr_row + 1] = unhappiness_matrix[curr_row].dup
-        prof_ids[curr_row + 1] = instructor_idx
-        curr_row += 1
-      end
-
-      # Move up one, since previous loop was one ahead
-      curr_row += 1
     end
-    # Return matrix and true ids
-    [unhappiness_matrix, prof_ids]
+
+    # Constraint 1: No professor is scheduled at a time they don't want
+    temporal_constraints = []
+    instructors.each do |p|
+      hates_mornings = !p['before_9']
+      hates_evenings = !p['after_3']
+      prof_id = prof_hash[p['id']]
+      if hates_mornings && !morning_class_ids.empty?
+        temporal_constraints.append((morning_class_ids.map {|c| pairing[c][prof_id]}.reduce(:+) + GuaranteedZero_b == 0))
+      end
+      if hates_evenings && !evening_class_ids.empty?
+        ctr = evening_class_ids.map {|c| pairing[c][prof_id]}.reduce(:+) <= 0
+        temporal_constraints.append((evening_class_ids.map {|c| pairing[c][prof_id]}.reduce(:+) + GuaranteedZero_b == 0))
+      end
+    end
+    puts "After preferences:\n"
+    puts temporal_constraints
+
+    # Constraint 2: Each professor is scheduled for their (modified) contracted hours
+    (0...instructors.length).each do |p|
+      temporal_constraints.append((0...classes.length).map{|c| pairing[c][p]}.reduce(:+) + GuaranteedZero_b == hours[p])
+    end
+    puts "After contract hours:\n" 
+    puts temporal_constraints
+
+    # Constraint 3: A professor cannot be scheduled for two concurrent classes
+    # FIXME: Broken, somehow
+    classes.each do |course|
+      assigned_time = course['time_slot']
+      conflicting_times = overlap_map[assigned_time]
+      conflicting_classes = classes.select{ |c| conflicting_times.include?(c['time_slot'])}
+      next unless !conflicting_classes.empty?
+      (0...instructors.length).each do |p|
+        temporal_constraints.append((conflicting_classes.map {|c| pairing[class_hash[c['id']]][p]}.reduce(:+) + pairing[class_hash[course['id']]][p] <= 1))
+      end
+    end
+    puts "After concurrency:\n" 
+    puts temporal_constraints
+
+    temporal_constraints.append([GuaranteedZero_b <= 0])
+
+    # Form ILP and solve
+    problem = Rulp::Max(objective)
+    problem[temporal_constraints]
+    # Silence RULP output, unless there's an error
+    Rulp.log_level = Logger::ERROR
+
+    begin       
+      Rulp::Glpk(problem)
+    rescue StandardError
+      raise StandardError, 'Solution infeasible!'
+    end
+
+    # Get matching data from ILP matrix
+    matching = []
+    (0...classes.length).each do |c|
+      (0...instructors.length).each do |p|
+        next unless pairing[c][p].value
+        matching << {
+          'prof_id' => instructors[p]['id'],
+          'happiness'=> happiness_matrix[c][p]
+        }
+        next
+      end
+    end
+
+    matching 
+
   end
-end
+
+end 
