@@ -92,7 +92,7 @@ class ScheduleSolver
         next if classes[c]['is_lab'] == rooms[r]['is_lab']
 
         (0...num_times).each do |t|
-          designation_constraints.append((sched[c][r][t] + GuaranteedZero_b).zero?)
+          designation_constraints.append((sched[c][r][t] + GuaranteedZero_b) == 0)
         end
       end
     end
@@ -336,10 +336,10 @@ class ScheduleSolver
       hates_evenings = !p['after_3']
       prof_id = prof_hash[p['id']]
       if hates_mornings && !morning_class_ids.empty?
-        negotiable_constraints.append((morning_class_ids.map { |c| pairing[c][prof_id] }.reduce(:+) + GuaranteedZero_b).zero?)
+        negotiable_constraints.append((morning_class_ids.map { |c| pairing[c][prof_id] }.reduce(:+) + GuaranteedZero_b) == 0)
       end
       if hates_evenings && !evening_class_ids.empty?
-        negotiable_constraints.append((evening_class_ids.map { |c| pairing[c][prof_id] }.reduce(:+) + GuaranteedZero_b).zero?)
+        negotiable_constraints.append((evening_class_ids.map { |c| pairing[c][prof_id] }.reduce(:+) + GuaranteedZero_b) == 0)
       end
     end
 
