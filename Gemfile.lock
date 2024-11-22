@@ -167,7 +167,6 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashie (5.0.0)
-    hungarian_algorithm (1.0.0)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.0.1)
@@ -456,7 +455,6 @@ DEPENDENCIES
   debug
   factory_bot_rails
   faker
-  hungarian_algorithm
   importmap-rails
   jbuilder
   matrix
