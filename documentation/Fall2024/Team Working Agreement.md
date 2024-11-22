@@ -39,9 +39,9 @@
 - Properly tested
 - Rubocop has at most 1 offense per file
 - Ensure tests cover all the scenarios including corner cases
-- 
 - Run cucumber and maintain coverage above 90% for your feature
 - Run rspec and maintain coverage above 90% for your feature
+- After merging any code to main, manually test the code and try to break it. 
 
 ## Communication Channels
 - **Slack**
