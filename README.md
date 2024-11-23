@@ -42,6 +42,7 @@ The key stakeholder for this application is the Associate Department Head, who i
 - **Sprint 4**:
   - **Goal**: Integrate the algorithm and soft constraints, straighten out some issues, and get the app running end to end.
   - [Sprint Plan](https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_4_Plan.pdf)
+  - [Retrospective](https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/Sprint_4_Retrospective.pdf)
 
 ---
 
@@ -201,6 +202,7 @@ heroku config:set RAILS_MASTER_KEY=<YOUR_MASTER_KEY>
 If the above steps do not work, see [Deploy to Heroku](https://github.com/tamu-edu-students/Google-Auth-Ruby-By-JD?tab=readme-ov-file#deploy-to-heroku) for OmniAuth documentation.
 
 ## Using the application
+For a pdf version refer to [User Documentation](https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/main/documentation/Fall2024/AggieAssign%20-%20User%20Documentation.pdf)
 1. Login using your TAMU Email ID
 2. The landing page shows the schedules you have been working on
 3. Click on ```Create a New Schedule``` to create one with a name and semester
