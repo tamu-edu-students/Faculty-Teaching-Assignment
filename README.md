@@ -21,7 +21,9 @@ The key stakeholder for this application is the Associate Department Head, who i
 - **App**: [Live Application](https://faculty-teaching-assignment-31f5f9c405bc.herokuapp.com)
 - **Code Climate Report**: [Code Quality Report](https://codeclimate.com/github/tamu-edu-students/Faculty-Teaching-Assignment)
 - **Team Working Agreement**: [Working Agreement](https://github.com/tamu-edu-students/Faculty-Teaching-Assignment/blob/documentation/documentation/Fall2024/Team%20Working%20Agreement.md)
-- **Application Demo**: [Application Demo Video](https://youtu.be/2_s7YLV0lkk)
+- **Application Demo**: [Application Demo Video](https://youtu.be/020dlN_XJJg)
+- **Final Report**: [Final Report](./documentation/Fall2024/Final%20Report.pdf)
+- **Presentation**: [Presentation](./documentation/Fall2024/Final%20Presentation.pptx)
 
 ### Sprint Documentation:
 - **Sprint 1**: 
@@ -108,10 +110,30 @@ bundle config set --local without 'production' && bundle install
 ```
 
 Setup your Google OAuth Rails Credentials using Google Developer Console.
+### Edit the Credentials
+
+```bash
+  EDITOR=nano rails credentials:edit
+```
+
+The credentials file will open in the editor.
+
+Add your Google OAuth credentials to the file in the following format. Make sure to maintain the correct indentation and spacing as shown. There should be 2 spaces before `client_id` and `client_secret`, and a space after the colon:
+
+```yaml
+   google:
+     client_id: your_client_id
+     client_secret: your_client_secret
+```
+
+*Note: Replace `your_client_id` and `your_client_secret` with your own Google OAuth credentials. Do not include any quotes around the actual credentials.*
+
+After adding your credentials, save the changes and exit the editor.
+
 For a more detailed explantion, see 
 [Setup Google OAuth on Google's End](https://github.com/tamu-edu-students/Google-Auth-Ruby-By-JD?tab=readme-ov-file#setup-google-oauth-on-googles-end) 
 and 
-[Add OAuth ID and Secret to Rails Credentials](https://github.com/tamu-edu-students/Google-Auth-Ruby-By-JD?tab=readme-ov-file#create-an-initializer-for-omniauth).
+[Add OAuth ID and Secret to Rails Credentials](https://github.com/tamu-edu-students/Google-Auth-Ruby-By-JD?tab=readme-ov-file#add-oauth-id-and-secret-to-rails-credentials).
 
 If steps are followed correctly you would have your ```RAILS_MASTER_KEY``` in ```config/master.key```. NEVER EVER COMMIT THIS TO GIT.
 <details>
