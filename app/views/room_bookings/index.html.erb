@@ -101,10 +101,16 @@
                                 </div>
                             <% end %>
                             <% elsif booking && !booking.is_available %>
-                            <%= button_to "U", toggle_availability_schedule_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id, is_available: true }, class: "btn btn-sm btn-success" %>
-                            <% else %>
-                            <%= button_to "BL", toggle_availability_schedule_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id, is_available: false }, class: "btn btn-sm btn-danger" %>
-                            <% end %>
+                            <%= button_to toggle_availability_schedule_room_bookings_path, 
+                            method: :post, 
+                            params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id, is_available: true }, 
+                            class: "btn btn-sm btn-success" do %>
+                <i class="fa fa-unlock"></i>
+              <% end %>                            <% else %>
+                            <%= button_to toggle_availability_schedule_room_bookings_path, method: :post, params: { room_id: room.id, time_slot_id: time_slot.id, active_tab: @active_tab, schedule_id: @schedule.id, is_available: false }, class: "btn btn-sm btn-danger" do %>
+                                <i class="fa fa-lock"></i>
+                              <% end %>     
+                                <% end %>                          
                         </td>
                         <% end %>
                     </tr>
